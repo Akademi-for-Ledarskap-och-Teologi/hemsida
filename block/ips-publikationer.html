@@ -1,0 +1,403 @@
+<!-- =====================================================================
+     ALT · IPS-publikationer  (Squarespace-kodblock för /ips-publikationer)
+     Hämtar katalogen från Apps Script-webbappen, som läser PDF:erna i Drive.
+     Lägg till en publikation: släpp PDF:en i rätt undermapp i Drive – klart.
+     Pappersbok-länk för nya titlar: skriv "Köp: https://..." i filens
+     beskrivning i Drive (högerklick → Filinformation → Beskrivning).
+     ===================================================================== -->
+<div id="alt-ips">
+<style>
+#alt-ips{
+  --bg:#EDE5E0; --ink:#1C1C1C; --muted:#5a5652; --accent:#C07A63; --card:#FBF9F7; --line:rgba(28,28,28,.1);
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+#alt-ips *{box-sizing:border-box}
+#alt-ips h2,#alt-ips h3,#alt-ips h4{font-family:var(--head);font-weight:400;line-height:1.08;margin:0;color:inherit;letter-spacing:-.01em;overflow-wrap:normal;word-break:normal;hyphens:manual}
+#alt-ips p{margin:0}
+#alt-ips a{color:inherit;text-decoration:none}
+#alt-ips button{font:inherit}
+#alt-ips .eyebrow,#alt-ips .meta{display:block;font-family:var(--head);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);line-height:1.4}
+#alt-ips .pill{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:15px 26px;border-radius:12px;border:0;cursor:pointer;white-space:nowrap;transition:transform .2s var(--ease),background .2s}
+#alt-ips .pill:hover{transform:scale(1.04);background:#000;color:#fff}
+#alt-ips .pill--accent{background:var(--accent)}
+#alt-ips .pill--accent:hover{background:#a96550}
+#alt-ips .pill--light{background:#e5e3dc;color:var(--ink)}
+#alt-ips .pill--light:hover{background:#fff;color:var(--ink)}
+#alt-ips .pill--sm{font-size:11px;padding:10px 16px;border-radius:9px}
+#alt-ips .arr{display:inline-block;transition:transform .2s var(--ease)}
+#alt-ips .pill:hover .arr,#alt-ips .textlink:hover .arr{transform:translateX(3px)}
+#alt-ips .textlink{color:var(--accent);font-family:var(--head);font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;background:none;border:0;padding:0;cursor:pointer}
+#alt-ips .textlink:hover{text-decoration:underline;text-underline-offset:3px}
+#alt-ips a:focus-visible,#alt-ips button:focus-visible,#alt-ips input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* Verktygsraden */
+#alt-ips .tools{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;background:var(--card);border-radius:var(--r);padding:28px 32px;box-shadow:var(--shadow)}
+#alt-ips .tools__big{font-family:var(--head);font-size:84px;line-height:.85;letter-spacing:-.04em;color:var(--accent);min-width:1.4ch;text-align:center}
+#alt-ips .tools__big small{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:10px;line-height:1.2}
+#alt-ips .tools__mid{display:flex;flex-direction:column;gap:12px;min-width:0}
+#alt-ips .search{display:flex;align-items:center;gap:10px;padding:0 18px;border-radius:999px;background:#fff;border:1px solid var(--line);transition:border-color .2s}
+#alt-ips .search:focus-within{border-color:var(--ink)}
+#alt-ips .search svg{width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;flex:none}
+#alt-ips .search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:20px;color:var(--ink);padding:13px 0}
+#alt-ips .search input:focus-visible{outline:0}
+#alt-ips .search input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+#alt-ips .search .clear{border:0;background:var(--bg);width:28px;height:28px;border-radius:50%;cursor:pointer;color:var(--muted);font-size:15px;line-height:1;flex:none}
+#alt-ips .search .clear[hidden]{display:none}
+#alt-ips .filters{display:flex;flex-wrap:wrap;gap:6px 0;align-items:center}
+#alt-ips .chips{display:flex;flex-wrap:wrap;gap:6px;margin-right:12px}
+#alt-ips .chips + .chips{padding-left:12px;border-left:1px solid var(--line)}
+#alt-ips .chip{font-family:var(--head);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;text-align:left;transition:background .2s,color .2s,border-color .2s}
+#alt-ips .chip:hover{border-color:var(--ink)}
+#alt-ips .chip.is-on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#alt-ips .chip .n{color:var(--accent);margin-left:6px}
+#alt-ips .chip.is-on .n{color:#fff;opacity:.7}
+
+/* Serier */
+#alt-ips .sec{margin-top:110px;scroll-margin-top:120px}
+#alt-ips .sec:first-child{margin-top:80px}
+#alt-ips .sec-head{margin-bottom:32px}
+#alt-ips .sec-head h2{font-size:clamp(32px,4.6vw,52px);text-transform:uppercase;margin-top:10px}
+#alt-ips .sec-head p{margin-top:10px;color:var(--muted);font-size:20px;max-width:60ch}
+#alt-ips .list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#alt-ips .list li{display:flex}
+
+/* Publikationskort */
+#alt-ips .pub{flex:1;display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;background:var(--card);border-radius:var(--r-sm);padding:20px 22px 20px 12px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s}
+#alt-ips .pub:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+#alt-ips .pub__nr{text-align:center;border-right:1px solid var(--line);padding:4px 10px 0 0;margin-left:6px;align-self:start}
+#alt-ips .pub__nr i{display:block;font-style:normal;font-family:var(--head);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#alt-ips .pub__nr b{display:block;font-family:var(--head);font-weight:400;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--accent);margin:4px 0 8px}
+#alt-ips .pub__body{min-width:0;display:flex;flex-direction:column;gap:6px}
+#alt-ips .pub h4{font-size:clamp(17px,1.5vw,20px);line-height:1.18;text-transform:uppercase;padding-top:.12em}
+#alt-ips .pub__sub{font-style:italic;color:var(--muted);line-height:1.35;font-size:18px}
+#alt-ips .pub__facts{font-size:15px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 14px;margin-top:2px}
+#alt-ips .badge{display:inline-block;font-family:var(--head);font-size:10px;letter-spacing:.1em;text-transform:uppercase;background:var(--bg);color:var(--ink);padding:5px 9px;border-radius:6px;vertical-align:2px}
+#alt-ips .pub__hit{font-size:15px;color:var(--muted);border-left:2px solid var(--accent);padding-left:10px;margin-top:4px}
+#alt-ips .pub__hit mark{background:#f1dcd3;color:var(--ink);padding:0 2px;border-radius:3px}
+#alt-ips .pub__act{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:auto;padding-top:12px}
+#alt-ips .pub__note{font-size:16px;color:var(--muted);line-height:1.45;background:var(--bg);border-radius:12px;padding:12px 14px;margin-top:4px}
+#alt-ips .pub__note[hidden]{display:none}
+#alt-ips .nopdf{font-family:var(--head);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* Mörkt kort, laddning, tomt läge */
+#alt-ips .card--dark{margin-top:110px;background:var(--ink);color:#fff;border-radius:var(--r);padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;box-shadow:var(--shadow)}
+#alt-ips .card--dark h3{font-size:30px;text-transform:uppercase}
+#alt-ips .card--dark p{opacity:.8;margin-top:8px;max-width:46ch}
+#alt-ips .skel{border-radius:var(--r-sm);background:linear-gradient(100deg,#f3eeea 30%,#fbf9f7 50%,#f3eeea 70%);background-size:300% 100%;animation:ips-shim 1.4s infinite;min-height:170px}
+#alt-ips .skel-wrap{margin-top:80px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#alt-ips .empty{margin-top:80px;background:var(--card);border-radius:var(--r);padding:40px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+#alt-ips .empty a,#alt-ips .empty button{color:var(--ink);text-decoration:underline;background:none;border:0;cursor:pointer;font:inherit;padding:0}
+#alt-ips .in{animation:ips-up .7s var(--ease) both}
+#alt-ips .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes ips-shim{to{background-position:-150% 0}}
+@keyframes ips-up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@media (max-width:900px){
+  #alt-ips .list,#alt-ips .skel-wrap{grid-template-columns:minmax(0,1fr)}
+  #alt-ips .tools{grid-template-columns:auto 1fr}
+  #alt-ips .tools > .pill{grid-column:1/-1;justify-content:center}
+}
+@media (max-width:640px){
+  #alt-ips{font-size:18px}
+  #alt-ips .tools{grid-template-columns:1fr;padding:22px;gap:18px}
+  #alt-ips .tools__big{display:none}
+  #alt-ips .chips + .chips{padding-left:0;border-left:0}
+  #alt-ips .sec{margin-top:80px}
+  #alt-ips .pub{grid-template-columns:64px minmax(0,1fr);padding:16px 16px 16px 8px;gap:12px}
+  #alt-ips .pub__nr{margin-left:4px;padding-right:8px}
+  #alt-ips .pub__nr b{font-size:30px}
+  #alt-ips .pub h4{font-size:16px}
+  #alt-ips .card--dark{padding:28px;margin-top:80px}
+}
+@media (prefers-reduced-motion:reduce){#alt-ips *,#alt-ips *::before,#alt-ips *::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="tools">
+  <div class="tools__big"><span data-count="">–</span><small>publikationer</small></div>
+  <div class="tools__mid">
+    <label class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+      <span class="sr">Sök bland publikationerna</span>
+      <input type="search" data-q="" placeholder="Sök titel, författare, ämne eller ISBN" autocomplete="off">
+      <button type="button" class="clear" data-clear="" aria-label="Rensa sökningen" hidden="">✕</button>
+    </label>
+    <div class="filters">
+      <div class="chips" data-series="" role="group" aria-label="Serie"></div>
+      <div class="chips" data-format="" role="group" aria-label="Format">
+        <button type="button" class="chip is-on" data-f="alla" aria-pressed="true">Alla format</button>
+        <button type="button" class="chip" data-f="pdf" aria-pressed="false">PDF</button>
+        <button type="button" class="chip" data-f="bok" aria-pressed="false">Pappersbok</button>
+      </div>
+    </div>
+  </div>
+  <a class="pill pill--accent" href="https://www.nyamusik.se/forsamlingsmaterial/pingst/historia-forskning" target="_blank" rel="noopener">Köp tryckt <span class="arr">→</span></a>
+</div>
+
+<p class="sr" aria-live="polite" data-live=""></p>
+<div data-out=""><div class="skel-wrap"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></div>
+
+<div class="card--dark">
+  <div>
+    <h3>Vill du ha boken i handen?</h3>
+    <p>Många av rapporterna och skrifterna finns även som tryckt pappersbok hos Nya Musik.</p>
+  </div>
+  <div><a class="pill pill--light" href="https://www.nyamusik.se/forsamlingsmaterial/pingst/historia-forskning" target="_blank" rel="noopener">Till Nya Musik <span class="arr">→</span></a></div>
+</div>
+
+<script>
+(function () {
+  /* ================= INSTÄLLNINGAR ================= */
+  var CFG = {
+    // Webbappens adress från Apps Script (Distribuera → Hantera distributioner → Webbapp-URL)
+    endpoint: 'https://script.google.com/macros/s/AKfycbzQlGy7Ei8bQWdgr0vhswjt4pmkErm2tUZmk1AspsqNVx5b8Z72VtMQBCYAEcH9JfRD/exec',
+    driveFolder: 'https://drive.google.com/drive/folders/1I7Oe6mVpwjJ4ATQlq6O9icGMJNWON2ml',
+
+    // Serier: ordning, namn och text. "match" jämförs med mappnamnet i Drive.
+    // En ny undermapp i Drive som inte står här visas sist med mappens namn.
+    series: [
+      { key: 'ips', match: /^IPS|forskningsrapport/i, chip: 'Forskningsrapporter', title: 'IPS Forskningsrapporter',
+        text: 'Forskningsrapporter från Institutet för Pentekostala Studier.' },
+      { key: 'skrifter', match: /^Skrifter|insamlingsstiftelsen/i, chip: 'Skrifter', title: 'Skrifter',
+        text: 'Skrifter utgivna av Insamlingsstiftelsen för Pingstforskning.' },
+      { key: 'studia', match: /studia/i, chip: 'Studia Pentecostalia', title: 'Studia Pentecostalia Upsaliensia',
+        text: 'Akademiska essäer och antologier om svensk pingströrelse, utgivna av Artos.' }
+    ],
+
+    // Pappersbok hos Nya Musik. Nyckel = serie:nummer.
+    // (För nya titlar räcker det att skriva "Köp: https://..." i PDF:ens beskrivning i Drive.)
+    buyBase: 'https://www.nyamusik.se/forsamlingsmaterial/pingst/historia-forskning/',
+    buy: {
+      'ips:1': 'pingst-i-gronland---en-studie-av-den-gronlandska-frikyrkan-inuunerup-nutaap-oqal-406741',
+      'ips:2': 'medlemskap---en-tvarvetenskaplig-studie-av-medlemskap-i-pingstrorelsen-406742',
+      'ips:3': 'forsamlingssyn-i-pingstrorelsen---rapport-fran-ett-seminarium.-406757',
+      'ips:4': 'pentekostal-barn--och-familjeteologi-406725',
+      'ips:5': 'pentekostalismen-i-sverige-pa-2000-talet-406758',
+      'ips:6': 'forsamlingsplantering-i-pingst-406771',
+      'ips:7': 'teologi-for-hela-skapelsen-406770',
+      'ips:8': 'entusiastisk-kristendom-och-fanatism-i-knutby-406977',
+      'ips:9': 'svensk-frikyrklighet-i-pandemin-407986',
+      'ips:10': 'kristen-tro-pa-glid-tron-hos-unga-vuxna-i-svensk-frikyrklighet-408889',
+      'ips:11': 'pingstrorelsens-ecklesiologi-i-forandring.-studier-av-pingst-som-forsamling-ror-409524',
+      'skrifter:1': 'https://www.nyamusik.se/sokresultat?search=Organisationer%20och%20beslutsprocesser%20inom%20Pingstr%C3%B6relsen',
+      'skrifter:2': 'organizations-and-decision-procedures-within-the-swedish-pentecostal-m-406726',
+      'skrifter:3': 'vart-behov-av-sanning---bertil-carlsson-406727',
+      'skrifter:4': 'pingstrorelsen-och-tidningen-dagen---fran-sekt-till-kristet-samhalle-1907-1963-406729',
+      'skrifter:5': 'pingstrorelsen-kyrkorna-och-samhallet---en-studie-kring-tidningen-dagen-1964-19-406731',
+      'skrifter:6': 'https://www.nyamusik.se/sokresultat?search=Den%20samfundsfria%20f%C3%B6rsamlingen',
+      'skrifter:7': 'pingstvackelsens-riktlinjer-406733',
+      'skrifter:8': 'latter-rain-vackelsen-i-ostermalms-fria-forsamling-pa-1950-talet-406734',
+      'skrifter:9': 'regn-regn-fardas-over-oss.-algot-niklasson-och-fornyelsevackelsen-406735',
+      'skrifter:10': 'pingstrorelsen-forr-och-nu.-valda-publikationer-1947-2002-406723',
+      'skrifter:11': 'lewi-pethrus-i-konflikt.-om-nagra-konflikter-ar-1929-406736',
+      'skrifter:12': 'georg-gustafsson---forsamlingsledare-predikant-och-forebedjare-inom-den-svenska-406737',
+      'skrifter:13': 'sprangbataljonen-en-tidig-pingstrorelse-406738',
+      'skrifter:14': 'forskning-och-sjalvreflektion-i-pingstrorelsen-1973-2008-406763',
+      'skrifter:15': 'manniskan-samhallet-och-gud.-grunddrag-i-lewi-pethrus-kristendomsuppfattning-406748',
+      'skrifter:16': 'pingstvackelsen-inom-metodistkyrkan-i-sverige-aren-1907-1922-406747',
+      'skrifter:17': 'andrew-ek.-nagra-skeden-i-hans-liv-som-missionar-predikant-och-nodhjalpsarbetar-406740',
+      'skrifter:18': 'andens-dop-och-nadegavorna.-ett-ekumeniskt-pingstmote-i-stockholm-1918-406743',
+      'skrifter:19': 'om-pingstvackelsens-riktlinjer.-anteckningar-om-skriften-och-den-tidiga-pingstva-406744',
+      'skrifter:20': 'utanfor-lagret.-en-berattelse-om-missionaren-och-evangelisten-otto-wit-406767',
+      'skrifter:21': 'pingstkyrkan-i-burundi-och-svensk-pingstmission-i-landet-1935-1985-406754',
+      'skrifter:22': 'de-pingstbetonade.-en-pingstrorelse-inom-svenska-missionsforbundet-406752',
+      'skrifter:23': 'kampen-om-de-redan-fralsta.-svenska-missionsforbundet-och-pingstvackelsen-i-konf-409243',
+      'skrifter:24': 'wasti-feldt---forskningsbiografi-om-kvinnligt-forestandarskap-i-pingst-409832'
+    },
+
+    // Publikationer som saknar PDF (visas ändå). Läggs en PDF med samma nummer i Drive vinner den.
+    extra: {
+      studia: [
+        { nr: 1, authors: 'Jan-Åke Alvarsson', title: 'Om Pingströrelsen', subtitle: 'Essäer, översikter och analyser', year: 2014, isbn: '978-91-7580-710-2', publisher: 'Skellefteå: Artos' },
+        { nr: 2, authors: 'Jan-Åke Alvarsson & Nils-Eije Stävare, red.', title: 'Vägskäl', subtitle: 'Pingströrelsens kursändring under 1950-talet', year: 2015, isbn: '978-91-7580-746-1', publisher: 'Skellefteå: Artos' },
+        { nr: 3, authors: 'Joel Halldorf', title: 'Biskop Lewi Pethrus', subtitle: 'Biografi över ett ledarskap. Religion och mångfald i det svenska folkhemmet', year: 2017, isbn: '978-91-7580-775-1', publisher: 'Skellefteå: Artos' },
+        { nr: 4, authors: 'Jan-Åke Alvarsson, red.', title: 'Varför reste Lewi Pethrus just till Chicago?', subtitle: 'Relationer mellan Sverige och USA inom ramen för pentekostalismen', year: 2018, isbn: '978-91-7777-092-3', publisher: 'Skellefteå: Artos' },
+        { nr: 5, authors: 'Jan-Åke Alvarsson, red.', title: 'Pentekostalismen i Sverige på 2020-talet', subtitle: '', year: 2021, isbn: '978-91-7777-187-6', publisher: 'Skellefteå: Artos' }
+      ]
+    }
+  };
+  /* ================================================= */
+
+  var root = document.getElementById('alt-ips');
+  if (!root || root.dataset.ready) return;
+  root.dataset.ready = '1';
+  var $ = function (s) { return root.querySelector(s); };
+  var out = $('[data-out]'), qEl = $('[data-q]'), clearEl = $('[data-clear]');
+  var seriesEl = $('[data-series]'), formatEl = $('[data-format]'), countEl = $('[data-count]'), liveEl = $('[data-live]');
+  var LS = 'alt-ips-v1';
+  var state = { q: '', series: 'alla', format: 'alla' };
+  var DATA = null;
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+
+  /* ---- bygg serier av katalogen + extra ---- */
+  function build(cat) {
+    var groups = {}, order = [];
+    CFG.series.forEach(function (c) { groups[c.key] = { key: c.key, chip: c.chip, title: c.title, text: c.text, items: [] }; order.push(c.key); });
+    (cat && cat.series || []).forEach(function (s) {
+      var conf = CFG.series.filter(function (c) { return c.match.test(s.name); })[0];
+      var key = conf ? conf.key : norm(s.name).replace(/[^a-z0-9]+/g, '-');
+      if (!groups[key]) { groups[key] = { key: key, chip: s.name, title: s.name, text: s.description || '', items: [] }; order.push(key); }
+      s.items.forEach(function (i) {
+        groups[key].items.push(Object.assign({}, i, {
+          pdf: 'https://drive.google.com/file/d/' + i.id + '/view',
+          dl: 'https://drive.google.com/uc?export=download&id=' + i.id
+        }));
+      });
+    });
+    Object.keys(CFG.extra || {}).forEach(function (key) {
+      if (!groups[key]) return;
+      CFG.extra[key].forEach(function (x) {
+        if (!groups[key].items.some(function (i) { return i.nr === x.nr; })) groups[key].items.push(Object.assign({}, x));
+      });
+    });
+    var all = [];
+    order.forEach(function (key) {
+      var g = groups[key];
+      g.items.forEach(function (i) {
+        if (!i.buy) { var b = CFG.buy[key + ':' + i.nr]; if (b) i.buy = /^https?:/.test(b) ? b : CFG.buyBase + b; }
+        i.series = key;
+        i._hay = norm([i.title, i.subtitle, i.authors, i.isbn, i.year, 'nr ' + i.nr, i.note, g.title, g.text, i.publisher].join(' '));
+        i._toc = norm(i.toc || '');
+        all.push(i);
+      });
+      // nyast först: år, sedan nummer (saknas år används närmaste nummers år)
+      var dated = g.items.filter(function (i) { return i.year; });
+      g.items.forEach(function (i) {
+        i._y = i.year || (dated.slice().sort(function (a, b) { return Math.abs(a.nr - i.nr) - Math.abs(b.nr - i.nr); })[0] || {}).year || 0;
+      });
+      g.items.sort(function (a, b) { return b._y - a._y || (b.nr || 0) - (a.nr || 0); });
+    });
+    return { groups: order.map(function (k) { return groups[k]; }).filter(function (g) { return g.items.length; }), all: all };
+  }
+
+  /* ---- filtrering ---- */
+  function matches(i, terms) {
+    if (state.series !== 'alla' && i.series !== state.series) return false;
+    if (state.format === 'pdf' && !i.id) return false;
+    if (state.format === 'bok' && !i.buy) return false;
+    if (!terms.length) return true;
+    i._tocHit = false;
+    for (var t = 0; t < terms.length; t++) {
+      if (i._hay.indexOf(terms[t]) > -1) continue;
+      if (i._toc.indexOf(terms[t]) > -1) { i._tocHit = true; continue; }
+      return false;
+    }
+    return true;
+  }
+
+  function tocSnippet(i, terms) {
+    var raw = i.toc || '', n = norm(raw), pos = -1, len = 0;
+    terms.forEach(function (t) { var p = n.indexOf(t); if (p > -1 && pos < 0) { pos = p; len = t.length; } });
+    if (pos < 0) return '';
+    var a = Math.max(0, pos - 50), b = Math.min(raw.length, pos + len + 60);
+    return (a ? '…' : '') + esc(raw.slice(a, pos)) + '<mark>' + esc(raw.slice(pos, pos + len)) + '</mark>' + esc(raw.slice(pos + len, b)) + (b < raw.length ? '…' : '');
+  }
+
+  function card(i, terms) {
+    var sub = i.subtitle ? '<p class="pub__sub">' + esc(i.subtitle.charAt(0).toUpperCase() + i.subtitle.slice(1)) + '</p>' : '';
+    var facts = [];
+    if (i.publisher) facts.push(esc(i.publisher));
+    if (i.isbn) facts.push('ISBN ' + esc(i.isbn));
+    var act = [];
+    if (i.id) act.push('<a class="pill pill--sm" href="' + esc(i.pdf) + '" target="_blank" rel="noopener" aria-label="Läs ' + esc(i.title) + ' som PDF">Läs PDF <span class="arr">→</span></a>');
+    else act.push('<span class="nopdf">Endast tryckt</span>');
+    if (i.buy) act.push('<a class="textlink" href="' + esc(i.buy) + '" target="_blank" rel="noopener">Köp pappersbok <span class="arr">→</span></a>');
+    if (i.note) act.push('<button type="button" class="textlink" data-note aria-expanded="false">Om utgåvan</button>');
+    var hit = (terms.length && i._tocHit) ? '<p class="pub__hit">Träff i innehållet: ' + tocSnippet(i, terms) + '</p>' : '';
+    return '<li><article class="pub in">' +
+      '<div class="pub__nr"><i>Nr</i><b>' + esc(i.nr != null ? i.nr : '–') + '</b><i>' + esc(i.year || '') + '</i></div>' +
+      '<div class="pub__body">' +
+        (i.authors ? '<span class="meta">' + esc(i.authors) + '</span>' : '') +
+        '<h4>' + esc(i.title) + '</h4>' + sub +
+        '<p class="pub__facts">' + (i.nyutgava ? '<span class="badge">Nyutgåva</span>' : '') + facts.map(function (f) { return '<span>' + f + '</span>'; }).join('') + '</p>' +
+        hit +
+        (i.note ? '<p class="pub__note" hidden>' + esc(i.note) + '</p>' : '') +
+        '<div class="pub__act">' + act.join('') + '</div>' +
+      '</div></article></li>';
+  }
+
+  function render() {
+    if (!DATA) return;
+    var terms = norm(state.q).split(/\s+/).filter(Boolean);
+    var html = '', total = 0;
+    DATA.groups.forEach(function (g) {
+      var items = g.items.filter(function (i) { return matches(i, terms); });
+      if (!items.length) return;
+      total += items.length;
+      html += '<section class="sec" id="ips-' + esc(g.key) + '"><div class="sec-head"><div>' +
+        '<span class="eyebrow">Serie · ' + items.length + (items.length === 1 ? ' publikation' : ' publikationer') + '</span>' +
+        '<h2>' + esc(g.title) + '</h2>' + (g.text ? '<p>' + esc(g.text) + '</p>' : '') +
+        '</div></div><ul class="list">' + items.map(function (i) { return card(i, terms); }).join('') + '</ul></section>';
+    });
+    out.innerHTML = html || '<div class="empty">Inga publikationer matchar din sökning. <button type="button" data-reset>Visa alla</button></div>';
+    countEl.textContent = total;
+    liveEl.textContent = total + ' publikationer visas';
+  }
+
+  function renderChips() {
+    var html = '<button type="button" class="chip' + (state.series === 'alla' ? ' is-on' : '') + '" data-s="alla" aria-pressed="' + (state.series === 'alla') + '">Alla serier</button>';
+    DATA.groups.forEach(function (g) {
+      var on = state.series === g.key;
+      html += '<button type="button" class="chip' + (on ? ' is-on' : '') + '" data-s="' + esc(g.key) + '" aria-pressed="' + on + '">' + esc(g.chip) + '<span class="n">' + g.items.length + '</span></button>';
+    });
+    seriesEl.innerHTML = html;
+  }
+
+  function setOn(wrap, attr, val) {
+    [].forEach.call(wrap.querySelectorAll('.chip'), function (b) { var on = b.getAttribute(attr) === val; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on); });
+  }
+
+  /* ---- händelser ---- */
+  var tmr;
+  qEl.addEventListener('input', function () {
+    clearTimeout(tmr);
+    clearEl.hidden = !qEl.value;
+    tmr = setTimeout(function () { state.q = qEl.value; render(); }, 120);
+  });
+  clearEl.addEventListener('click', function () { qEl.value = ''; clearEl.hidden = true; state.q = ''; render(); qEl.focus(); });
+  seriesEl.addEventListener('click', function (e) { var b = e.target.closest('[data-s]'); if (!b) return; state.series = b.getAttribute('data-s'); setOn(seriesEl, 'data-s', state.series); render(); });
+  formatEl.addEventListener('click', function (e) { var b = e.target.closest('[data-f]'); if (!b) return; state.format = b.getAttribute('data-f'); setOn(formatEl, 'data-f', state.format); render(); });
+  out.addEventListener('click', function (e) {
+    var n = e.target.closest('[data-note]');
+    if (n) {
+      var p = n.closest('.pub').querySelector('.pub__note');
+      var open = p.hidden; p.hidden = !open; n.setAttribute('aria-expanded', open); n.textContent = open ? 'Dölj' : 'Om utgåvan';
+    }
+    if (e.target.closest('[data-reset]')) {
+      state = { q: '', series: 'alla', format: 'alla' }; qEl.value = ''; clearEl.hidden = true;
+      setOn(seriesEl, 'data-s', 'alla'); setOn(formatEl, 'data-f', 'alla'); render();
+    }
+  });
+
+  /* ---- data ---- */
+  function use(cat) { DATA = build(cat); renderChips(); render(); }
+  var initQ = new URLSearchParams(location.search).get('q');
+  if (initQ) { qEl.value = initQ; state.q = initQ; clearEl.hidden = false; }
+
+  var cached = null;
+  try { cached = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) {}
+  if (cached && cached.series) use(cached);
+
+  fetch(CFG.endpoint, { redirect: 'follow' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (cat) {
+      if (!cat || !cat.series) throw new Error('tom katalog');
+      try { localStorage.setItem(LS, JSON.stringify(cat)); } catch (e) {}
+      use(cat);
+    })
+    .catch(function (err) {
+      console.warn('IPS-publikationer:', err);
+      if (DATA) return;                 // visar senast sparade versionen
+      use({ series: [] });              // visar åtminstone de tryckta (Studia)
+      out.insertAdjacentHTML('afterbegin', '<div class="empty">PDF-arkivet kunde inte hämtas just nu. Försök igen om en stund, eller öppna <a href="' + CFG.driveFolder + '" target="_blank" rel="noopener">mappen i Google Drive</a>.</div>');
+    });
+})();
+</script>
+</div>

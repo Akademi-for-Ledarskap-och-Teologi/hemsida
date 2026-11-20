@@ -1,0 +1,248 @@
+<!-- ============================================================
+     ALT – Uppsatsarkiv (Squarespace code block)
+     Hämtar uppsatserna (PDF) direkt från Google Drive-mappen
+     "Uppsatser". Lägg en ny PDF i mappen så syns den på sidan.
+
+     Filnamn:  Efternamn_Förnamn_Titel_med_ord_kandidatuppsats_2020.pdf
+               (typ = kandidatuppsats / magisteruppsats / masteruppsats)
+     Titel med å/ä/ö: skriv titeln i filens "Beskrivning" i Drive,
+     eller lägg till den i TITLAR nedan (nyckel = filens ID).
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=EB+Garamond:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+
+<div id="alt-ua">
+<style>
+#alt-ua{
+  --bg:#EDE5E0; --ink:#1C1C1C; --muted:#5a5652; --accent:#C07A63; --card:#FBF9F7; --line:rgba(28,28,28,.1);
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
+  -webkit-font-smoothing:antialiased; max-width:1080px; margin:0 auto;
+}
+#alt-ua *{box-sizing:border-box}
+#alt-ua h2,#alt-ua h3{font-family:var(--head);font-weight:400;line-height:1.08;margin:0;color:inherit;letter-spacing:-.01em;text-transform:uppercase}
+#alt-ua p{margin:0}
+#alt-ua a{color:inherit;text-decoration:none}
+#alt-ua .eyebrow{font-family:var(--head);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+
+/* Verktygsruta */
+#alt-ua .tools{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 26px;display:grid;grid-template-columns:auto 1fr;gap:10px 26px;align-items:start}
+#alt-ua .count{font-family:var(--head);color:var(--accent);font-size:56px;line-height:.9;letter-spacing:-.02em}
+#alt-ua .count small{display:block;font-size:10px;letter-spacing:.08em;color:var(--ink);margin-top:8px;text-transform:uppercase}
+#alt-ua .search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 16px;height:46px}
+#alt-ua .search svg{flex:none;opacity:.6}
+#alt-ua .search input{flex:1;border:0;outline:0;background:transparent;font:inherit;font-size:18px;color:var(--ink);min-width:0;padding:0;height:100%}
+#alt-ua .search input::placeholder{color:#8a847f}
+#alt-ua .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+#alt-ua .chip{font-family:var(--head);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+#alt-ua .chip:hover{border-color:var(--ink)}
+#alt-ua .chip.is-on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#alt-ua .chip .n{opacity:.55;margin-left:5px}
+#alt-ua button:focus-visible,#alt-ua a:focus-visible,#alt-ua input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* År-sektioner */
+#alt-ua [data-out]{margin-top:36px;display:grid;gap:10px}
+#alt-ua .sec{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+#alt-ua .sec__head{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:18px;width:100%;padding:18px 24px;cursor:pointer}
+#alt-ua .sec__head:focus-visible{outline:3px solid var(--accent);outline-offset:-3px;border-radius:var(--r)}
+#alt-ua .sec__head h2{font-size:clamp(28px,4vw,38px);flex:none}
+#alt-ua .sec__head .eyebrow{flex:1}
+#alt-ua .sec__chev{flex:none;width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .3s var(--ease),background .2s,color .2s}
+#alt-ua .sec__head:hover .sec__chev{background:var(--accent);color:#fff}
+#alt-ua .sec.is-open .sec__chev{transform:rotate(180deg)}
+#alt-ua .sec__body{display:none;padding:0 16px 16px}
+#alt-ua .sec.is-open .sec__body{display:block}
+#alt-ua .sec .ev{background:#fff}
+#alt-ua .list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+#alt-ua .ev{display:grid;grid-template-columns:96px 1fr 30px;gap:16px;align-items:center;background:var(--card);border-radius:var(--r-sm);box-shadow:var(--shadow);padding:14px 16px;transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+#alt-ua .ev:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+#alt-ua .ev__type{font-family:var(--head);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);text-align:center;border-right:1px solid var(--line);padding-right:14px;align-self:stretch;display:flex;align-items:center;justify-content:center}
+#alt-ua .ev__text{font-size:19px;line-height:1.35}
+#alt-ua .ev__text b{font-weight:700}
+#alt-ua .ev__go{width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;transition:transform .2s var(--ease),background .2s}
+#alt-ua .ev:hover .ev__go{background:var(--accent);color:#fff;transform:translateX(2px)}
+#alt-ua mark{background:rgba(192,122,99,.22);color:inherit;border-radius:3px;padding:0 1px}
+#alt-ua .empty,#alt-ua .status{margin-top:40px;text-align:center;color:var(--muted);font-style:italic}
+
+@media (max-width:640px){
+  #alt-ua .tools{grid-template-columns:1fr;padding:20px}
+  #alt-ua .count{font-size:44px}
+  #alt-ua .ev{grid-template-columns:1fr 28px;gap:6px 12px}
+  #alt-ua .ev__type{grid-column:1/-1;border:0;padding:0;justify-content:flex-start}
+  #alt-ua .ev__text{font-size:18px}
+}
+</style>
+
+  <div class="tools">
+    <div class="count"><span data-count="">–</span><small>uppsatser</small></div>
+    <div>
+      <label class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input type="search" data-q="" placeholder="Sök titel eller författare" aria-label="Sök titel eller författare">
+      </label>
+      <div class="chips" data-types="" role="group" aria-label="Typ av uppsats"></div>
+    </div>
+  </div>
+
+  <div data-out=""><p class="status">Hämtar uppsatser …</p></div>
+
+<script>
+(function(){
+  /* ---------------- CONFIG – ändra här ---------------- */
+  var API_KEY   = "AIzaSyAGar9HX_-g7r35VPXiu-xL1s-dyOrvNH8"; // samma nyckel som /kursplaner
+  var FOLDER_ID = "1GoqOwrscfy52J5s3GeWNbED4PBF1sBM4";       // UPPSATSER HEMSIDA
+
+  // Titlar med rätt stavning (å/ä/ö, skiljetecken). Nyckel = Drive-filens ID.
+  // Alternativ: skriv titeln i filens "Beskrivning" i Drive – den vinner över filnamnet.
+  var TITLAR = {
+    "1DL6gPbIx6DAHR0wUJ4He0KF8IweYOAJp": "I varje gudstjänst övar vi på det",
+    "1QMZA2kQEu1--w7Wy9c6RucOTZmA_kgvo": "Vem blir frälst?",
+    "1PPzW6DuYdJ_RwwUrlp2vAp8U6NjAQnKP": "Mina sånger, våra sånger, Hjärtesånger!?",
+    "1PltESbqvsdvsHcJLUqbSU1WvVwleurLT": "Modernitet, teologi och tolerans",
+    "1nTWXch8QeVAxl_UlXc7YmFFZB_cbgJu7": "Personligare tro – inte sedan utan nu"
+  };
+
+  var TYPER = [
+    {key:"kandidat", label:"Kandidat", full:"Kandidatuppsats"},
+    {key:"magister", label:"Magister", full:"Magisteruppsats"},
+    {key:"master",   label:"Master",   full:"Masteruppsats"}
+  ];
+
+  /* ---------------- Hjälpfunktioner ---------------- */
+  var root = document.getElementById("alt-ua");
+  var out  = root.querySelector("[data-out]");
+  var qEl  = root.querySelector("[data-q]");
+  var chipsEl = root.querySelector("[data-types]");
+  var state = {q:"", typ:"alla", open:{}}; // open = år som besökaren har fällt ut
+  var items = [];
+
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function norm(s){return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
+  function cap(s){return s ? s.charAt(0).toUpperCase()+s.slice(1) : s;}
+
+  function parse(f){
+    var base = f.name.replace(/\.pdf$/i,"");
+    var parts = base.split("_").filter(Boolean);
+    var tIdx = -1, typ = null;
+    parts.forEach(function(p,i){
+      var m = /^(kandidat|magister|master)(uppsats)?$/i.exec(p);
+      if(m){ tIdx = i; typ = m[1].toLowerCase(); }
+    });
+    var yearM = /^(19|20)\d{2}$/.exec(parts[parts.length-1] || "");
+    var year = yearM ? parseInt(parts[parts.length-1],10) : null;
+    var efternamn = parts[0] || "", fornamn = parts[1] || "";
+    var titel = tIdx > 2 ? parts.slice(2,tIdx).join(" ") : parts.slice(2, year ? -1 : undefined).join(" ");
+    var desc = (f.description || "").trim();
+    titel = TITLAR[f.id] || desc || cap(titel) || base.replace(/_/g," ");
+    var t = TYPER.filter(function(x){return x.key===typ;})[0];
+    return {
+      id:f.id, efternamn:efternamn, fornamn:fornamn, titel:titel,
+      typ:typ, typFull:t ? t.full : "Uppsats", typLabel:t ? t.label : "Uppsats",
+      year:year,
+      url:"https://drive.google.com/file/d/"+f.id+"/view",
+      hay:norm([efternamn,fornamn,fornamn+" "+efternamn,titel].join(" "))
+    };
+  }
+
+  function hl(text){
+    var raw = String(text);
+    if(!state.q) return esc(raw);
+    var n = norm(raw), q = norm(state.q).trim();
+    if(!q) return esc(raw);
+    var i = n.indexOf(q);
+    if(i < 0) return esc(raw);
+    return esc(raw.slice(0,i))+"<mark>"+esc(raw.slice(i,i+q.length))+"</mark>"+esc(raw.slice(i+q.length));
+  }
+
+  /* ---------------- Rendering ---------------- */
+  function renderChips(){
+    var counts = {alla:items.length};
+    items.forEach(function(it){ if(it.typ) counts[it.typ]=(counts[it.typ]||0)+1; });
+    var html = '<button type="button" class="chip'+(state.typ==="alla"?" is-on":"")+'" data-t="alla">Alla<span class="n">'+counts.alla+'</span></button>';
+    TYPER.forEach(function(t){
+      html += '<button type="button" class="chip'+(state.typ===t.key?" is-on":"")+'" data-t="'+t.key+'">'+t.label+'<span class="n">'+(counts[t.key]||0)+'</span></button>';
+    });
+    chipsEl.innerHTML = html;
+  }
+
+  function render(){
+    var q = norm(state.q).trim();
+    var list = items.filter(function(it){
+      return (state.typ==="alla" || it.typ===state.typ) && (!q || it.hay.indexOf(q) > -1);
+    });
+    root.querySelector("[data-count]").textContent = list.length;
+
+    if(!list.length){ out.innerHTML = '<p class="empty">Inga uppsatser matchar sökningen.</p>'; return; }
+
+    var groups = {};
+    list.forEach(function(it){ var y = it.year || "Övriga"; (groups[y]=groups[y]||[]).push(it); });
+    var years = Object.keys(groups).sort(function(a,b){
+      if(a==="Övriga") return 1; if(b==="Övriga") return -1; return b-a;
+    });
+
+    out.innerHTML = years.map(function(y){
+      var g = groups[y].sort(function(a,b){ return a.efternamn.localeCompare(b.efternamn,"sv") || a.fornamn.localeCompare(b.fornamn,"sv"); });
+      // Utfällt om besökaren har öppnat året, eller om en sökning pågår
+      var isOpen = !!q || !!state.open[y];
+      return '<section class="sec'+(isOpen?" is-open":"")+'">'+
+        '<button type="button" class="sec__head" data-y="'+esc(y)+'" aria-expanded="'+isOpen+'">'+
+          '<h2>'+esc(y)+'</h2><span class="eyebrow">'+g.length+(g.length===1?" uppsats":" uppsatser")+'</span>'+
+          '<span class="sec__chev" aria-hidden="true">↓</span></button>'+
+        '<div class="sec__body"><ul class="list">'+
+        g.map(function(it){
+          var namn = it.efternamn + (it.fornamn ? ", "+it.fornamn : "");
+          var titel = it.titel.replace(/\s+$/,"");
+          var punkt = /[.!?]$/.test(titel) ? "" : ".";
+          return '<li><a class="ev" href="'+it.url+'" target="_blank" rel="noopener">'+
+            '<span class="ev__type">'+esc(it.typLabel)+'</span>'+
+            '<span class="ev__text"><b>'+hl(namn)+':</b> '+hl(titel)+punkt+' '+esc(it.typFull)+(it.year?", "+it.year:"")+'.</span>'+
+            '<span class="ev__go" aria-hidden="true">→</span></a></li>';
+        }).join("")+'</ul></div></section>';
+    }).join("");
+  }
+
+  /* ---------------- Händelser ---------------- */
+  var tmr;
+  qEl.addEventListener("input", function(){ clearTimeout(tmr); tmr = setTimeout(function(){ state.q = qEl.value; render(); }, 120); });
+  chipsEl.addEventListener("click", function(e){
+    var b = e.target.closest("[data-t]"); if(!b) return;
+    state.typ = b.getAttribute("data-t"); renderChips(); render();
+  });
+  out.addEventListener("click", function(e){
+    var h = e.target.closest(".sec__head"); if(!h) return;
+    var sec = h.parentNode, open = !sec.classList.contains("is-open");
+    sec.classList.toggle("is-open", open);
+    h.setAttribute("aria-expanded", open);
+    var y = h.getAttribute("data-y");
+    if(open) state.open[y] = true; else delete state.open[y];
+  });
+
+  /* ---------------- Hämta från Drive ---------------- */
+  function load(token, acc){
+    var q = "'"+FOLDER_ID+"' in parents and trashed = false and mimeType = 'application/pdf'";
+    var url = "https://www.googleapis.com/drive/v3/files"
+      + "?q=" + encodeURIComponent(q)
+      + "&fields=" + encodeURIComponent("nextPageToken,files(id,name,description)")
+      + "&pageSize=1000&key=" + API_KEY
+      + (token ? "&pageToken=" + encodeURIComponent(token) : "");
+    return fetch(url).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(d){ acc = acc.concat(d.files||[]); return d.nextPageToken ? load(d.nextPageToken, acc) : acc; });
+  }
+
+  function start(files){ items = files.map(parse); renderChips(); render(); }
+
+  if(window.ALT_UA_DEMO){ start(window.ALT_UA_DEMO); }
+  else {
+    load(null, []).then(start).catch(function(){
+      out.innerHTML = '<p class="status">Uppsatsarkivet kunde inte laddas just nu. Försök igen om en stund.</p>';
+    });
+  }
+})();
+</script>
+</div>

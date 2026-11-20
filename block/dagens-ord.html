@@ -1,0 +1,466 @@
+<!--
+  ============================================================
+  ALT – DAGENS ORD (grekiska + hebreiska) – för altutbildning.se
+  ============================================================
+  Klistra in HELA filen i ett Squarespace-kodblock.
+  Design: samma formspråk som kurskatalogen och ansökningsguiden.
+  Orden byts automatiskt varje dag (samma ord för alla besökare samma dag).
+  Lägg till fler ord i listorna GR och HE längre ner:
+    [ord, translitteration, betydelse, förklaring, Strong-nummer, versreferens]
+  ============================================================
+-->
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=EB+Garamond:ital,wght@0,400;0,600;1,400&amp;family=Noto+Serif+Hebrew:wght@400;600&amp;display=swap">
+<div id="altord">
+  <header class="ao-head">
+    <div>
+      <p class="ao-eyebrow ao-date"></p>
+      <h2 class="ao-title">Dagens ord</h2>
+      <p class="ao-lead">Gissa vad orden betyder – och vänd sedan korten.</p>
+    </div>
+  </header>
+  <div class="ao-grid"></div>
+  <p class="ao-streak" aria-live="polite"></p>
+</div>
+
+<style>
+#altord{
+  --bg:#EDE5E0; --card:#FBF9F7; --ink:#1c1c1c; --muted:#5a5652; --accent:#c07a63; --teal:#2f575f; --line:rgba(28,28,28,.1);
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif; --text:"EB Garamond",Garamond,Georgia,serif;
+  --heb:"Noto Serif Hebrew","SBL Hebrew","Times New Roman",serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--text); font-size:19px; line-height:1.5; width:100%; -webkit-font-smoothing:antialiased;
+}
+#altord *{box-sizing:border-box}
+#altord button{font:inherit;color:inherit}
+#altord h2,#altord h3,#altord p{margin:0;color:inherit}
+#altord h2,#altord h3{font-family:var(--head);font-weight:400;line-height:1.08;letter-spacing:-.01em}
+#altord :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@keyframes ao-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes ao-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+
+/* ---------- Rubrik ---------- */
+#altord .ao-head{display:flex;justify-content:space-between;align-items:flex-end;gap:6px 24px;flex-wrap:wrap;margin-bottom:18px}
+#altord .ao-head > div:first-child{max-width:640px}
+#altord .ao-eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#altord .ao-title{font-size:clamp(28px,4vw,40px);text-transform:uppercase;margin:6px 0 0}
+#altord .ao-lead{font-size:18px;color:var(--muted)}
+
+/* ---------- Kort ---------- */
+#altord .ao-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+#altord .ao-flip{perspective:1600px;animation:ao-up .6s var(--ease) both}
+#altord .ao-flip:nth-child(2){animation-delay:.08s}
+#altord .ao-flip{display:flex}
+#altord .ao-inner{flex:1;display:grid;min-height:270px;transition:transform .85s var(--ease);transform-style:preserve-3d}
+#altord .ao-flip.is-flipped .ao-inner{transform:rotateY(180deg)}
+#altord .ao-face{grid-area:1/1;position:relative;overflow:hidden;border-radius:var(--r);-webkit-backface-visibility:hidden;backface-visibility:hidden;container-type:inline-size;display:flex;flex-direction:column;padding:22px 28px 20px;isolation:isolate}
+#altord .ao-front{background:var(--tc);color:var(--tf);box-shadow:var(--shadow);cursor:pointer;border:0;text-align:left;width:100%;transition:box-shadow .45s var(--ease)}
+#altord .ao-front:hover{box-shadow:var(--shadow-lg)}
+#altord .ao-back{background:var(--card);color:var(--ink);box-shadow:var(--shadow-lg);transform:rotateY(180deg);gap:8px}
+#altord .ao-back::before{content:"";position:absolute;inset:0 0 auto 0;height:10px;background:var(--tc)}
+
+/* Bågar (samma motiv som kurskatalogens programkort) */
+#altord .ao-arches{position:absolute;right:-6%;top:22px;height:135%;width:auto;color:currentColor;opacity:.14;pointer-events:none;z-index:-1;transition:transform 1.2s var(--ease)}
+#altord .ao-arches path{fill:none;stroke:currentColor;stroke-width:55}
+#altord .ao-front:hover .ao-arches{transform:translateY(-14px) scale(1.03)}
+
+#altord .ao-lang{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.8;display:flex;justify-content:space-between;gap:12px}
+#altord .ao-lang .n{opacity:.7}
+#altord .ao-word{font-size:clamp(34px,calc(130cqi / var(--n)),72px);line-height:1.15;margin:auto 0 2px;padding-top:8px;font-family:var(--text);font-weight:400;white-space:nowrap}
+#altord .ao-word.he{font-family:var(--heb);direction:rtl;text-align:right}
+#altord .ao-word .ch{display:inline-block;opacity:0;transform:translateY(.25em);animation:ao-up .7s var(--ease) forwards}
+#altord .ao-translit{font-size:20px;font-style:italic;opacity:.85}
+#altord .ao-hint{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid color-mix(in srgb,currentColor 22%,transparent)}
+#altord .ao-hint span:first-child{font-size:18px;opacity:.85}
+#altord .ao-turn{flex:none;width:38px;height:38px;border-radius:25%;background:rgba(255,255,255,.88);color:#1c1c1c;display:grid;place-content:center;font-size:20px;transition:transform .45s var(--ease)}
+#altord .ao-front:hover .ao-turn{transform:rotate(180deg)}
+
+/* Baksida */
+#altord .ao-back .ao-lang{color:var(--tc);opacity:1;filter:saturate(1.1) brightness(.85);margin-top:6px}
+#altord .ao-small{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+#altord .ao-small b{font-weight:400;font-size:28px;line-height:1.1}
+#altord .ao-small b.he{font-family:var(--heb);direction:rtl}
+#altord .ao-small i{color:var(--muted);font-size:19px}
+#altord .ao-mean{font-family:var(--head);font-size:clamp(22px,6cqi,30px);text-transform:uppercase;line-height:1.05;letter-spacing:-.01em}
+#altord .ao-text{font-size:17px;line-height:1.5;color:#2d2b29}
+#altord .ao-meta{display:flex;flex-wrap:wrap;gap:6px}
+#altord .ao-tag{font-size:15px;line-height:1.3;border-radius:6px;padding:4px 10px;background:var(--bg)}
+#altord a.ao-ref{color:#fff;background:var(--tc);text-decoration:none;font-weight:600;transition:transform .2s var(--ease)}
+#altord a.ao-ref:hover{transform:scale(1.05)}
+#altord .ao-acts{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+#altord .ao-btn.ao-more{background:var(--tc);color:#fff;text-decoration:none}
+#altord .ao-more .arr{transition:transform .2s var(--ease)}
+#altord .ao-more:hover .arr{transform:translateX(3px)}
+#altord .ao-btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:10px;padding:11px 18px;font-family:var(--head);font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background:var(--ink);color:#fff;transition:transform .2s var(--ease),background .2s}
+#altord .ao-btn:hover{transform:scale(1.04)}
+#altord .ao-btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+#altord .ao-btn.speaking{animation:ao-wiggle .5s ease-in-out infinite}
+
+#altord .ao-streak{margin-top:12px;text-align:center;font-family:var(--head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-height:1em}
+#altord .ao-streak b{font-weight:400;color:var(--accent)}
+
+@media(max-width:820px){
+  #altord .ao-grid{grid-template-columns:1fr;gap:16px}
+  #altord .ao-inner{min-height:240px}
+}
+@media(max-width:640px){
+  #altord{font-size:18px}
+  #altord .ao-lead{font-size:19px}
+  #altord .ao-face{padding:24px 22px 20px}
+  #altord .ao-head{margin-bottom:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  #altord *,#altord *::before,#altord *::after{animation:none!important;transition:none!important}
+  #altord .ao-word .ch{opacity:1;transform:none}
+  #altord .ao-flip.is-flipped .ao-front{visibility:hidden}
+}
+</style>
+
+<script>
+(function(){
+'use strict';
+var root = document.getElementById('altord');
+if (!root || root.dataset.ready) return;
+root.dataset.ready = '1';
+
+/* [ord, translitteration, betydelse, förklaring, Strong-nummer, versreferens] */
+var GR = [
+  ["ἀγάπη","agápē","Kärlek","Den självgivande kärleken som söker den andras bästa. Paulus ägnar ett helt kapitel åt den.","G26","1 Kor 13:4"],
+  ["λόγος","lógos","Ord","Betyder ord, tal eller förnuft. Johannes använder det om Kristus själv: Ordet som var hos Gud.","G3056","Joh 1:1"],
+  ["χάρις","cháris","Nåd","En gåva som ges fritt och oförtjänt. Samma rot finns i chara (glädje) och eucharistia (tacksägelse).","G5485","Ef 2:8"],
+  ["πίστις","pístis","Tro, förtroende","Inte bara att hålla något för sant, utan att lita på och vara trofast mot någon.","G4102","Heb 11:1"],
+  ["ἐλπίς","elpís","Hopp","En förväntan som vilar på Guds löfte, inte en vag önskan.","G1680","Rom 5:5"],
+  ["εἰρήνη","eirḗnē","Frid","Motsvarar ofta hebreiskans shalom, alltså frid som helhet och välgång, inte bara frånvaro av konflikt.","G1515","Joh 14:27"],
+  ["μετάνοια","metánoia","Omvändelse","Ordagrant ”ett omtänkande”, en ändring av sinne och riktning.","G3341","Luk 15:7"],
+  ["ἐκκλησία","ekklēsía","Församling","Av ek-kaleō, ”kalla ut”. I den grekiska staden var det en sammankallad folkförsamling.","G1577","Matt 16:18"],
+  ["εὐαγγέλιον","euangélion","Evangelium","”Gott budskap”. Användes om segerbud och kejserliga kungörelser.","G2098","Mark 1:1"],
+  ["κοινωνία","koinōnía","Gemenskap","Delaktighet i något gemensamt, även att dela med sig av det man har.","G2842","Apg 2:42"],
+  ["δόξα","dóxa","Härlighet, ära","Från början ”åsikt” eller ”rykte”, i Bibeln Guds strålande närvaro. Därav ordet doxologi.","G1391","Luk 2:14"],
+  ["σάρξ","sárx","Kött","Kan betyda kropp, människans svaghet eller hela den mänskliga naturen. Ordet blev sarx.","G4561","Joh 1:14"],
+  ["πνεῦμα","pneûma","Ande, vind","Samma ord för ande, vind och andning. Jesus leker med dubbelbetydelsen i samtalet med Nikodemos.","G4151","Joh 3:8"],
+  ["ψυχή","psychḗ","Själ, liv","Människans liv och jag. Därav psykologi.","G5590","Matt 16:25"],
+  ["σωτηρία","sōtēría","Frälsning","Räddning, befrielse, att bli helad. Läran om frälsningen kallas soteriologi.","G4991","Rom 1:16"],
+  ["βασιλεία","basileía","Rike, kungavälde","Mer Guds regerande än ett geografiskt område.","G932","Matt 6:10"],
+  ["καιρός","kairós","Rätt tid","Till skillnad från chronos (klocktid) är kairos det avgörande ögonblicket.","G2540","Mark 1:15"],
+  ["παράκλητος","paráklētos","Hjälpare","”Den som kallas till ens sida”: försvarare, tröstare, rådgivare.","G3875","Joh 14:16"],
+  ["διάκονος","diákonos","Tjänare","Någon som utför en tjänst, till exempel serverar vid bordet. Därav diakon.","G1249","Mark 10:43"],
+  ["μαθητής","mathētḗs","Lärjunge","Elev, den som lär sig genom att följa sin lärare.","G3101","Luk 14:27"],
+  ["ἀλήθεια","alḗtheia","Sanning","Ordagrant ”det som inte är dolt”.","G225","Joh 14:6"],
+  ["ζωή","zōḗ","Liv","Livet i dess fullhet, ofta det eviga livet hos Johannes.","G2222","Joh 10:10"],
+  ["φῶς","phôs","Ljus","Därav foto- och fosfor (”ljusbärare”).","G5457","Joh 8:12"],
+  ["σπλαγχνίζομαι","splanchnízomai","Fyllas av medlidande","Bildat av ordet för inälvor. Medkänslan känns ända in i magen.","G4697","Luk 15:20"],
+  ["μακάριος","makários","Salig, lycklig","Inleder varje saligprisning i Bergspredikan.","G3107","Matt 5:3"],
+  ["ταπεινοφροσύνη","tapeinophrosýnē","Ödmjukhet","”Lågt sinnelag”. I den grekiska omvärlden var det knappast en dygd, men i Nya testamentet blir det en.","G5012","Fil 2:3"],
+  ["ἀνάστασις","anástasis","Uppståndelse","Ordagrant ”att resa sig upp”.","G386","Joh 11:25"],
+  ["κενόω","kenóō","Utblotta, tömma","Därav kenos-teologin om hur Kristus avstod från sin gudomliga ställning.","G2758","Fil 2:7"],
+  ["ὑπομονή","hypomonḗ","Uthållighet","”Att stanna kvar under”, att bära en börda utan att ge upp.","G5281","Jak 1:3"],
+  ["ποιμήν","poimḗn","Herde","Därav pastor (latin för herde) och poimenik, läran om själavård.","G4166","Joh 10:11"],
+  ["παρρησία","parrēsía","Frimodighet","Frihet att säga allt, att tala öppet och utan rädsla.","G3954","Apg 4:31"],
+  ["οἰκοδομή","oikodomḗ","Uppbyggelse","Ordagrant ”husbygge”, att bygga upp gemenskapen.","G3619","Ef 4:12"],
+  ["ἀπόστολος","apóstolos","Apostel, sändebud","Någon som är utsänd med ett uppdrag.","G652","Matt 10:2"],
+  ["πραΰς","praÿs","Ödmjuk, saktmodig","Användes om ett tämjt djur: styrka under kontroll.","G4239","Matt 5:5"],
+  ["ἁμαρτία", "hamartía", "Synd", "Ordagrant att missa målet, som när en pil inte träffar. Paulus talar om synden nästan som en makt.", "G266", "Rom 6:23"],
+  ["δικαιοσύνη", "dikaiosýnē", "Rättfärdighet", "Ett nyckelord hos Paulus: Guds rättfärdighet som uppenbaras i evangeliet.", "G1343", "Rom 1:17"],
+  ["δικαιόω", "dikaióō", "Förklara rättfärdig", "Ett ord från rättssalen: att bli frikänd. Grunden för läran om rättfärdiggörelse.", "G1344", "Rom 5:1"],
+  ["ἀπολύτρωσις", "apolýtrōsis", "Återlösning", "Att friköpas, som när en slav eller fånge löses ut mot en lösensumma.", "G629", "Rom 3:24"],
+  ["ἱλαστήριον", "hilastḗrion", "Försoningsställe", "Samma ord som i den grekiska översättningen av Gamla testamentet används om locket på förbundsarken, nådastolen.", "G2435", "Rom 3:25"],
+  ["καταλλαγή", "katallagḗ", "Försoning", "Att förlika två parter, att göra fiender till vänner. Paulus kallar sitt uppdrag försoningens tjänst.", "G2643", "2 Kor 5:18"],
+  ["ἄφεσις", "áphesis", "Förlåtelse, frigivning", "Att släppa fri eller efterskänka en skuld. Jesus läser om frihet för fångar i synagogan i Nasaret.", "G859", "Luk 4:18"],
+  ["ἔλεος", "éleos", "Barmhärtighet", "Medlidande som leder till handling. Samma rot finns i bönen Kyrie eleison, ”Herre, förbarma dig”.", "G1656", "Luk 1:50"],
+  ["ἐπίσκοπος", "epískopos", "Tillsyningsman", "Den som har uppsikt. Därav ordet biskop.", "G1985", "1 Tim 3:2"],
+  ["πρεσβύτερος", "presbýteros", "Äldste", "Ett ledaruppdrag i de första församlingarna. Därav präst och presbyter.", "G4245", "Apg 14:23"],
+  ["κήρυγμα", "kḗrygma", "Förkunnelse", "Härolden ropar ut ett budskap. I teologin kallas den tidiga kyrkans kärnbudskap kerygma.", "G2782", "1 Kor 1:21"],
+  ["διδαχή", "didachḗ", "Undervisning", "Lära och undervisning. Folket häpnade över hur Jesus undervisade.", "G1322", "Matt 7:28"],
+  ["παραβολή", "parabolḗ", "Liknelse", "Ordagrant ”något som kastas bredvid”, en jämförelse som belyser något annat.", "G3850", "Mark 4:2"],
+  ["σημεῖον", "sēmeîon", "Tecken", "Johannes kallar Jesu under för tecken: de pekar bortom sig själva.", "G4592", "Joh 2:11"],
+  ["προσκυνέω", "proskynéō", "Tillbe", "Att falla ner inför någon. Jesus talar om tillbedjan i ande och sanning.", "G4352", "Joh 4:24"],
+  ["εὐχαριστία", "eucharistía", "Tacksägelse", "Därav eukaristi, kyrkans namn på nattvarden.", "G2169", "Fil 4:6"],
+  ["βάπτισμα", "báptisma", "Dop", "Av ett verb som betyder doppa eller sänka ner. Paulus beskriver dopet som att begravas och uppstå med Kristus.", "G908", "Rom 6:4"],
+  ["σταυρός", "staurós", "Kors", "Romarrikets skamligaste avrättningsredskap, som Paulus ändå vill berömma sig av.", "G4716", "Gal 6:14"],
+  ["αἷμα", "haîma", "Blod", "Bärare av liv. Vid sista måltiden talar Jesus om förbundets blod.", "G129", "Matt 26:28"],
+  ["ἀρραβών", "arrabṓn", "Handpenning", "Ett ord från handeln: första delbetalningen som garanterar resten. Anden är en handpenning på arvet.", "G728", "Ef 1:14"],
+  ["υἱοθεσία", "huiothesía", "Adoption", "Att bli insatt som son eller dotter med full arvsrätt.", "G5206", "Rom 8:15"],
+  ["ἀββά", "abbá", "Abba, far", "Arameiskt ord för far, bevarat i grekiska texten. Jesus använder det i Getsemane.", "G5", "Mark 14:36"],
+  ["μαράνα θά", "maraná thá", "Vår Herre, kom!", "En arameisk bön som stod kvar i de grekisktalande församlingarna.", "G3134", "1 Kor 16:22"],
+  ["παρουσία", "parousía", "Ankomst, närvaro", "Användes om när en kung kom på besök. I Nya testamentet om Kristi återkomst.", "G3952", "1 Tess 4:15"],
+  ["ἀποκάλυψις", "apokálypsis", "Uppenbarelse", "Ordagrant ”avtäckning”, att dra undan förhänget. Gav namn åt Uppenbarelseboken.", "G602", "Upp 1:1"],
+  ["ἔσχατος", "éschatos", "Sist", "Kristus är den förste och den siste. Därav eskatologi, läran om de yttersta tingen.", "G2078", "Upp 22:13"],
+  ["μυστήριον", "mystḗrion", "Mysterium", "Hos Paulus en hemlighet som Gud nu har uppenbarat: Kristus bland er.", "G3466", "Kol 1:27"],
+  ["ἐπιφάνεια", "epipháneia", "Framträdande", "Att visa sig, att bli synlig. Därav epifania, trettondagen.", "G2015", "Tit 2:13"],
+  ["σκηνόω", "skēnóō", "Slå upp sitt tält", "Ordet blev människa och ”tältade” bland oss, en anspelning på tabernaklet i öknen.", "G4637", "Joh 1:14"],
+  ["μονογενής", "monogenḗs", "Ende, enfödde", "Den ende i sitt slag. Används om Sonen i Joh 3:16.", "G3439", "Joh 3:16"],
+  ["κύριος", "kýrios", "Herre", "I grekiska Gamla testamentet står ordet för Guds namn. ”Jesus Kristus är Herre” är en av de äldsta bekännelserna.", "G2962", "Fil 2:11"],
+  ["Χριστός", "Christós", "Kristus, den smorde", "Den grekiska översättningen av hebreiskans mashiach, Messias.", "G5547", "Matt 16:16"],
+  ["ἐξουσία", "exousía", "Makt, fullmakt", "Rätt och myndighet att handla. Den uppståndne har fått all makt i himlen och på jorden.", "G1849", "Matt 28:18"],
+  ["δύναμις", "dýnamis", "Kraft", "Förmåga och kraft. Därav dynamik och dynamit.", "G1411", "Apg 1:8"],
+  ["χάρισμα", "chárisma", "Nådegåva", "En gåva av nåd (charis). Därav karismatisk.", "G5486", "1 Kor 12:4"],
+  ["καρπός", "karpós", "Frukt", "Det som växer fram när grenen sitter kvar i vinstocken.", "G2590", "Joh 15:5"],
+  ["ἐγκράτεια", "enkráteia", "Självbehärskning", "Att ha makt över sig själv. Den sista av Andens frukter i Galaterbrevet.", "G1466", "Gal 5:23"],
+  ["χρηστότης", "chrēstótēs", "Godhet, vänlighet", "Generös och mild godhet. Gud visar sin godhet mot oss i Kristus.", "G5544", "Ef 2:7"],
+  ["μακροθυμία", "makrothymía", "Tålamod", "Ordagrant ”långmodighet”: att ha lång stubin.", "G3115", "Gal 5:22"],
+  ["χαρά", "chará", "Glädje", "Jesus talar om sin glädje som ska bli fullkomlig i lärjungarna.", "G5479", "Joh 15:11"],
+  ["συνείδησις", "syneídēsis", "Samvete", "Ordagrant ”med-vetande”, en inre kunskap som vittnar med oss.", "G4893", "Rom 2:15"],
+  ["νοῦς", "noûs", "Sinne, förstånd", "Människans tänkande och omdöme, som enligt Paulus ska förnyas.", "G3563", "Rom 12:2"],
+  ["μεταμορφόω", "metamorphóō", "Förvandla", "Används när Jesus förklaras på berget. Därav metamorfos.", "G3339", "Matt 17:2"],
+  ["καινός", "kainós", "Ny", "Ny till sitt väsen, inte bara nyare. Den som är i Kristus är en ny skapelse.", "G2537", "2 Kor 5:17"],
+  ["κτίσις", "ktísis", "Skapelse", "Hela skapelsen suckar och väntar på befrielse.", "G2937", "Rom 8:22"],
+  ["ἀγαπητός", "agapētós", "Älskad", "Rösten vid dopet: ”Du är min älskade son.”", "G27", "Mark 1:11"],
+  ["φιλαδελφία", "philadelphía", "Syskonkärlek", "Kärlek mellan syskon, här i församlingen. Staden Philadelphia i USA har fått sitt namn efter ordet.", "G5360", "Rom 12:10"],
+  ["φιλοξενία", "philoxenía", "Gästfrihet", "Ordagrant ”kärlek till främlingar”. Somliga har haft änglar som gäster utan att veta om det.", "G5381", "Heb 13:2"],
+  ["ξένος", "xénos", "Främling", "”Jag var främling och ni tog emot mig.” Därav xenofobi.", "G3581", "Matt 25:35"],
+  ["πτωχός", "ptōchós", "Fattig", "Den som är helt utblottad och tvingas tigga. ”Saliga ni som är fattiga.”", "G4434", "Luk 6:20"],
+  ["ὀργή", "orgḗ", "Vrede", "Guds vrede, alltså hans ställningstagande mot orätt, inte ett humörutbrott.", "G3709", "Rom 1:18"],
+  ["κρίσις", "krísis", "Dom", "Avgörande, bedömning. Därav kris, ett avgörande läge.", "G2920", "Joh 5:24"],
+  ["νόμος", "nómos", "Lag", "Ofta Moses lag. Kärleken är lagens uppfyllelse.", "G3551", "Rom 13:10"],
+  ["παιδαγωγός", "paidagōgós", "Uppfostrare", "Slaven som följde barnen till skolan. Paulus använder bilden om lagen.", "G3807", "Gal 3:24"],
+  ["ἐλευθερία", "eleuthería", "Frihet", "”Till frihet har Kristus befriat oss.”", "G1657", "Gal 5:1"],
+  ["δοῦλος", "doûlos", "Slav, tjänare", "Paulus presenterar sig som Kristi Jesu tjänare, egentligen slav.", "G1401", "Rom 1:1"],
+  ["λειτουργία", "leitourgía", "Tjänst", "Ursprungligen en offentlig tjänst för folket. Därav liturgi.", "G3009", "Luk 1:23"],
+  ["θυσία", "thysía", "Offer", "Paulus kallar ett helt liv hängivet åt Gud för ett levande offer.", "G2378", "Rom 12:1"],
+  ["ἱερεύς", "hiereús", "Präst", "Hebreerbrevet kallar Kristus präst för evigt, som Melkisedek.", "G2409", "Heb 7:17"],
+  ["ναός", "naós", "Tempel", "Själva helgedomen. Paulus säger att församlingen är Guds tempel.", "G3485", "1 Kor 3:16"],
+  ["σῶμα", "sôma", "Kropp", "Församlingen som Kristi kropp, där varje del behövs.", "G4983", "1 Kor 12:27"],
+  ["ἄρτος", "ártos", "Bröd", "”Jag är livets bröd”, det första av Jesu Jag är-ord hos Johannes.", "G740", "Joh 6:35"],
+  ["ποτήριον", "potḗrion", "Bägare", "Nattvardens bägare, det nya förbundet i Jesu blod.", "G4221", "1 Kor 11:25"],
+  ["ἀνάμνησις", "anámnēsis", "Åminnelse", "Mer än att minnas: att göra det förflutna levande nu. ”Gör detta till minne av mig.”", "G364", "1 Kor 11:24"],
+  ["κλῆσις", "klêsis", "Kallelse", "Att vara kallad av Gud, och att leva värdigt den kallelsen.", "G2821", "Ef 4:1"],
+  ["ἁγιασμός", "hagiasmós", "Helgelse", "Processen att bli helig, att formas efter Guds vilja.", "G38", "1 Tess 4:3"],
+  ["ἅγιος", "hágios", "Helig", "Avskild för Gud. ”Ni ska vara heliga, ty jag är helig.”", "G40", "1 Pet 1:16"],
+  ["πληρόω", "plēróō", "Uppfylla", "Att fylla helt, fullborda. Jesus har inte kommit för att upphäva lagen utan för att uppfylla den.", "G4137", "Matt 5:17"],
+  ["τετέλεσται", "tetélestai", "Det är fullbordat", "Jesu sista ord på korset hos Johannes. Verbet teleō betyder att föra något ända fram till målet.", "G5055", "Joh 19:30"],
+  ["συναγωγή", "synagōgḗ", "Synagoga", "Ordagrant ”sammankomst”. Jesus gick som han brukade till synagogan på sabbaten.", "G4864", "Luk 4:16"],
+  ["γραφή", "graphḗ", "Skrift", "De heliga skrifterna, som Jesus säger vittnar om honom.", "G1124", "Joh 5:39"],
+  ["θεόπνευστος", "theópneustos", "Utandad av Gud", "Ett ord som bara finns här i Nya testamentet: Skriften är andad av Gud.", "G2315", "2 Tim 3:16"],
+  ["ὁμολογία", "homología", "Bekännelse", "Ordagrant ”att säga samma sak”, att stämma in i tron.", "G3671", "Heb 4:14"],
+  ["πανοπλία", "panoplía", "Full rustning", "Den tunga soldatens hela utrustning. Paulus talar om Guds vapenrustning.", "G3833", "Ef 6:11"],
+  ["σοφία", "sophía", "Vishet", "Kristus är Guds kraft och Guds vishet. Därav filosofi, ”kärlek till visheten”.", "G4678", "1 Kor 1:24"],
+  ["μωρία", "mōría", "Dårskap", "Ordet om korset är dårskap för dem som går förlorade.", "G3472", "1 Kor 1:18"],
+  ["οἰκουμένη", "oikouménē", "Den bebodda världen", "Hela världen i Lukas julberättelse. Därav ekumenik.", "G3625", "Luk 2:1"],
+  ["κόσμος", "kósmos", "Världen", "Ursprungligen ”ordning”. Hos Johannes ofta världen som inte känner igen Gud.", "G2889", "Joh 1:10"],
+  ["ἐπαγγελία", "epangelía", "Löfte", "Guds löfte till Abraham, som enligt Paulus gäller alla som tillhör Kristus.", "G1860", "Gal 3:29"]
+];
+var HE = [
+  ["חֶסֶד","chésed","Trofast kärlek","Förbundskärlek som håller. Ett av Gamla testamentets rikaste ord, svårt att översätta med ett enda ord.","H2617","Ps 136:1"],
+  ["שָׁלוֹם","shalóm","Frid, helhet","Fullständighet och välgång i alla relationer, inte bara frånvaro av krig.","H7965","4 Mos 6:26"],
+  ["אֱמוּנָה","emunáh","Trofasthet","Fasthet och pålitlighet, från samma rot som amen.","H530","Hab 2:4"],
+  ["רוּחַ","rúach","Ande, vind, andedräkt","Guds ande som svävar över vattnet redan i skapelsens början.","H7307","1 Mos 1:2"],
+  ["נֶפֶשׁ","néfesh","Själ, liv","Hela den levande människan, från början ”strupe” eller ”andning”.","H5315","5 Mos 6:5"],
+  ["תּוֹרָה","toráh","Undervisning, lag","Mer än regler: vägledning. Kommer av ett verb som betyder ”visa vägen”.","H8451","Ps 1:2"],
+  ["בְּרִית","berít","Förbund","En bindande överenskommelse. Gud ingår förbund med Abraham.","H1285","1 Mos 15:18"],
+  ["כָּבוֹד","kavód","Härlighet","Grundbetydelsen är ”tyngd”, det som har verklig vikt.","H3519","2 Mos 33:18"],
+  ["שָׁמַע","shamá","Höra, lyda","Inleder Shema, Israels trosbekännelse. Att höra är att lyda.","H8085","5 Mos 6:4"],
+  ["קָדוֹשׁ","qadósh","Helig","Avskild, annorlunda. Serafernas rop upprepar ordet tre gånger.","H6918","Jes 6:3"],
+  ["צְדָקָה","tsedaqáh","Rättfärdighet","Att leva rätt i sina relationer. Ordet används också om barmhärtighet mot fattiga.","H6666","Amos 5:24"],
+  ["מִשְׁפָּט","mishpát","Rätt, rättvisa","Rättskipning och rätt ordning i samhället.","H4941","Mika 6:8"],
+  ["הֶבֶל","hével","Fläkt, tomhet","Andedräkt eller ånga, det som försvinner. Predikarens ledmotiv.","H1892","Pred 1:2"],
+  ["שַׁבָּת","shabbát","Sabbat, vila","Från ett verb som betyder ”upphöra”.","H7676","2 Mos 20:8"],
+  ["אָדָם","adám","Människa","Ordlek med adamáh, ”jord”: människan är tagen från jorden.","H120","1 Mos 1:27"],
+  ["שׁוּב","shúv","Vända om","Grundordet för omvändelse: att vända tillbaka.","H7725","Jes 55:7"],
+  ["רַחֲמִים","rachamím","Barmhärtighet","Samma rot som rechem, ”moderliv”. En moderlig ömhet.","H7356","Jes 54:7"],
+  ["יָדַע","yadá","Känna, veta","Kunskap genom relation, inte bara information.","H3045","Ps 139:1"],
+  ["חָכְמָה","chokmáh","Vishet","Praktisk livsvisdom, konsten att leva väl.","H2451","Ords 9:10"],
+  ["לֵב","lév","Hjärta","Inte främst känslornas säte, utan förnuftets och viljans.","H3820","Ords 4:23"],
+  ["אֱלֹהִים","elohím","Gud","Pluralform som ändå används med verb i singular om Israels Gud.","H430","1 Mos 1:1"],
+  ["בָּרָא","bará","Skapa","Har i Gamla testamentet alltid Gud som subjekt.","H1254","1 Mos 1:1"],
+  ["הָלַל","halál","Lova, prisa","Finns i hallelu-jah, ”lova Herren”.","H1984","Ps 150:1"],
+  ["עֶבֶד","éved","Tjänare","Används om slavar, men också som hederstitel: ”Herrens tjänare”.","H5650","Jes 42:1"],
+  ["גֹּאֵל","go'él","Lösare","Den släkting som löser ut en familjemedlem ur skuld eller nöd.","H1350","Job 19:25"],
+  ["אַהֲבָה","ahaváh","Kärlek","Kärlek mellan människor och mellan Gud och folket. ”Stark som döden.”","H160","Höga v 8:6"],
+  ["יְשׁוּעָה","yeshu'áh","Frälsning","Räddning, befrielse. Samma rot som namnet Jesus (Yeshua).","H3444","2 Mos 15:2"],
+  ["מָשִׁיחַ","mashíach","Smord, Messias","Den som är smord till ett uppdrag. På grekiska Christos.","H4899","Ps 2:2"],
+  ["שֵׁם","shém","Namn","Namnet uttrycker väsen och närvaro.","H8034","2 Mos 3:15"],
+  ["נָבִיא","naví","Profet","Den som är kallad att tala för Guds räkning.","H5030","5 Mos 18:15"],
+  ["עוֹלָם","olám","Evighet","En oöverblickbart lång tid, både bakåt och framåt.","H5769","Ps 90:2"],
+  ["דָּבָר","davár","Ord, sak","Både ord och händelse. När Gud talar sker något.","H1697","Jes 40:8"],
+  ["תְּהִלָּה","tehilláh","Lovsång","Psaltarens hebreiska namn är Tehillim, ”lovsånger”.","H8416","Jes 61:3"],
+  ["אֶהְיֶה אֲשֶׁר אֶהְיֶה", "ehjéh asjér ehjéh", "Jag är den jag är", "Guds svar när Mose frågar efter hans namn. Kan också översättas ”Jag ska vara den jag ska vara”.", "H1961", "2 Mos 3:14"],
+  ["יְהוָה", "JHWH", "Herren", "Guds namn, tetragrammet. Av vördnad uttalas det inte i judisk tradition, och svenska biblar skriver ”Herren”.", "H3068", "2 Mos 34:6"],
+  ["אֲדֹנָי", "adonáj", "Herre", "Det ord som läses högt i stället för Guds namn.", "H136", "1 Mos 15:2"],
+  ["אֵל שַׁדַּי", "el shaddáj", "Gud den Väldige", "Ett gudsnamn från patriarkernas tid, ofta översatt ”Gud den Allsmäktige”.", "H7706", "1 Mos 17:1"],
+  ["עִמָּנוּאֵל", "immanu'él", "Gud med oss", "Namnet på barnet i Jesajas profetia, som Matteus kopplar till Jesus.", "H6005", "Jes 7:14"],
+  ["בְּרָכָה", "berakháh", "Välsignelse", "Abraham ska bli en välsignelse, för att alla folk ska välsignas genom honom.", "H1293", "1 Mos 12:2"],
+  ["בָּרַךְ", "barákh", "Välsigna", "Inleder den aronitiska välsignelsen: ”Herren välsigne dig och bevare dig.”", "H1288", "4 Mos 6:24"],
+  ["אָמֵן", "amén", "Amen", "”Det står fast”, från samma rot som tro och trofasthet. Ett av få ord som gått oförändrat in i nästan alla språk.", "H543", "5 Mos 27:15"],
+  ["קָהָל", "qahál", "Församling", "Folket samlat inför Gud vid Sinai. Översätts i grekiska Gamla testamentet ofta med ekklesia.", "H6951", "5 Mos 9:10"],
+  ["מִשְׁכָּן", "mishkán", "Tabernakel", "Ordagrant ”boning”, det bärbara tält där Gud bodde mitt ibland folket.", "H4908", "2 Mos 25:9"],
+  ["כִּפֻּרִים", "kippurím", "Försoning", "Jom kippur, försoningsdagen, är judendomens heligaste dag.", "H3725", "3 Mos 23:27"],
+  ["כָּפַר", "kafár", "Sona, försona", "Grundbetydelsen är kanske ”täcka över”. På försoningsdagen blir folket renat från sina synder.", "H3722", "3 Mos 16:30"],
+  ["כַּפֹּרֶת", "kappóret", "Nådastol", "Locket på förbundsarken, där blod stänktes på försoningsdagen.", "H3727", "2 Mos 25:17"],
+  ["חַטָּאת", "chattát", "Synd", "Att missa målet. Första gången ordet förekommer ligger synden på lur vid Kains dörr.", "H2403", "1 Mos 4:7"],
+  ["עָוֹן", "avón", "Skuld, missgärning", "Det som är krokigt eller snett. ”Herren lät vår skuld drabba honom.”", "H5771", "Jes 53:6"],
+  ["פֶּשַׁע", "pésha", "Överträdelse", "Synd som uppror och trolöshet. Den lidande tjänaren sargades för våra brott.", "H6588", "Jes 53:5"],
+  ["סָלַח", "salách", "Förlåta", "Används i Gamla testamentet bara med Gud som subjekt. Löftet om det nya förbundet slutar med förlåtelse.", "H5545", "Jer 31:34"],
+  ["חֵן", "chén", "Nåd, välvilja", "Noa fann nåd inför Herren.", "H2580", "1 Mos 6:8"],
+  ["חָנַן", "chanán", "Vara nådig", "”Herren låte sitt ansikte lysa över dig och vare dig nådig.”", "H2603", "4 Mos 6:25"],
+  ["אֱמֶת", "emét", "Sanning, trofasthet", "Det som håller och går att lita på. Står ofta tillsammans med chesed.", "H571", "Ps 117:2"],
+  ["פָּדָה", "padáh", "Friköpa", "Att lösa ut mot betalning. Gud friköpte Israel ur slaveriet i Egypten.", "H6299", "5 Mos 7:8"],
+  ["גָּלוּת", "galút", "Fångenskap, exil", "Tiden i Babylon, som formade mycket av Gamla testamentet.", "H1546", "Hes 1:2"],
+  ["שְׁאֵרִית", "she'erít", "Rest", "Den kvarleva som Gud bevarar och samlar ihop när allt ser förlorat ut.", "H7611", "Mika 2:12"],
+  ["צִיּוֹן", "tsijjón", "Sion", "Berget i Jerusalem, och en bild för Guds stad och folk. Därifrån ska undervisningen gå ut.", "H6726", "Jes 2:3"],
+  ["מִקְדָּשׁ", "miqdásh", "Helgedom", "Ett heligt rum, ”så att jag kan bo mitt ibland dem”.", "H4720", "2 Mos 25:8"],
+  ["הֵיכָל", "hekhál", "Tempel, palats", "Både kungens palats och Guds tempel. Jesaja ser Herrens mantel fylla templet.", "H1964", "Jes 6:1"],
+  ["מִזְבֵּחַ", "mizbéach", "Altare", "Platsen där man offrar. Noa bygger ett altare efter floden.", "H4196", "1 Mos 8:20"],
+  ["עֹלָה", "oláh", "Brännoffer", "Ordagrant ”det som stiger upp”: offret brändes helt.", "H5930", "1 Mos 22:2"],
+  ["קָרְבָּן", "qorbán", "Offergåva", "Av ett verb som betyder ”komma nära”. Offret är ett sätt att närma sig Gud.", "H7133", "3 Mos 1:2"],
+  ["כֹּהֵן", "kohén", "Präst", "Melkisedek, kung i Salem och präst åt Gud den Högste, är den förste som kallas präst i Bibeln.", "H3548", "1 Mos 14:18"],
+  ["פֶּסַח", "pésach", "Påsk", "Ordet hänger ihop med ett verb som betyder ”gå förbi”, när ängeln gick förbi israeliternas hus.", "H6453", "2 Mos 12:11"],
+  ["מַצָּה", "matsáh", "Osyrat bröd", "Brödet som bakades i hast inför uttåget ur Egypten.", "H4682", "2 Mos 12:15"],
+  ["סֻכָּה", "sukkáh", "Lövhydda", "Under lövhyddohögtiden bor man i hyddor till minne av vandringen i öknen.", "H5521", "3 Mos 23:42"],
+  ["יוֹבֵל", "jovél", "Jubelår", "Vart femtionde år skulle skulder efterskänkas och jord återlämnas. Därav ordet jubel.", "H3104", "3 Mos 25:10"],
+  ["מָן", "mán", "Manna", "Brödet från himlen i öknen. Namnet kommer av frågan ”Vad är det?”.", "H4478", "2 Mos 16:31"],
+  ["מִדְבָּר", "midbár", "Öken", "Prövningens och mötets plats. ”Bana väg för Herren i öknen.”", "H4057", "Jes 40:3"],
+  ["אוֹת", "ót", "Tecken", "Regnbågen är tecknet på Guds förbund med jorden.", "H226", "1 Mos 9:13"],
+  ["מַלְאָךְ", "mal'ákh", "Budbärare, ängel", "Både mänskliga sändebud och himmelska. Profeten Malaki heter ”min budbärare”.", "H4397", "Mal 3:1"],
+  ["כְּרוּב", "kerúv", "Kerub", "Himmelska väsen som vaktar vägen till livets träd. Det finns också kerubbilder på förbundsarkens lock.", "H3742", "1 Mos 3:24"],
+  ["שָׂרָף", "saráf", "Seraf", "Ordagrant ”den brinnande”. Serafer omger Guds tron i Jesajas kallelsesyn.", "H8314", "Jes 6:2"],
+  ["עֵדֶן", "éden", "Eden", "Trädgården där människan skulle bruka och vårda jorden. Ordet kan betyda ”njutning”.", "H5731", "1 Mos 2:15"],
+  ["נָחָשׁ", "nachásh", "Orm", "Ormen i trädgården, listigare än alla andra djur.", "H5175", "1 Mos 3:1"],
+  ["צֶלֶם", "tsélem", "Avbild", "Människan skapad till Guds avbild, grunden för människovärdet i kristen tro.", "H6754", "1 Mos 1:26"],
+  ["דְּמוּת", "demút", "Likhet", "Står tillsammans med tselem: människan är lik Gud.", "H1823", "1 Mos 5:1"],
+  ["עֵזֶר", "ézer", "Hjälp", "Kvinnan skapas som en hjälp. Samma ord används oftast om Gud själv som Israels hjälp.", "H5828", "1 Mos 2:18"],
+  ["תֹהוּ וָבֹהוּ", "tohu va-vohu", "Öde och tom", "Jorden före skapelsens ordning. Uttrycket rimmar på hebreiska.", "H8414", "1 Mos 1:2"],
+  ["שְׁאוֹל", "she'ól", "Dödsriket", "De dödas skuggvärld i Gamla testamentet. Jona ropar till Gud från dödsrikets djup.", "H7585", "Jona 2:3"],
+  ["מָוֶת", "mávet", "Död", "Profeten trotsar döden och dödsriket. Paulus citerar stället när han skriver om uppståndelsen.", "H4194", "Hos 13:14"],
+  ["חָזוֹן", "chazón", "Syn, vision", "Profeten ska skriva ner synen tydligt, så att den kan läsas i flykten.", "H2377", "Hab 2:2"],
+  ["נְאֻם", "ne'úm", "Utsaga", "Står i profeternas uttryck ”säger Herren”, som här i Jeremias brev till de landsflyktiga.", "H5002", "Jer 29:11"],
+  ["מָשָׁל", "mashál", "Ordspråk, liknelse", "Ordspråksboken heter på hebreiska Mishlé, efter ordet.", "H4912", "Ords 1:1"],
+  ["יִרְאָה", "jir'áh", "Fruktan, vördnad", "Herrens fruktan är början till kunskap. Mer djup respekt än rädsla.", "H3374", "Ords 1:7"],
+  ["תְּפִלָּה", "tefilláh", "Bön", "Templet ska kallas ett bönens hus för alla folk. Jesus citerar orden.", "H8605", "Jes 56:7"],
+  ["תּוֹדָה", "todáh", "Tack, tackoffer", "”Gå in i hans portar med tack.” Ordet betyder också bekännelse.", "H8426", "Ps 100:4"],
+  ["הוֹשִׁיעָה נָּא", "hoshí'a ná", "Hosianna", "”Fräls oss!” Ropet från Psaltaren som folket ropar när Jesus rider in i Jerusalem.", "H3467", "Ps 118:25"],
+  ["סֶלָה", "séla", "Sela", "Ett ord som står i psalmer och hos Habackuk. Kanske en paus eller musikanvisning, ingen vet säkert.", "H5542", "Hab 3:3"],
+  ["נָחַם", "nachám", "Trösta", "”Trösta, trösta mitt folk” inleder Jesajabokens andra del.", "H5162", "Jes 40:1"],
+  ["זָכַר", "zakhár", "Komma ihåg", "När Gud kommer ihåg någon handlar han. Gud tänkte på Noa och lät vattnet sjunka undan.", "H2142", "1 Mos 8:1"],
+  ["בָּטַח", "batách", "Lita på", "”Förtrösta på Herren av hela ditt hjärta.”", "H982", "Ords 3:5"],
+  ["קָוָה", "qaváh", "Vänta, hoppas", "Den som hoppas på Herren får ny kraft och lyfter med vingar som örnar.", "H6960", "Jes 40:31"],
+  ["עָנָו", "anáv", "Ödmjuk", "Mose beskrivs som den ödmjukaste av alla människor.", "H6035", "4 Mos 12:3"],
+  ["גֵּר", "gér", "Främling", "Invandraren ska behandlas som en infödd, ”för ni var själva främlingar i Egypten”.", "H1616", "3 Mos 19:34"],
+  ["אַלְמָנָה", "almanáh", "Änka", "Tillsammans med den faderlöse och främlingen den som Gud särskilt tar sig an.", "H490", "5 Mos 10:18"],
+  ["אֶבְיוֹן", "evjón", "Fattig", "Den behövande. Israel ska öppna sin hand för sin fattige broder.", "H34", "5 Mos 15:11"],
+  ["רֵעַ", "réa", "Nästa", "”Du ska älska din nästa som dig själv” står först i Tredje Moseboken.", "H7453", "3 Mos 19:18"],
+  ["שָׁפַט", "shafát", "Döma, skipa rätt", "Domarbokens ledare kallas shoftim. De var mer befriare än domare.", "H8199", "Dom 2:16"],
+  ["מֶלֶךְ", "mélekh", "Kung", "Jesaja ser Konungen, Herren Sebaot, och blir rädd.", "H4428", "Jes 6:5"],
+  ["מְנוּחָה", "menucháh", "Vila, ro", "Herden leder till vatten där jag finner ro.", "H4496", "Ps 23:2"],
+  ["רֹעֶה", "ro'éh", "Herde", "”Herren är min herde.” En vanlig bild för kungar i Mellanöstern.", "H7462", "Ps 23:1"],
+  ["צֵל", "tsél", "Skugga", "I Gamla testamentet ofta en bild för skydd: att vila i den Väldiges skugga.", "H6738", "Ps 91:1"],
+  ["מָגֵן", "magén", "Sköld", "”Jag är din sköld.” Därav Davidsstjärnans namn: Magen David.", "H4043", "1 Mos 15:1"],
+  ["צוּר", "tsúr", "Klippa", "En gudsbild för stabilitet och trofasthet: ”Han är Klippan.”", "H6697", "5 Mos 32:4"],
+  ["נֵר", "nér", "Lykta", "”Ditt ord är en lykta för min fot.”", "H5216", "Ps 119:105"],
+  ["דֶּרֶךְ", "dérekh", "Väg", "Livet som en vandring. Herren känner de rättfärdigas väg.", "H1870", "Ps 1:6"],
+  ["אַשְׁרֵי", "ashré", "Lycklig, salig", "Psaltarens första ord: ”Lycklig den som …”", "H835", "Ps 1:1"],
+  ["חַיִּים", "chajjím", "Liv", "”Välj livet!” Ordet är en pluralform, och ”Le-chajjim” betyder ”Skål!”", "H2416", "5 Mos 30:19"],
+  ["דָּם", "dám", "Blod", "”Kroppens liv är i blodet.” Grunden för offerkulten.", "H1818", "3 Mos 17:11"],
+  ["נְשָׁמָה", "neshamáh", "Livsande", "Gud blåste livsande i människans näsa, och hon blev en levande varelse.", "H5397", "1 Mos 2:7"],
+  ["עָפָר", "afár", "Stoft", "”Stoft är du, och till stoft ska du återvända.” Orden läses på askonsdagen.", "H6083", "1 Mos 3:19"],
+  ["בָּשָׂר", "basár", "Kött", "Människans förgänglighet: allt kött är som gräs.", "H1320", "Jes 40:6"],
+  ["יוֹם יְהוָה", "jom JHWH", "Herrens dag", "Dagen då Gud griper in. Amos varnar för att den kan bli mörker och inte ljus.", "H3117", "Amos 5:18"],
+  ["אַחֲרִית הַיָּמִים", "acharít ha-jamím", "De kommande dagarna", "Tidens slut, när folken ska strömma till Herrens berg.", "H319", "Jes 2:2"],
+  ["שׁוֹפָר", "shofár", "Bagghorn", "Hornet som blåstes vid Jerikos murar och fortfarande blåses vid judiska högtider.", "H7782", "Jos 6:20"],
+  ["תָּמִים", "tamím", "Hel, fullkomlig", "Noa var rättfärdig och hel. Ordet betyder hel och oförfalskad, inte felfri.", "H8549", "1 Mos 6:9"],
+  ["שָׁכַן", "shakhán", "Bo", "”Jag ska bo mitt ibland israeliterna.” Av roten kommer senare ordet shekina, Guds närvaro.", "H7931", "2 Mos 29:45"],
+  ["עַם", "ám", "Folk", "”Jag ska göra er till mitt folk och vara er Gud.” Kärnan i förbundet.", "H5971", "2 Mos 6:7"],
+  ["גּוֹיִם", "gojím", "Folken", "De andra folken, hedningarna. Tjänaren ska bli ett ljus för folken.", "H1471", "Jes 49:6"]
+];
+
+/* Länkar till bibeln.se (Bibel 2026: NT 2026 och GT 2000). Förkortning -> bokkod på bibeln.se */
+var LEARN_URL = 'https://altutbildning.se/utbildning';   // knappen "Vill du lära dig mer?" på baksidan
+var BIBEL_URL = 'https://www.bibeln.se/bibel/B2026/';
+var BOOKCODE = {
+  '1 Mos':'GEN','2 Mos':'EXO','3 Mos':'LEV','4 Mos':'NUM','5 Mos':'DEU','Jos':'JOS','Dom':'JDG','Rut':'RUT','1 Sam':'1SA','2 Sam':'2SA',
+  '1 Kung':'1KI','2 Kung':'2KI','Job':'JOB','Ps':'PSA','Ords':'PRO','Pred':'ECC','Höga v':'SNG','Jes':'ISA','Jer':'JER','Klag':'LAM',
+  'Hes':'EZK','Dan':'DAN','Hos':'HOS','Joel':'JOL','Amos':'AMO','Jona':'JON','Mika':'MIC','Hab':'HAB','Sak':'ZEC','Mal':'MAL',
+  'Matt':'MAT','Mark':'MRK','Luk':'LUK','Joh':'JHN','Apg':'ACT','Rom':'ROM','1 Kor':'1CO','2 Kor':'2CO','Gal':'GAL','Ef':'EPH',
+  'Fil':'PHP','Kol':'COL','Tit':'TIT','1 Tess':'1TH','1 Tim':'1TI','2 Tim':'2TI','Heb':'HEB','Jak':'JAS','1 Pet':'1PE','2 Pet':'2PE','1 Joh':'1JN','Upp':'REV'
+};
+/* "Joh 1:1" -> länk till versen, "Joh 3:16-18" -> länk till verserna */
+function bibUrl(ref){
+  var m = String(ref).match(/^(.+?)\s+(\d+):(\d+)(?:\s*[-–]\s*(\d+))?$/), code = m && BOOKCODE[m[1]];
+  if (!code) return '';
+  return BIBEL_URL + code + '.' + m[2] + '.' + m[3] + '-' + code + '.' + m[2] + '.' + (m[4] || m[3]);
+}
+
+var ARCHES = '<svg class="ao-arches" viewBox="325 29 1282 1871" preserveAspectRatio="xMaxYMin meet" aria-hidden="true"><path d="M351 1900V670A614 614 0 0 1 1579 670V1900"/><path d="M442 1900V670A523 523 0 0 1 1488 670V1900"/><path d="M533 1900V670A432 432 0 0 1 1397 670V1900"/><path d="M624 1900V670A341 341 0 0 1 1306 670V1900"/><path d="M715 1900V670A250 250 0 0 1 1215 670V1900"/><path d="M806 1900V670A159 159 0 0 1 1124 670V1900"/><path d="M897 1900V670A68 68 0 0 1 1033 670V1900"/></svg>';
+var LANGS = [
+  { list:GR, cls:'gr', lang:'grc', tts:'el-GR', label:'Grekiska', sub:'Nya testamentet', c:'#2f575f', fg:'#ffffff', shift:0 },
+  { list:HE, cls:'he', lang:'he',  tts:'he-IL', label:'Hebreiska', sub:'Gamla testamentet', c:'#c07a63', fg:'#ffffff', shift:7 }
+];
+var canSpeak = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+var $ = function(s){ return root.querySelector(s); };
+
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function dayNo(d){ return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); }
+function pick(list, n){ return list[((n % list.length) + list.length) % list.length]; }
+/* Bokstäverna animeras en och en. Hebreiska vokaltecken hålls ihop med sin bokstav. */
+function letters(w){
+  var parts = w.match(/[^֑-ׇ̀-ͯ][֑-ׇ̀-ͯ]*/g) || [w];
+  return parts.map(function(p, i){ return '<span class="ch" style="animation-delay:' + (0.15 + i * 0.05).toFixed(2) + 's">' + esc(p) + '</span>'; }).join('');
+}
+
+function cardHtml(L, w, i){
+  var n = Math.max(5, w[0].replace(/[֑-ׇ̀-ͯ]/g, '').length);
+  var listen = canSpeak ? '<button type="button" class="ao-btn" data-act="say" data-i="' + i + '" title="Modernt uttal via webbläsarens röst">Lyssna ♪</button>' : '';
+  return '<div class="ao-flip" style="--tc:' + L.c + ';--tf:' + L.fg + '">' +
+    '<div class="ao-inner">' +
+      '<button type="button" class="ao-face ao-front" data-act="flip" aria-label="' + L.label + ': ' + esc(w[1]) + '. Vänd kortet för att se betydelsen">' + ARCHES +
+        '<span class="ao-lang"><span>' + L.label + '</span><span class="n">' + L.sub + '</span></span>' +
+        '<span class="ao-word ' + L.cls + '" lang="' + L.lang + '" style="--n:' + n + '">' + (L.cls === 'he' ? esc(w[0]) : letters(w[0])) + '</span>' +
+        '<span class="ao-translit">' + esc(w[1]) + '</span>' +
+        '<span class="ao-hint"><span>Vad tror du att det betyder?</span><span class="ao-turn" aria-hidden="true">↻</span></span>' +
+      '</button>' +
+      '<div class="ao-face ao-back" aria-hidden="true">' +
+        '<p class="ao-lang"><span>' + L.label + '</span><span class="n">Betydelse</span></p>' +
+        '<div class="ao-small"><b class="' + L.cls + '" lang="' + L.lang + '">' + esc(w[0]) + '</b><i>' + esc(w[1]) + '</i></div>' +
+        '<h3 class="ao-mean">' + esc(w[2]) + '</h3>' +
+        '<p class="ao-text">' + esc(w[3]) + '</p>' +
+        '<div class="ao-meta"><span class="ao-tag">' + L.sub + '</span>' + (bibUrl(w[5]) ? '<a class="ao-tag ao-ref" href="' + bibUrl(w[5]) + '" target="_blank" rel="noopener" tabindex="-1" title="Läs på bibeln.se">Läs ' + esc(w[5]) + ' ↗</a>' : '<span class="ao-tag">' + esc(w[5]) + '</span>') + '<span class="ao-tag">Strong ' + esc(w[4]) + '</span></div>' +
+        '<div class="ao-acts">' + listen + '<button type="button" class="ao-btn ghost" data-act="flip">↻ Vänd tillbaka</button>' +
+          '<a class="ao-btn ao-more" href="' + LEARN_URL + '" tabindex="-1">Vill du lära dig mer? <span class="arr">→</span></a></div>' +
+      '</div>' +
+    '</div></div>';
+}
+
+var current = [];
+function render(){
+  var d = new Date();
+  var n = dayNo(d);
+  current = LANGS.map(function(L){ return pick(L.list, n + L.shift); });
+  $('.ao-grid').innerHTML = LANGS.map(function(L, i){ return cardHtml(L, current[i], i); }).join('');
+  var txt = d.toLocaleDateString('sv-SE', { weekday:'long', day:'numeric', month:'long' });
+  $('.ao-date').textContent = 'Idag · ' + txt;
+}
+
+function setFlip(card, on){
+  card.classList.toggle('is-flipped', on);
+  card.querySelector('.ao-front').setAttribute('aria-hidden', on);
+  card.querySelector('.ao-back').setAttribute('aria-hidden', !on);
+  card.querySelectorAll('.ao-back button, .ao-back a').forEach(function(b){ b.tabIndex = on ? 0 : -1; });
+  card.querySelector('.ao-front').tabIndex = on ? -1 : 0;
+  var target = on ? card.querySelector('.ao-back .ao-btn.ghost') : card.querySelector('.ao-front');
+  if (target) setTimeout(function(){ try { target.focus({ preventScroll:true }); } catch (e) {} }, 400);
+}
+
+root.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]'); if (!b || !root.contains(b)) return;
+  var act = b.dataset.act;
+  if (act === 'flip') { var c = b.closest('.ao-flip'); setFlip(c, !c.classList.contains('is-flipped')); }
+  else if (act === 'say' && canSpeak) {
+    var L = LANGS[+b.dataset.i], u = new SpeechSynthesisUtterance(current[+b.dataset.i][0]);
+    u.lang = L.tts; u.rate = 0.75;
+    u.onend = u.onerror = function(){ b.classList.remove('speaking'); };
+    speechSynthesis.cancel(); b.classList.add('speaking'); speechSynthesis.speak(u);
+  }
+});
+/* Tittar-streak: hur många dagar i rad besökaren kollat dagens ord (sparas bara i webbläsaren) */
+(function streak(){
+  var today = dayNo(new Date()), s = { last:0, n:0 };
+  try { s = JSON.parse(localStorage.getItem('altord-streak') || '{"last":0,"n":0}'); } catch (e) {}
+  if (s.last !== today) { s.n = s.last === today - 1 ? s.n + 1 : 1; s.last = today; }
+  try { localStorage.setItem('altord-streak', JSON.stringify(s)); } catch (e) {}
+  if (s.n >= 2) $('.ao-streak').innerHTML = 'Du har kollat dagens ord <b>' + s.n + ' dagar i rad</b>' + (s.n >= 40 ? ' – längre än Jesus i öknen!' : s.n >= 7 ? ' – en hel skapelsevecka!' : '');
+})();
+render();
+})();
+</script>

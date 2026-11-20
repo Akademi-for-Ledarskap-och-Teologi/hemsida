@@ -1,0 +1,156 @@
+<!-- ============================================================
+     ALT – Sidfot v1 (kodblock för Squarespace)
+     Klistra in i ett Code Block i sidfoten (Redigera sidfot).
+     Ta bort de gamla blocken i sidfoten så att bara detta ligger kvar.
+     Allt är avgränsat under #alt-footer och påverkar inte resten av sidan.
+     ============================================================ -->
+<div id="alt-footer">
+<style>
+#alt-footer{
+  --bg:#EDE5E0; --ink:#1C1C1C; --accent:#C07A63; --fg:#e5e3dc; --teal:#2f575f;
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --ease:cubic-bezier(.2,.8,.2,1);
+  font-family:var(--body); font-size:18px; line-height:1.5; color:var(--ink);
+  --muted:#5a5652; --line:rgba(255,255,255,.35); --card:#FBF9F7;
+  max-width:1040px; margin:0 auto; -webkit-font-smoothing:antialiased;
+}
+#alt-footer *{box-sizing:border-box}
+#alt-footer a{color:inherit;text-decoration:none}
+#alt-footer p{margin:0}
+#alt-footer h4{font-family:var(--head);font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 16px}
+#alt-footer a:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+#alt-footer .ft{background:transparent;padding:56px 0 28px;position:relative}
+
+/* Topp */
+#alt-footer .top{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;padding-bottom:40px;border-bottom:1px solid var(--line);position:relative;z-index:1}
+#alt-footer .brand img{height:56px;width:auto;display:block}
+#alt-footer .brand p{font-size:21px;margin-top:14px;max-width:30ch;color:#fff}
+#alt-footer .pill{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:15px 26px;border-radius:12px;white-space:nowrap;transition:transform .2s var(--ease),background .2s}
+#alt-footer .pill:hover{transform:scale(1.04);background:#a96550}
+#alt-footer .pill .arr{display:inline-block;transition:transform .2s var(--ease)}
+#alt-footer .pill:hover .arr{transform:translateX(3px)}
+
+/* Kolumner */
+#alt-footer .cols{display:grid;grid-template-columns:repeat(3,1fr) 1.3fr;gap:16px;padding:40px 0;position:relative;z-index:1}
+#alt-footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+#alt-footer .cols ul a{position:relative;font-size:19px;opacity:.8;transition:opacity .2s,padding .25s var(--ease)}
+#alt-footer .cols ul a::before{content:"→";position:absolute;left:-6px;opacity:0;color:var(--accent);font-size:15px;top:2px;transition:opacity .2s,left .25s var(--ease)}
+#alt-footer .cols ul a:hover{opacity:1;padding-left:18px}
+#alt-footer .cols ul a:hover::before{opacity:1;left:0}
+#alt-footer .cols ul a{white-space:nowrap}
+#alt-footer address a,#alt-footer a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;border:0!important;font:inherit!important}
+#alt-footer address *{text-decoration:none!important;border-bottom:0!important}
+#alt-footer .pdf{display:inline-block;font-family:var(--head);font-size:9px;letter-spacing:.08em;background:rgba(28,28,28,.08);border-radius:999px;padding:2px 7px;margin-left:6px;vertical-align:3px}
+#alt-footer .box{background:var(--card);color:var(--ink);border-radius:16px;padding:22px 22px 20px;box-shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06)}
+#alt-footer .visit address{font-style:normal;font-size:19px;line-height:1.45}
+#alt-footer .visit .lines{display:grid;gap:4px;margin-top:12px}
+#alt-footer .visit .lines a{display:inline-flex;align-items:center;gap:10px;font-size:18px;opacity:.9}
+#alt-footer .visit .lines a:hover{opacity:1;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+#alt-footer .visit .ic{font-family:var(--head);font-size:11px;color:var(--accent);width:14px;text-align:center}
+#alt-footer .map{display:inline-block;margin-top:14px;font-family:var(--head);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+#alt-footer .map:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* Botten */
+#alt-footer .bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--line);position:relative;z-index:1}
+#alt-footer .copy{font-size:16px;color:#fff}
+#alt-footer .social{display:flex;gap:10px}
+#alt-footer .social a{width:44px;height:44px;border-radius:50%;background:var(--card);box-shadow:0 1px 2px rgba(28,28,28,.06);display:grid;place-content:center;transition:background .25s,transform .25s var(--ease)}
+#alt-footer .social a:hover{background:var(--accent);color:#fff;transform:translateY(-3px)}
+#alt-footer .social svg{width:19px;height:19px;fill:currentColor;display:block}
+#alt-footer .totop{font-family:var(--head);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#fff;opacity:.9;display:inline-flex;align-items:center;gap:8px;transition:opacity .2s}
+#alt-footer .totop:hover{opacity:1}
+#alt-footer .totop span{width:30px;height:30px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-content:center;font-size:13px;transition:transform .25s var(--ease)}
+#alt-footer .totop:hover span{transform:translateY(-3px)}
+
+@media (max-width:900px){
+  #alt-footer .cols{grid-template-columns:repeat(3,1fr)}
+  #alt-footer .visit{grid-column:1/-1}
+}
+@media (max-width:640px){
+  #alt-footer .ft{padding:40px 0 24px}
+  #alt-footer .brand img{height:46px}
+  #alt-footer .top .pill{width:100%;justify-content:center}
+  #alt-footer .top{flex-direction:column;align-items:center;text-align:center}
+  #alt-footer .brand{display:flex;flex-direction:column;align-items:center}
+  #alt-footer .cols{grid-template-columns:minmax(0,1fr);gap:12px}
+  #alt-footer .box{min-width:0;padding:22px 22px 20px}
+  #alt-footer .box h4{margin-bottom:12px}
+  #alt-footer .box ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}
+  #alt-footer .cols ul a{font-size:18px}
+  #alt-footer .cols ul a:hover{padding-left:0}
+  #alt-footer .cols ul a::before{display:none}
+  #alt-footer .bottom{flex-direction:column;align-items:center;text-align:center;gap:18px}
+}
+@media (prefers-reduced-motion:reduce){
+  #alt-footer *,#alt-footer *::before,#alt-footer *::after{transition:none!important}
+}
+</style>
+
+  <footer class="ft">
+    <div class="top">
+      <div class="brand">
+        <a href="/" aria-label="ALT – till startsidan"><img src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/64da1d60-2b6c-44f9-b6e0-270baffc9c88/ALT+logo_Vit+med+rosa.png?format=500w" alt="ALT"></a>
+        <p>Akademi för Ledarskap och Teologi</p>
+      </div>
+      <a class="pill" href="/nyhetsbrev">Prenumerera på nyhetsbrevet <span class="arr">→</span></a>
+    </div>
+
+    <div class="cols">
+      <nav class="box" aria-label="Studier">
+        <h4>Studier</h4>
+        <ul>
+          <li><a href="/kursplaner">Kursplaner</a></li>
+          <li><a href="/studieorter">Studieorter</a></li>
+          <li><a href="/s/Studiehandbok-2026-2027-PDF.pdf" target="_blank" rel="noopener">Studiehandbok<span class="pdf">PDF</span></a></li>
+          <li><a href="/bibliotek">Bibliotek</a></li>
+        </ul>
+      </nav>
+      <nav class="box" aria-label="Hjälp">
+        <h4>Hjälp</h4>
+        <ul>
+          <li><a href="/studievagledning">Studievägledning</a></li>
+          <li><a href="/vanliga-fragor">Vanliga frågor</a></li>
+          <li><a href="/kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+      <nav class="box" aria-label="Om ALT">
+        <h4>Om ALT</h4>
+        <ul>
+          <li><a href="/om-oss">Om oss</a></li>
+          <li><a href="/nyhetsbrev">Nyhetsbrev</a></li>
+        </ul>
+      </nav>
+      <div class="box visit">
+        <h4>Besök oss</h4>
+        <address x-apple-data-detectors="false">Akademi för Ledarskap och Teologi<br>Åstadalsvägen 2<br>702 21 Örebro</address>
+        <div class="lines">
+          <a href="tel:+46193077500"><span class="ic">☏</span>+46 19 30 77 50</a>
+          <a href="mailto:info@altutbildning.se"><span class="ic">@</span>info@altutbildning.se</a>
+        </div>
+        <a class="map" href="https://www.google.com/maps/search/?api=1&amp;query=%C3%85stadalsv%C3%A4gen+2%2C+702+21+%C3%96rebro" target="_blank" rel="noopener">Visa på karta →</a>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="social" aria-label="Sociala medier">
+        <a href="https://instagram.com/altutbildning" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1.1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1.1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.2.8-.4.4-.6.7-.8 1.2-.2.4-.3 1-.4 2.1C2.7 8.5 2.7 8.9 2.7 12s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.2.4.4.7.6 1.2.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.2-.8.4-.4.6-.7.8-1.2.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.2-.4-.4-.7-.6-1.2-.8-.4-.2-1-.3-2.1-.4C15.5 4 15.1 4 12 4zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8zm0 8.1a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zm6.2-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"></path></svg></a>
+        <a href="https://www.youtube.com/@altutbildning" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1c.4-1.6.5-3.2.5-4.8s-.1-3.2-.5-4.8zM9.7 15V9l5.8 3-5.8 3z"></path></svg></a>
+        <a href="https://www.facebook.com/altutbildning/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"></path></svg></a>
+        <a href="https://www.tiktok.com/@altutbildning" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 2h-3.3v13.4a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.2a6.2 6.2 0 1 0 5.3 6.2V8.6a7.9 7.9 0 0 0 4.6 1.5V6.8a4.6 4.6 0 0 1-4.6-4.6z"></path></svg></a>
+      </div>
+      <p class="copy">© <span data-af="year">2026</span> Akademi för Ledarskap och Teologi</p>
+      <a class="totop" href="#" data-af="top">Till toppen <span>↑</span></a>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var root=document.getElementById("alt-footer"); if(!root) return;
+  var y=root.querySelector('[data-af="year"]'); if(y) y.textContent=new Date().getFullYear();
+  var t=root.querySelector('[data-af="top"]');
+  if(t) t.addEventListener("click",function(e){ e.preventDefault(); window.scrollTo({top:0,behavior:"smooth"}); });
+})();
+</script>
+</div>

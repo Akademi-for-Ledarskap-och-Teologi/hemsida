@@ -1,0 +1,477 @@
+<!--
+  ============================================================
+  ALT – BIBELLÄSNINGSKALKYLATOR – för altutbildning.se
+  ============================================================
+  Klistra in HELA filen i ett Squarespace-kodblock.
+  Design: samma formspråk som kurskatalogen och ansökningsguiden.
+  Ordantal per bok är ungefärliga (baserade på engelska räkningar) och
+  kapitelindelningen följer Bibel 2000. Lästakt: 200 ord per minut.
+  ============================================================
+-->
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=EB+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<div id="altbib">
+  <header class="ab-head">
+    <p class="ab-eyebrow">Bibelläsning</p>
+    <h2 class="ab-title">Hur lång tid tar det?</h2>
+    <p class="ab-lead">Ställ in din lästakt, så räknar vi ut när du är i mål – och vad du hinner med på vägen.</p>
+  </header>
+
+  <div class="ab-wrap">
+    <section class="ab-panel ab-controls" aria-label="Inställningar">
+      <div class="ab-field">
+        <span class="ab-label">Vad vill du läsa?</span>
+        <div class="ab-chips ab-presets"></div>
+        <p class="ab-note">…eller klicka på en bok i bokhyllan nedanför.</p>
+      </div>
+      <div class="ab-field">
+        <span class="ab-label">Jag räknar i</span>
+        <div class="ab-seg" role="group" aria-label="Enhet">
+          <button type="button" data-act="mode" data-v="min">Minuter</button>
+          <button type="button" data-act="mode" data-v="kap">Kapitel</button>
+        </div>
+      </div>
+      <div class="ab-field">
+        <label class="ab-label" for="ab-amount"><span class="ab-amount-label">Per lästillfälle</span></label>
+        <div class="ab-range">
+          <input type="range" id="ab-amount">
+          <output class="ab-out" for="ab-amount"></output>
+        </div>
+      </div>
+      <div class="ab-field">
+        <span class="ab-label">Jag läser på</span>
+        <div class="ab-days" role="group" aria-label="Veckodagar"></div>
+      </div>
+      <div class="ab-field">
+        <label class="ab-label" for="ab-start">Jag börjar</label>
+        <input type="date" id="ab-start" class="ab-date">
+      </div>
+    </section>
+
+    <section class="ab-hero" aria-live="polite">
+      <img class="ab-bg" src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/acd91f40-fa2f-404e-8299-a738fe0c6950/DSC04094.jpg?format=1500w" alt="" loading="lazy" onerror="this.remove()">
+      <svg class="ab-arches" viewBox="325 29 1282 1871" preserveAspectRatio="xMaxYMin meet" aria-hidden="true"><path d="M351 1900V670A614 614 0 0 1 1579 670V1900"></path><path d="M442 1900V670A523 523 0 0 1 1488 670V1900"></path><path d="M533 1900V670A432 432 0 0 1 1397 670V1900"></path><path d="M624 1900V670A341 341 0 0 1 1306 670V1900"></path><path d="M715 1900V670A250 250 0 0 1 1215 670V1900"></path><path d="M806 1900V670A159 159 0 0 1 1124 670V1900"></path><path d="M897 1900V670A68 68 0 0 1 1033 670V1900"></path></svg>
+      <div class="ab-hero-in">
+        <p class="ab-eyebrow ab-what"></p>
+        <p class="ab-wd"></p>
+        <h3 class="ab-end"></h3>
+        <div class="ab-sum">
+          <div><b data-n="sessions">0</b><span>lästillfällen</span></div>
+          <div><b data-n="hours">0</b><span>timmar läsning</span></div>
+          <div><b data-n="days">0</b><span>dagar i kalendern</span></div>
+        </div>
+        <ul class="ab-fun"></ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="ab-panel ab-shelfcard">
+    <div class="ab-shelfhead">
+      <h3>Bokhyllan</h3>
+      <p>Färgade böcker ingår i din läsning. Håll över en bok för att se när du är klar med den – klicka för att läsa bara den.</p>
+    </div>
+    <div class="ab-shelves"></div>
+    <div class="ab-legend"></div>
+    <div class="ab-tip" role="tooltip"></div>
+  </section>
+
+  <section class="ab-panel ab-milescard">
+    <h3>Milstolpar på vägen</h3>
+    <ol class="ab-miles"></ol>
+    <p class="ab-fine">Ungefärlig beräkning: cirka 200 ord per minut. Antalet ord varierar mellan översättningar.</p>
+  </section>
+</div>
+
+<style>
+#altbib{
+  --bg:#EDE5E0; --card:#FBF9F7; --ink:#1c1c1c; --muted:#5a5652; --accent:#c07a63; --teal:#2f575f; --line:rgba(28,28,28,.1);
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif; --text:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--text); font-size:19px; line-height:1.5; width:100%; -webkit-font-smoothing:antialiased;
+}
+#altbib *{box-sizing:border-box}
+#altbib button,#altbib input{font:inherit;color:inherit}
+#altbib h2,#altbib h3,#altbib p,#altbib ul,#altbib ol{margin:0;color:inherit}
+#altbib h2,#altbib h3{font-family:var(--head);font-weight:400;line-height:1.08;letter-spacing:-.01em}
+#altbib :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@keyframes ab-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes ab-fill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes ab-pop{0%{transform:scale(.96);opacity:.4}100%{transform:none;opacity:1}}
+
+/* ---------- Rubrik ---------- */
+#altbib .ab-head{text-align:center;margin:0 auto 44px;container-type:inline-size}
+#altbib .ab-head .ab-lead{max-width:760px;margin:0 auto}
+#altbib .ab-head .ab-eyebrow{font-size:clamp(16px,2.4cqi,26px);letter-spacing:.16em}
+#altbib .ab-eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#altbib .ab-title{font-size:min(64px,5.6cqi);white-space:nowrap;text-transform:uppercase;margin:12px 0 16px}
+#altbib .ab-lead{font-size:22px;color:var(--muted)}
+
+/* ---------- Layout ---------- */
+#altbib .ab-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px;align-items:stretch}
+#altbib .ab-panel{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:32px}
+#altbib .ab-controls{display:grid;gap:26px;align-content:start}
+#altbib .ab-field{display:grid;gap:10px}
+#altbib .ab-label{font-family:var(--head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);line-height:1.2}
+#altbib .ab-note{font-size:16px;color:var(--muted);font-style:italic}
+
+/* Chips */
+#altbib .ab-chips{display:flex;flex-wrap:wrap;gap:8px}
+#altbib .ab-chip{border:0;background:#fff;box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:8px 15px;font-size:17px;font-weight:600;line-height:1.3;cursor:pointer;transition:background .2s,color .2s,transform .2s var(--ease)}
+#altbib .ab-chip:hover{transform:scale(1.04)}
+#altbib .ab-chip[aria-pressed="true"]{background:var(--ink);color:#fff;box-shadow:none}
+
+/* Segmentknapp */
+#altbib .ab-seg{display:inline-flex;background:#fff;box-shadow:inset 0 0 0 1px var(--line);border-radius:12px;padding:4px;gap:4px;justify-self:start}
+#altbib .ab-seg button{border:0;background:none;border-radius:9px;padding:9px 20px;font-family:var(--head);font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .25s,color .25s}
+#altbib .ab-seg button[aria-pressed="true"]{background:var(--teal);color:#e5e3dc}
+
+/* Reglage */
+#altbib .ab-range{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+#altbib .ab-out{font-family:var(--head);font-size:30px;line-height:1;min-width:4.2ch;text-align:right;letter-spacing:-.02em}
+#altbib .ab-out small{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-left:4px}
+#altbib input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer;margin:0}
+#altbib input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:8px;background:linear-gradient(to right,var(--teal) var(--p,50%),rgba(28,28,28,.12) var(--p,50%))}
+#altbib input[type=range]::-moz-range-track{height:10px;border-radius:8px;background:rgba(28,28,28,.12)}
+#altbib input[type=range]::-moz-range-progress{height:10px;border-radius:8px;background:var(--teal)}
+#altbib input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-9px;border-radius:8px;background:#fff;box-shadow:0 0 0 2px var(--ink),0 2px 6px rgba(0,0,0,.2);transition:transform .2s var(--ease)}
+#altbib input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:8px;background:#fff;box-shadow:0 0 0 2px var(--ink),0 2px 6px rgba(0,0,0,.2)}
+#altbib input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15) rotate(8deg)}
+
+/* Veckodagar */
+#altbib .ab-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+#altbib .ab-day{aspect-ratio:1;border:0;border-radius:25%;background:#fff;box-shadow:inset 0 0 0 1px var(--line);font-family:var(--head);font-size:12px;letter-spacing:.04em;cursor:pointer;transition:background .2s,color .2s,transform .2s var(--ease)}
+#altbib .ab-day:hover{transform:translateY(-2px)}
+#altbib .ab-day[aria-pressed="true"]{background:var(--accent);color:#fff;box-shadow:none}
+#altbib .ab-date{border:0;border-radius:11px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);padding:12px 18px;font-size:18px;font-weight:600;width:100%;max-width:260px}
+
+/* ---------- Resultat ---------- */
+#altbib .ab-hero{position:relative;overflow:hidden;border-radius:var(--r);background:var(--teal);color:#e5e3dc;padding:40px;container-type:inline-size;isolation:isolate;display:flex}
+#altbib .ab-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;z-index:-3}
+#altbib .ab-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(to top,var(--teal) 0%,var(--teal) 52%,color-mix(in srgb,var(--teal) 70%,transparent) 72%,color-mix(in srgb,var(--teal) 25%,transparent) 100%)}
+#altbib .ab-arches{position:absolute;right:-4%;top:28px;height:150%;width:auto;color:currentColor;opacity:.08;pointer-events:none;z-index:-1}
+#altbib .ab-arches path{fill:none;stroke:currentColor;stroke-width:55}
+#altbib .ab-hero-in{display:flex;flex-direction:column;gap:14px;width:100%}
+#altbib .ab-hero .ab-eyebrow{color:inherit;opacity:.75}
+#altbib .ab-wd{font-size:22px;font-style:italic;opacity:.85;margin-top:auto;padding-top:24px}
+#altbib .ab-end{font-size:clamp(34px,10cqi,72px);text-transform:uppercase;line-height:.98;letter-spacing:-.02em}
+#altbib .ab-end.pop{animation:ab-pop .5s var(--ease)}
+#altbib .ab-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+#altbib .ab-sum div{background:rgba(255,255,255,.1);border-radius:var(--r-sm);padding:16px 14px 14px}
+#altbib .ab-sum div:first-child{background:#e5e3dc;color:var(--ink)}
+#altbib .ab-sum b{display:block;font-family:var(--head);font-weight:400;font-size:clamp(22px,6.5cqi,32px);line-height:1;letter-spacing:-.03em}
+#altbib .ab-sum span{display:block;font-size:15px;line-height:1.2;opacity:.8;margin-top:8px}
+#altbib .ab-fun{list-style:none;padding:0;display:grid;gap:8px;font-size:18px;line-height:1.4;margin-top:6px}
+#altbib .ab-fun li{position:relative;padding-left:22px}
+#altbib .ab-fun li::before{content:"";position:absolute;left:2px;top:.55em;width:9px;height:9px;border-radius:3px;background:var(--accent)}
+#altbib .ab-fun b{font-weight:600;color:#fff}
+#altbib .ab-fun a{color:#fff;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:3px;white-space:nowrap}
+#altbib .ab-fun a:hover{text-decoration-color:#fff}
+
+/* ---------- Bokhylla ---------- */
+#altbib .ab-shelfcard{margin-top:20px;position:relative}
+#altbib .ab-shelfhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px 24px;flex-wrap:wrap;margin-bottom:24px}
+#altbib .ab-shelfhead h3,#altbib .ab-milescard h3{font-size:24px;text-transform:uppercase}
+#altbib .ab-shelfhead p{font-size:17px;color:var(--muted);max-width:56ch}
+#altbib .ab-shelves{display:grid;gap:26px}
+#altbib .ab-shelf h4{margin:0 0 8px;font-family:var(--head);font-weight:400;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#altbib .ab-row{display:flex;align-items:flex-end;gap:2px;height:150px;padding:0 6px;border-bottom:8px solid var(--ink);border-radius:0 0 4px 4px}
+#altbib .ab-book{flex:1 1 0;min-width:0;height:var(--h);border:0;padding:0;border-radius:4px 4px 1px 1px;background:rgba(28,28,28,.08);cursor:pointer;position:relative;overflow:hidden;transition:transform .3s var(--ease),filter .2s}
+#altbib .ab-book::after{content:"";position:absolute;inset:0;background:var(--c);transform-origin:bottom;transform:scaleY(0)}
+#altbib .ab-book.on::after{animation:ab-fill .6s var(--ease) forwards;animation-delay:var(--d,0s)}
+#altbib .ab-book span{position:absolute;left:50%;bottom:6px;transform:translateX(-50%) rotate(180deg);writing-mode:vertical-rl;font-family:var(--head);font-size:9px;letter-spacing:.04em;white-space:nowrap;color:var(--ink);opacity:.55;z-index:1;pointer-events:none}
+#altbib .ab-book.on span{color:var(--ct);opacity:.9}
+#altbib .ab-book:hover,#altbib .ab-book:focus-visible{transform:translateY(-8px)}
+#altbib .ab-book:focus-visible{outline-offset:1px}
+#altbib .ab-legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:15px;color:var(--muted)}
+#altbib .ab-legend span{display:inline-flex;align-items:center;gap:8px}
+#altbib .ab-legend i{width:12px;height:12px;border-radius:3px;background:var(--c)}
+#altbib .ab-tip{position:absolute;left:0;top:0;transform:translate(-50%,calc(-100% - 12px));background:var(--ink);color:#fff;border-radius:11px;padding:10px 14px;font-size:15px;line-height:1.35;box-shadow:var(--shadow-lg);pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:5}
+#altbib .ab-tip.show{opacity:1}
+#altbib .ab-tip b{display:block;font-family:var(--head);font-weight:400;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+
+/* ---------- Milstolpar ---------- */
+#altbib .ab-milescard{margin-top:20px}
+#altbib .ab-miles{list-style:none;padding:0;margin-top:22px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+#altbib .ab-miles li{background:#fff;border-radius:var(--r-sm);padding:16px 18px;display:grid;gap:4px;position:relative;overflow:hidden;animation:ab-up .5s var(--ease) both;animation-delay:var(--d,0s)}
+#altbib .ab-miles li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+#altbib .ab-miles small{font-family:var(--head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#altbib .ab-miles b{font-weight:600;font-size:19px;line-height:1.25}
+#altbib .ab-miles span{font-size:16px;color:var(--muted)}
+#altbib .ab-miles li.goal{background:var(--ink);color:#fff}
+#altbib .ab-miles li.goal small,#altbib .ab-miles li.goal span{color:rgba(255,255,255,.7)}
+#altbib .ab-fine{font-size:14px;color:var(--muted);margin-top:18px}
+
+@media(max-width:900px){
+  #altbib .ab-wrap{grid-template-columns:1fr}
+  #altbib .ab-hero{min-height:440px}
+}
+@media(max-width:640px){
+  #altbib{font-size:18px}
+  #altbib .ab-head{margin-bottom:32px}
+  #altbib .ab-lead{font-size:20px}
+  #altbib .ab-panel{padding:24px 20px}
+  #altbib .ab-hero{padding:30px 24px}
+  #altbib .ab-row{height:110px;gap:1px;padding:0 2px}
+  #altbib .ab-book span{display:none}
+  #altbib .ab-sum span{font-size:13px}
+  #altbib .ab-miles{grid-template-columns:1fr 1fr;gap:8px}
+  #altbib .ab-miles li{padding:14px 14px 14px 18px}
+  #altbib .ab-miles b{font-size:17px}
+  #altbib .ab-miles span{font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){
+  #altbib *,#altbib *::before,#altbib *::after{animation:none!important;transition:none!important}
+  #altbib .ab-book.on::after{transform:none}
+}
+</style>
+
+<script>
+(function(){
+'use strict';
+var root = document.getElementById('altbib');
+if (!root || root.dataset.ready) return;
+root.dataset.ready = '1';
+
+var WPM = 200;
+/* Grupper: [namn, färg, textfärg på färgen] */
+var GROUPS = [
+  ['Moseböckerna','#2f575f','#e5e3dc'], ['Historiska böcker','#a7b9c8','#1c1c1c'], ['Poetiska böcker','#c8a24a','#1c1c1c'],
+  ['Stora profeter','#c07a63','#1c1c1c'], ['Små profeter','#d4967d','#1c1c1c'],
+  ['Evangelierna','#2f575f','#e5e3dc'], ['Apostlagärningarna','#a6b6a1','#1c1c1c'], ['Paulus brev','#c5c2a0','#1c1c1c'],
+  ['Övriga brev','#1c1c1c','#e5e3dc'], ['Uppenbarelseboken','#c07a63','#1c1c1c']
+];
+/* [kort, fullständigt namn, ca antal ord, kapitel (Bibel 2000), grupp] */
+var BOOKS = [
+  ['1 Mos','Första Moseboken',38262,50,0],['2 Mos','Andra Moseboken',32685,40,0],['3 Mos','Tredje Moseboken',24541,27,0],['4 Mos','Fjärde Moseboken',32896,36,0],['5 Mos','Femte Moseboken',28352,34,0],
+  ['Jos','Josua',18854,24,1],['Dom','Domarboken',18966,21,1],['Rut','Rut',2574,4,1],['1 Sam','Första Samuelsboken',25048,31,1],['2 Sam','Andra Samuelsboken',20600,24,1],
+  ['1 Kung','Första Kungaboken',24513,22,1],['2 Kung','Andra Kungaboken',23517,25,1],['1 Krön','Första Krönikeboken',20365,29,1],['2 Krön','Andra Krönikeboken',26069,36,1],
+  ['Esra','Esra',7440,10,1],['Neh','Nehemja',10480,13,1],['Est','Ester',5633,10,1],
+  ['Job','Job',18098,42,2],['Ps','Psaltaren',42704,150,2],['Ords','Ordspråksboken',15038,31,2],['Pred','Predikaren',5579,12,2],['Höga v','Höga visan',2658,8,2],
+  ['Jes','Jesaja',37036,66,3],['Jer','Jeremia',42654,52,3],['Klag','Klagovisorna',3411,5,3],['Hes','Hesekiel',39401,48,3],['Dan','Daniel',11602,12,3],
+  ['Hos','Hosea',5174,14,4],['Joel','Joel',2033,4,4],['Am','Amos',4216,9,4],['Ob','Obadja',669,1,4],['Jon','Jona',1320,4,4],['Mika','Mika',3152,7,4],
+  ['Nah','Nahum',1284,3,4],['Hab','Habackuk',1475,3,4],['Sef','Sefanja',1616,3,4],['Hagg','Haggai',1130,2,4],['Sak','Sakarja',6443,14,4],['Mal','Malaki',1781,3,4],
+  ['Matt','Matteusevangeliet',23684,28,5],['Mark','Markusevangeliet',15166,16,5],['Luk','Lukasevangeliet',25939,24,5],['Joh','Johannesevangeliet',19094,21,5],
+  ['Apg','Apostlagärningarna',24245,28,6],
+  ['Rom','Romarbrevet',9422,16,7],['1 Kor','Första Korinthierbrevet',9462,16,7],['2 Kor','Andra Korinthierbrevet',6065,13,7],['Gal','Galaterbrevet',3084,6,7],['Ef','Efesierbrevet',3022,6,7],
+  ['Fil','Filipperbrevet',2183,4,7],['Kol','Kolosserbrevet',1979,4,7],['1 Tess','Första Thessalonikerbrevet',1837,5,7],['2 Tess','Andra Thessalonikerbrevet',1022,3,7],
+  ['1 Tim','Första Timotheosbrevet',2244,6,7],['2 Tim','Andra Timotheosbrevet',1666,4,7],['Tit','Titusbrevet',896,3,7],['Filem','Filemonbrevet',430,1,7],
+  ['Hebr','Hebreerbrevet',6897,13,8],['Jak','Jakobsbrevet',2304,5,8],['1 Pet','Första Petrusbrevet',2476,5,8],['2 Pet','Andra Petrusbrevet',1553,3,8],
+  ['1 Joh','Första Johannesbrevet',2517,5,8],['2 Joh','Andra Johannesbrevet',298,1,8],['3 Joh','Tredje Johannesbrevet',294,1,8],['Jud','Judasbrevet',608,1,8],
+  ['Upp','Uppenbarelseboken',11952,22,9]
+];
+var PRESETS = [
+  ['Hela Bibeln',0,65],['Gamla testamentet',0,38],['Nya testamentet',39,65],['Moseböckerna',0,4],
+  ['Psaltaren',18,18],['Profeterna',22,38],['Evangelierna',39,42],['Paulus brev',44,56]
+];
+var DAYNAMES = [[1,'Mån'],[2,'Tis'],[3,'Ons'],[4,'Tor'],[5,'Fre'],[6,'Lör'],[0,'Sön']];
+/* Bibliska tidsjämförelser i dagar */
+var BIBEL_URL = 'https://www.bibeln.se/bibel/B2026/';   // bibeln.se, Bibel 2026 (NT 2026 och GT 2000)
+var COMPARE = [
+  [3,'Jona i fiskens buk','tre dagar','Jona 2:1','JON.2.1-JON.2.1'],
+  [7,'skapelseveckan','sju dagar','1 Mos 1','GEN.1'],
+  [40,'Jesus i öknen','40 dagar','Matt 4:2','MAT.4.2-MAT.4.2'],
+  [150,'vattnet som steg under syndafloden','150 dagar','1 Mos 7:24','GEN.7.24-GEN.7.24'],
+  [365*7,'Jakobs första tjänst för Rakel','sju år','1 Mos 29:20','GEN.29.20-GEN.29.20'],
+  [365*40,'Israels ökenvandring','40 år','4 Mos 14:33','NUM.14.33-NUM.14.33'],
+  [365*70,'fångenskapen i Babylon','70 år','Jer 29:10','JER.29.10-JER.29.10']
+];
+var TOTAL_WORDS = BOOKS.reduce(function(s,b){ return s + b[2]; }, 0);
+var PS_WORDS = BOOKS[18][2];
+
+/* ---------- Tillstånd ---------- */
+var KEY = 'altbib-v1';
+var state = { from:0, to:65, label:'Hela Bibeln', mode:'min', min:15, kap:3, days:[0,1,2,3,4,5,6], start:'' };
+try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) for (var k in sv) if (k !== 'start') state[k] = sv[k]; } catch (e) {}
+function save(){ try { var s = {}; for (var k in state) if (k !== 'start') s[k] = state[k]; localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+
+var $ = function(s){ return root.querySelector(s); };
+var $$ = function(s){ return root.querySelectorAll(s); };
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function fmt(n, dec){ return n.toLocaleString('sv-SE', { maximumFractionDigits:dec || 0 }); }
+function iso(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function long(d){ return d.toLocaleDateString('sv-SE', { day:'numeric', month:'long', year:'numeric' }); }
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+/* ---------- Uppbyggnad ---------- */
+$('.ab-presets').innerHTML = PRESETS.map(function(p, i){ return '<button type="button" class="ab-chip" data-act="preset" data-i="' + i + '">' + p[0] + '</button>'; }).join('');
+$('.ab-days').innerHTML = DAYNAMES.map(function(d){ return '<button type="button" class="ab-day" data-act="day" data-v="' + d[0] + '">' + d[1] + '</button>'; }).join('');
+var maxW = Math.sqrt(42704);
+function shelf(title, from, to){
+  var html = '';
+  for (var i = from; i <= to; i++) {
+    var b = BOOKS[i], g = GROUPS[b[4]], h = 22 + Math.sqrt(b[2]) / maxW * 78;
+    html += '<button type="button" class="ab-book" data-act="book" data-i="' + i + '" style="--h:' + h.toFixed(1) + '%;--c:' + g[1] + ';--ct:' + g[2] + '" aria-label="' + esc(b[1]) + '"><span>' + esc(b[0]) + '</span></button>';
+  }
+  return '<div class="ab-shelf"><h4>' + title + '</h4><div class="ab-row">' + html + '</div></div>';
+}
+$('.ab-shelves').innerHTML = shelf('Gamla testamentet', 0, 38) + shelf('Nya testamentet', 39, 65);
+$('.ab-legend').innerHTML = GROUPS.filter(function(g, i){ return i !== 9; }).map(function(g){ return '<span><i style="--c:' + g[1] + '"></i>' + g[0] + '</span>'; }).join('') + '<span><i style="--c:' + GROUPS[9][1] + '"></i>Uppenbarelseboken</span>';
+var amount = $('#ab-amount'), start = $('#ab-start');
+start.value = iso(new Date());
+
+/* ---------- Beräkning ---------- */
+var R = null;   // senaste resultatet
+function compute(){
+  var books = [], unitPer = state.mode === 'min' ? state.min * WPM : state.kap;
+  for (var i = state.from; i <= state.to; i++) books.push(i);
+  var cum = 0, words = 0, finish = {};
+  books.forEach(function(i){ cum += state.mode === 'min' ? BOOKS[i][2] : BOOKS[i][3]; words += BOOKS[i][2]; finish[i] = Math.max(1, Math.ceil(cum / unitPer - 1e-9)); });
+  var sessions = finish[state.to];
+  // Datum för varje lästillfälle, utifrån valda veckodagar
+  var s0 = start.value ? new Date(start.value + 'T12:00:00') : new Date(), d = new Date(s0), dates = [null], guard = 0;
+  while (dates.length <= sessions && guard < 40000) {
+    if (state.days.indexOf(d.getDay()) >= 0) dates.push(new Date(d));
+    d.setDate(d.getDate() + 1); guard++;
+  }
+  var end = dates[Math.min(sessions, dates.length - 1)];
+  var calDays = Math.round((end - s0) / 86400000) + 1;
+  R = { books:books, finish:finish, dates:dates, sessions:sessions, words:words, end:end, calDays:calDays, start:s0,
+        perYearWords:(state.mode === 'min' ? state.min * WPM : state.kap * TOTAL_WORDS / 1189) * state.days.length * 52.18 };
+}
+
+/* ---------- Rendering ---------- */
+function countTo(el, to, dec){
+  var from = parseFloat(el.dataset.v || '0'), t0 = null; el.dataset.v = to;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = fmt(to, dec); return; }
+  function step(ts){ if (!t0) t0 = ts; var p = Math.min(1, (ts - t0) / 700), e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(from + (to - from) * e, dec); if (p < 1) requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+}
+function dateOf(i){ return R.dates[Math.min(R.finish[i], R.dates.length - 1)]; }
+
+function renderControls(){
+  $$('.ab-chip').forEach(function(b){ var p = PRESETS[+b.dataset.i]; b.setAttribute('aria-pressed', p[1] === state.from && p[2] === state.to); });
+  $$('[data-act=mode]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.v === state.mode); });
+  $$('.ab-day').forEach(function(b){ b.setAttribute('aria-pressed', state.days.indexOf(+b.dataset.v) >= 0); });
+  if (state.mode === 'min') { amount.min = 5; amount.max = 120; amount.step = 5; amount.value = state.min; }
+  else { amount.min = 1; amount.max = 20; amount.step = 1; amount.value = state.kap; }
+  updateAmount();
+}
+function updateAmount(){
+  var v = +amount.value, p = (v - amount.min) / (amount.max - amount.min) * 100;
+  amount.style.setProperty('--p', p + '%');
+  $('.ab-out').innerHTML = v + '<small>' + (state.mode === 'min' ? 'min' : (v === 1 ? 'kap' : 'kap')) + '</small>';
+  $('.ab-amount-label').textContent = state.mode === 'min' ? 'Minuter per lästillfälle' : 'Kapitel per lästillfälle';
+}
+
+function renderResult(animateShelf){
+  compute();
+  $('.ab-what').textContent = state.label + ' · du är i mål';
+  $('.ab-wd').textContent = cap(R.end.toLocaleDateString('sv-SE', { weekday:'long' }));
+  var endEl = $('.ab-end'); endEl.textContent = long(R.end); endEl.classList.remove('pop'); void endEl.offsetWidth; endEl.classList.add('pop');
+  var hours = R.words / WPM / 60;
+  countTo($('[data-n=sessions]'), R.sessions);
+  countTo($('[data-n=hours]'), hours, hours < 10 ? 1 : 0);
+  countTo($('[data-n=days]'), R.calDays);
+
+  var fun = [];
+  var bibles = R.perYearWords / TOTAL_WORDS;
+  fun.push(bibles >= 1 ? 'I den takten hinner du läsa hela Bibeln <b>' + fmt(bibles, 1) + ' gånger</b> per år.' : 'Hela Bibeln skulle ta dig ungefär <b>' + fmt(1 / bibles, 1) + ' år</b>.');
+  if (state.from !== 18 || state.to !== 18) fun.push('Psaltaren hinner du läsa <b>' + fmt(R.perYearWords / PS_WORDS, 1) + ' gånger</b> på ett år.');
+  var c = COMPARE.reduce(function(best, x){ return Math.abs(Math.log(R.calDays / x[0])) < Math.abs(Math.log(R.calDays / best[0])) ? x : best; });
+  var r = R.calDays / c[0];
+  var ref = ' (' + c[2] + ', <a href="' + BIBEL_URL + c[4] + '" target="_blank" rel="noopener" title="Läs ' + c[3] + ' på bibeln.se">' + c[3] + ' ↗</a>).';
+  fun.push(r > 0.85 && r < 1.15 ? 'Det är ungefär lika länge som ' + c[1] + ref :
+    r > 1 ? 'Det är <b>' + fmt(r, 1) + ' gånger</b> så lång tid som ' + c[1] + ref :
+            'Det är bara <b>' + fmt(r * 100) + ' %</b> av tiden för ' + c[1] + ref);
+  fun.push('Med en kopp kaffe per lästillfälle blir det <b>' + fmt(R.sessions) + ' koppar</b>.');
+  $('.ab-fun').innerHTML = fun.map(function(f){ return '<li>' + f + '</li>'; }).join('');
+
+  // Bokhyllan
+  var k = 0;
+  $$('.ab-book').forEach(function(b){
+    var i = +b.dataset.i, on = i >= state.from && i <= state.to;
+    if (animateShelf) { b.classList.remove('on'); void b.offsetWidth; }
+    b.style.setProperty('--d', on ? (k++ * 0.018).toFixed(3) + 's' : '0s');
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on);
+  });
+
+  // Milstolpar
+  var miles = [], bks = R.books, groups = [];
+  bks.forEach(function(i){ var g = BOOKS[i][4]; if (groups.indexOf(g) < 0) groups.push(g); });
+  if (groups.length >= 2) {
+    groups.forEach(function(g){ var last = bks.filter(function(i){ return BOOKS[i][4] === g; }).pop(); miles.push([GROUPS[g][1], 'Klar med', GROUPS[g][0], dateOf(last)]); });
+  } else if (bks.length >= 2 && bks.length <= 13) {
+    bks.forEach(function(i){ miles.push([GROUPS[BOOKS[i][4]][1], 'Klar med', BOOKS[i][1], dateOf(i)]); });
+  } else if (bks.length > 13) {
+    [0.25, 0.5, 0.75].forEach(function(f){ var i = bks[Math.floor(bks.length * f) - 1]; miles.push([GROUPS[BOOKS[i][4]][1], 'Klar med', BOOKS[i][1], dateOf(i)]); });
+  } else {
+    var half = R.dates[Math.max(1, Math.ceil(R.sessions / 2))];
+    miles.push([GROUPS[BOOKS[bks[0]][4]][1], 'Halvvägs', 'Halva ' + BOOKS[bks[0]][1], half]);
+  }
+  var firstWeek = R.dates[Math.min(R.dates.length - 1, state.days.length)];
+  miles.unshift(['#a7b9c8', 'Första veckan', R.start.toLocaleDateString('sv-SE', { day:'numeric', month:'long' }) + ' – ' + firstWeek.toLocaleDateString('sv-SE', { day:'numeric', month:'long' }), null, state.days.length + ' lästillfällen avklarade']);
+  $('.ab-miles').innerHTML = miles.map(function(m, i){
+    return '<li style="--c:' + m[0] + ';--d:' + (i * 0.06) + 's"><small>' + m[1] + '</small><b>' + esc(m[2]) + '</b><span>' + (m[3] ? long(m[3]) : m[4]) + '</span></li>';
+  }).join('') + '<li class="goal" style="--c:var(--accent);--d:' + (miles.length * 0.06) + 's"><small>I mål</small><b>' + esc(state.label) + '</b><span>' + long(R.end) + '</span></li>';
+  save();
+}
+
+/* ---------- Verktygstips i bokhyllan ---------- */
+var tip = $('.ab-tip'), card = $('.ab-shelfcard');
+function showTip(b){
+  var i = +b.dataset.i, bk = BOOKS[i], on = i >= state.from && i <= state.to;
+  tip.innerHTML = '<b>' + esc(bk[1]) + '</b>' + bk[3] + ' kapitel · ca ' + fmt(Math.round(bk[2] / WPM)) + ' min' + (on ? '<br>Klar ' + long(dateOf(i)) : '<br>Klicka för att läsa bara den');
+  var cr = card.getBoundingClientRect(), br = b.getBoundingClientRect();
+  var x = br.left + br.width / 2 - cr.left, w = tip.offsetWidth;
+  x = Math.max(w / 2 + 8, Math.min(cr.width - w / 2 - 8, x));
+  tip.style.left = x + 'px'; tip.style.top = (br.top - cr.top) + 'px';
+  tip.classList.add('show');
+}
+function hideTip(){ tip.classList.remove('show'); }
+root.addEventListener('pointerover', function(e){ var b = e.target.closest('.ab-book'); if (b) showTip(b); });
+root.addEventListener('pointerout', function(e){ if (e.target.closest('.ab-book')) hideTip(); });
+root.addEventListener('focusin', function(e){ var b = e.target.closest('.ab-book'); if (b) showTip(b); });
+root.addEventListener('focusout', function(e){ if (e.target.closest('.ab-book')) hideTip(); });
+
+/* ---------- Händelser ---------- */
+root.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]'); if (!b || !root.contains(b)) return;
+  var act = b.dataset.act, shelfAnim = false;
+  if (act === 'preset') { var p = PRESETS[+b.dataset.i]; state.from = p[1]; state.to = p[2]; state.label = p[0]; shelfAnim = true; }
+  else if (act === 'book') { var i = +b.dataset.i; state.from = state.to = i; state.label = BOOKS[i][1]; shelfAnim = true; hideTip(); }
+  else if (act === 'mode') { state.mode = b.dataset.v; }
+  else if (act === 'day') {
+    var v = +b.dataset.v, ix = state.days.indexOf(v);
+    if (ix >= 0) { if (state.days.length > 1) state.days.splice(ix, 1); } else state.days.push(v);
+  }
+  renderControls(); renderResult(shelfAnim);
+});
+var t;
+amount.addEventListener('input', function(){
+  state[state.mode] = +amount.value; updateAmount();
+  clearTimeout(t); t = setTimeout(function(){ renderResult(false); }, 60);
+});
+start.addEventListener('change', function(){ renderResult(false); });
+
+/* ---------- Bakgrundsbild från Utbildningssidan ----------
+   Samma bild som Teologiåret har på /utbildning (samma metod som kurskatalogen),
+   så att bilden följer med om den byts där. Bilden i koden används som reserv. */
+(function syncImage(){
+  var img = $('.ab-bg'), KEY_IMG = 'altbib-img';
+  function use(src){ if (!src || !img || img.getAttribute('src') === src) return; var pre = new Image(); pre.onload = function(){ img.src = src; }; pre.src = src; }
+  try { use(localStorage.getItem(KEY_IMG)); } catch (e) {}
+  if (!window.fetch || !window.DOMParser) return;
+  fetch('/utbildning', { credentials:'same-origin' })
+    .then(function(r){ if (!r.ok) throw 0; return r.text(); })
+    .then(function(html){
+      var doc = new DOMParser().parseFromString(html, 'text/html'), src = '';
+      [].some.call(doc.querySelectorAll('section.page-section'), function(sec){
+        var h = sec.querySelector('h1,h2,h3,h4');
+        if (!h || h.textContent.trim().toLowerCase().indexOf('teologiåret') !== 0) return false;
+        var im = [].filter.call(sec.querySelectorAll('img'), function(i){ return !i.closest('.section-background'); })[0];
+        var u = im && (im.getAttribute('data-src') || im.getAttribute('src'));
+        if (u && /^https?:/.test(u)) { src = u.split('?')[0] + '?format=1500w'; return true; }
+        return false;
+      });
+      if (src) { try { localStorage.setItem(KEY_IMG, src); } catch (e) {} use(src); }
+    })
+    .catch(function(){ /* behåll bilden i koden */ });
+})();
+
+renderControls(); renderResult(true);
+})();
+</script>

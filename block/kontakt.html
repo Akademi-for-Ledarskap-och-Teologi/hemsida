@@ -1,0 +1,207 @@
+<!-- ALT – Kontakt (översta kodblocket på /kontakt)
+     Innehållet hämtas från Google-arket "Kontaktsidan – hemsidan" (mappen ALT, jobbkontot).
+     Ändra texterna i arket – inte här. Texten nedan är bara reserv om arket inte går att nå. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=EB+Garamond:ital,wght@0,400;0,500;1,400&amp;display=swap">
+<style>
+#alt-kontakt{
+  --btn-r:10px;
+  --bg:#EDE5E0; --ink:#1C1C1C; --accent:#C07A63; --accent-d:#a96550; --teal:#2f575f;
+  --card:#FBF9F7; --muted:#5a5652; --line:rgba(28,28,28,.12);
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --ease:cubic-bezier(.2,.8,.2,1);
+  font-family:var(--body); font-size:19px; line-height:1.5; color:var(--ink);
+  max-width:1120px; margin:0 auto; padding:0 4px; -webkit-font-smoothing:antialiased;
+}
+#alt-kontakt *{box-sizing:border-box}
+#alt-kontakt p{margin:0}
+#alt-kontakt a{color:inherit;text-decoration:none}
+#alt-kontakt button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#alt-kontakt :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:8px}
+#alt-kontakt .eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+#alt-kontakt h2,#alt-kontakt h3{font-family:var(--head);font-weight:400;line-height:1.02;margin:0;letter-spacing:-.01em}
+#alt-kontakt h2{font-size:clamp(34px,5.4vw,64px);text-transform:uppercase}
+#alt-kontakt h3{font-size:21px;line-height:1.15}
+#alt-kontakt section{padding:56px 0}
+#alt-kontakt .reveal{transition:opacity .7s var(--ease),transform .7s var(--ease)}
+#alt-kontakt.js .reveal{opacity:0;transform:translateY(18px)}
+#alt-kontakt.js .reveal.in{opacity:1;transform:none}
+
+#alt-kontakt .top{padding-top:64px}
+#alt-kontakt .top-h{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:28px}
+#alt-kontakt .top-h h2{font-size:clamp(40px,6vw,76px)}
+#alt-kontakt .top-h h2 em{font-family:var(--body);font-style:italic;font-weight:400;text-transform:none;color:var(--accent);letter-spacing:0}
+#alt-kontakt .top-h p{max-width:36ch;color:var(--muted)}
+#alt-kontakt .sum{display:grid;grid-template-columns:1.45fr 1fr;gap:16px}
+#alt-kontakt .box{background:var(--card);border-radius:var(--r);padding:10px 28px;display:flex;flex-direction:column;justify-content:space-evenly}
+#alt-kontakt .box.teal{background:var(--teal);color:#e5e3dc;padding:26px 28px;display:flex;flex-direction:column;gap:14px}
+#alt-kontakt .box.teal .eyebrow{color:#e8b4a2;margin:0}
+#alt-kontakt .row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
+#alt-kontakt .row:last-child{border-bottom:0}
+#alt-kontakt .row .k{font-family:var(--head);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);flex:none}
+#alt-kontakt .row .v{display:flex;align-items:center;gap:10px;text-align:right;min-width:0}
+#alt-kontakt .mail{font-size:19px;border-bottom:1px solid currentColor;padding-bottom:1px;overflow-wrap:anywhere}
+#alt-kontakt .lnk{font-size:19px;color:var(--accent);border-bottom:1px solid currentColor}
+#alt-kontakt .teal address{font-style:normal;font-size:21px;line-height:1.35}
+#alt-kontakt .teal .tel{font-size:21px;align-self:flex-start;border-bottom:1px solid rgba(229,227,220,.5)}
+#alt-kontakt .teal .pay{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:17px;padding-top:14px;border-top:1px solid rgba(229,227,220,.2);margin:0}
+#alt-kontakt .teal .pay dt{font-family:var(--head);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.7;align-self:center}
+#alt-kontakt .teal .pay dd{margin:0;font-variant-numeric:tabular-nums;text-align:right}
+#alt-kontakt .teal .fa{font-size:15px;opacity:.75}
+#alt-kontakt .teal .copy{color:#e5e3dc}
+#alt-kontakt .pill{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border-radius:var(--btn-r);padding:10px 18px;font-family:var(--head);font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:transform .2s var(--ease),background .2s;align-self:flex-start}
+#alt-kontakt .pill:hover{transform:scale(1.04);background:var(--accent-d)}
+#alt-kontakt .pill .arr{transition:transform .2s var(--ease)}
+#alt-kontakt .pill:hover .arr{transform:translateX(3px)}
+#alt-kontakt .copy{font-family:var(--head)!important;font-size:10px!important;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px!important;border-radius:var(--btn-r);border:1px solid currentColor!important;opacity:.55;transition:opacity .2s,background .2s;flex:none}
+#alt-kontakt .copy:hover{opacity:1}
+#alt-kontakt .copy.ok{opacity:1;background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
+
+@media (max-width:900px){#alt-kontakt .sum{grid-template-columns:1fr}}
+@media (max-width:600px){
+  #alt-kontakt{font-size:18px}
+  #alt-kontakt section{padding:40px 0}
+  #alt-kontakt .top{padding-top:40px}
+  #alt-kontakt .box{padding:6px 20px}
+  #alt-kontakt .box.teal{padding:22px 20px}
+  #alt-kontakt .row{flex-direction:column;align-items:flex-start;gap:6px}
+  #alt-kontakt .row .v{text-align:left}
+  #alt-kontakt .mail{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){
+  #alt-kontakt *{transition:none!important}
+  #alt-kontakt.js .reveal{opacity:1;transform:none}
+}
+</style>
+
+<div id="alt-kontakt">
+  <section class="top">
+    <div class="top-h reveal">
+      <div><p class="eyebrow" data-f="eyebrow">Kontakt</p><h2><span data-f="h">Hör av dig</span> <em data-f="hem">till oss</em></h2></div>
+      <p data-f="ingress">Välj det som passar ditt ärende, så hamnar frågan hos den som kan svara snabbast.</p>
+    </div>
+    <div class="sum reveal">
+      <div class="box" data-f="rows">
+        <div class="row"><span class="k">Allmänna frågor</span><span class="v"><a class="mail" href="mailto:info@altutbildning.se">info@altutbildning.se</a><button class="copy" data-copy="info@altutbildning.se">Kopiera</button></span></div>
+        <div class="row"><span class="k">Studievägledning</span><span class="v"><a class="lnk" href="/studievagledning">Upplägg, behörighet, tillgodoräknanden →</a></span></div>
+        <div class="row"><span class="k">Boka lokal</span><span class="v"><a class="mail" href="mailto:bokning@altutbildning.se">bokning@altutbildning.se</a><button class="copy" data-copy="bokning@altutbildning.se">Kopiera</button></span></div>
+        <div class="row"><span class="k">Studentkåren</span><span class="v"><a class="mail" href="mailto:studentkaren@altutbildning.se">studentkaren@altutbildning.se</a><button class="copy" data-copy="studentkaren@altutbildning.se">Kopiera</button></span></div>
+        <div class="row"><span class="k">Faktura &amp; ekonomi</span><span class="v"><a class="mail" href="mailto:faktura@altutbildning.se">faktura@altutbildning.se</a><button class="copy" data-copy="faktura@altutbildning.se">Kopiera</button></span></div>
+        <div class="row"><span class="k">Vanliga frågor</span><span class="v"><a class="lnk" href="/vanliga-fragor">Kanske finns svaret redan →</a></span></div>
+      </div>
+      <div class="box teal">
+        <p class="eyebrow" data-f="besokH">Besök &amp; ring</p>
+        <address data-f="adress">Åstadalsvägen 2<br>702 21 Örebro</address>
+        <a class="tel" data-f="tel" href="tel:+4619307750">019-30 77 50</a>
+        <a class="pill" data-f="karta" href="https://www.google.com/maps/search/?api=1&amp;query=%C3%85stadalsv%C3%A4gen%202%2C%20702%2021%20%C3%96rebro" target="_blank" rel="noopener"><span>Visa på karta</span> <span class="arr">→</span></a>
+        <dl class="pay" data-f="pay">
+          <dt>Org.nr</dt><dd>802507-2813</dd>
+          <dt>Swish</dt><dd>123 226 18 57</dd>
+          <dt>Bankgiro</dt><dd>5207-7864</dd>
+        </dl>
+        <p class="fa" data-f="fa">Fakturaadress: ALT – Akademi för Ledarskap och Teologi, Ekonomi, Åstadalsvägen 2, 702 21 Örebro</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var SHEET_ID = '1QG3LY_cdjuMtNEd0V8SAMfMnlsVCnZ8hhNGfU4cq58I';
+  var TAB = 'Kontakt';
+  var root = document.getElementById('alt-kontakt');
+  if(!root) return;
+  root.classList.add('js');
+
+  function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function $(f){return root.querySelector('[data-f="'+f+'"]')}
+
+  // Enkel CSV-tolk (klarar citattecken, kommatecken och radbrytningar i celler)
+  function parseCSV(t){
+    var rows=[],row=[],cell='',q=false;
+    for(var i=0;i<t.length;i++){
+      var c=t[i];
+      if(q){ if(c=='"'){ if(t[i+1]=='"'){cell+='"';i++} else q=false } else cell+=c }
+      else if(c=='"') q=true;
+      else if(c==','){row.push(cell);cell=''}
+      else if(c=='\n'){row.push(cell);rows.push(row);row=[];cell=''}
+      else if(c!='\r') cell+=c;
+    }
+    if(cell||row.length){row.push(cell);rows.push(row)}
+    return rows;
+  }
+
+  function telHref(n){var d=String(n).replace(/[^\d+]/g,''); if(d.charAt(0)=='0') d='+46'+d.slice(1); return 'tel:'+d}
+  function isYes(v){return /^(ja|j|x|yes|1|true)$/i.test(String(v).trim())}
+
+  function render(rows){
+    var get={}, arenden=[], betal=[];
+    rows.slice(1).forEach(function(r){
+      var del=(r[0]||'').trim(), rub=(r[1]||'').trim(), txt=(r[2]||'').trim(), lnk=(r[3]||'').trim(), kop=r[4]||'';
+      if(!del || (!rub && !txt)) return;
+      var d=del.toLowerCase();
+      if(d=='ärende') arenden.push({k:rub,t:txt,l:lnk,c:isYes(kop)});
+      else if(d=='betalning') betal.push({k:rub,t:txt});
+      else get[d+'|'+rub.toLowerCase()]={t:txt,l:lnk};
+    });
+    function g(d,r){var o=get[d+'|'+r]; return o?o.t:null}
+
+    var v;
+    if((v=g('sidhuvud','överrubrik'))!=null) $('eyebrow').textContent=v;
+    if((v=g('sidhuvud','rubrik'))!=null) $('h').textContent=v;
+    if((v=g('sidhuvud','rubrik, kursiv del'))!=null) $('hem').textContent=v;
+    if((v=g('sidhuvud','ingress'))!=null) $('ingress').textContent=v;
+
+    if(arenden.length){
+      $('rows').innerHTML=arenden.map(function(a){
+        var mail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a.t);
+        var href=a.l || (mail?'mailto:'+a.t:'');
+        var cls=mail?'mail':'lnk';
+        var val=href?'<a class="'+cls+'" href="'+esc(href)+'"'+(/^https?:/i.test(href)?' target="_blank" rel="noopener"':'')+'>'+esc(a.t)+'</a>':'<span>'+esc(a.t)+'</span>';
+        var btn=a.c?'<button class="copy" data-copy="'+esc(a.t)+'">Kopiera</button>':'';
+        return '<div class="row"><span class="k">'+esc(a.k)+'</span><span class="v">'+val+btn+'</span></div>';
+      }).join('');
+    }
+
+    if((v=g('besök','rubrik i rutan'))!=null) $('besokH').textContent=v;
+    var a1=g('besök','adress rad 1'), a2=g('besök','adress rad 2');
+    if(a1!=null||a2!=null) $('adress').innerHTML=[a1,a2].filter(Boolean).map(esc).join('<br>');
+    var tel=g('besök','telefon');
+    if(tel!=null){var te=$('tel'); te.textContent=tel; te.href=telHref(tel); te.style.display=tel?'':'none'}
+    var k=get['besök|kartknapp'];
+    if(k){
+      var kp=$('karta');
+      kp.querySelector('span').textContent=k.t||'Visa på karta';
+      var adr=[a1,a2].filter(Boolean).join(', ');
+      kp.href=k.l || ('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(adr));
+    }
+
+    if(betal.length) $('pay').innerHTML=betal.map(function(b){return '<dt>'+esc(b.k)+'</dt><dd>'+esc(b.t)+'</dd>'}).join('');
+    if((v=g('faktura','fakturaadress'))!=null){var fa=$('fa'); fa.textContent=v?'Fakturaadress: '+v:''; fa.style.display=v?'':'none'}
+  }
+
+  // Kopiera-knappar
+  root.addEventListener('click',function(e){
+    var b=e.target.closest('.copy'); if(!b) return;
+    var t=b.getAttribute('data-copy');
+    function ok(){b.classList.add('ok'); b.textContent='Kopierad'; setTimeout(function(){b.classList.remove('ok'); b.textContent='Kopiera'},1600)}
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok,function(){fallback()}); else fallback();
+    function fallback(){var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); ok()}catch(x){} document.body.removeChild(ta)}
+  });
+
+  // Inflygning
+  var els=root.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in'); io.unobserve(x.target)}})},{threshold:.12});
+    els.forEach(function(el){io.observe(el)});
+  } else els.forEach(function(el){el.classList.add('in')});
+
+  // Hämta från arket
+  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(TAB)+'&_='+Date.now())
+    .then(function(r){if(!r.ok) throw 0; return r.text()})
+    .then(function(t){var rows=parseCSV(t); if(rows.length>1) render(rows)})
+    .catch(function(){/* reservtexten ligger kvar */});
+})();
+</script>

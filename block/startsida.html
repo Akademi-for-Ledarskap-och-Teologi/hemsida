@@ -1,0 +1,410 @@
+<!-- ============================================================
+     ALT – Startsida v1 (kodblock för Squarespace)
+     Ersätter allt UNDER filmblocket på startsidan.
+     Klistra in hela detta block i ett Code Block i en sektion under filmen.
+     Allt är avgränsat under #alt-start och påverkar inte resten av sidan.
+     Nyheter och kalender hämtas automatiskt från /nyheter och /kalender
+     (när sidan laddas, när man återvänder till fliken och var 15:e minut).
+     ============================================================ -->
+<div id="alt-start">
+<style>
+#alt-start{
+  --bg:#EDE5E0; --ink:#1C1C1C; --muted:#5a5652; --accent:#C07A63; --card:#FBF9F7; --line:rgba(28,28,28,.1);
+  --teal:#2f575f; --sage:#a6b6a1; --slate:#303636; --fg:#e5e3dc;
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
+  /* Samma bredd som de tre bilderna ovanför: kodblocket täcker 24 kolumner,
+     bilderna 22 – så vi drar in en kolumn + ett mellanrum på varje sida. */
+  --gap:11px;
+  max-width:none; margin:0 calc((100% - 23 * var(--gap)) / 24 + var(--gap));
+  -webkit-font-smoothing:antialiased;
+}
+@media (max-width:767px){ #alt-start{margin:0} }
+#alt-start *{box-sizing:border-box}
+#alt-start h2,#alt-start h3,#alt-start h4{font-family:var(--head);font-weight:400;line-height:1.08;margin:0;color:inherit;letter-spacing:-.01em}
+#alt-start p{margin:0}
+#alt-start a{color:inherit;text-decoration:none}
+#alt-start .eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#alt-start .pill{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:15px 26px;border-radius:12px;border:0;cursor:pointer;white-space:nowrap;transition:transform .2s var(--ease),background .2s}
+#alt-start .pill:hover{transform:scale(1.04);background:#000;color:#fff}
+#alt-start .pill--accent{background:var(--accent)}
+#alt-start .pill--accent:hover{background:#a96550}
+#alt-start .pill--light{background:var(--fg);color:var(--ink)}
+#alt-start .pill--light:hover{background:#fff;color:var(--ink)}
+#alt-start .pill .arr,#alt-start .textlink .arr{display:inline-block;transition:transform .2s var(--ease)}
+#alt-start .pill:hover .arr,#alt-start .textlink:hover .arr{transform:translateX(3px)}
+#alt-start .textlink{color:var(--accent);font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+#alt-start .textlink:hover{text-decoration:underline;text-underline-offset:3px}
+#alt-start a:focus-visible,#alt-start button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- Sektionshuvud ---------- */
+#alt-start .sec{margin-top:110px}
+#alt-start .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:32px;flex-wrap:wrap}
+#alt-start .sec-head h2{font-size:clamp(36px,5.4vw,58px);text-transform:uppercase;margin-top:10px}
+#alt-start .sec-head p{font-size:21px;color:var(--muted);margin-top:8px;max-width:36ch}
+
+/* ---------- Status (ansökan) ---------- */
+#alt-start .status{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;background:var(--card);border-radius:var(--r);padding:28px 32px;box-shadow:var(--shadow);margin-bottom:0}
+#alt-start .status__big{font-family:var(--head);font-size:84px;line-height:.85;letter-spacing:-.04em;color:var(--accent);min-width:1ch;text-align:center}
+#alt-start .status__big small{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:10px;line-height:1.2}
+#alt-start .status__label{display:flex;align-items:center;gap:8px;font-family:var(--head);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+#alt-start .live{position:relative;width:10px;height:10px;border-radius:50%;background:#4f8a5b;flex:0 0 10px}
+#alt-start .live::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;animation:as-ping 1.8s var(--ease) infinite}
+#alt-start .status[hidden]{display:none!important}
+#alt-start .status[hidden] + .sec{margin-top:0!important}
+#alt-start .status__main{font-size:26px;line-height:1.25}
+#alt-start .status__sub{font-size:17px;color:var(--muted);margin-top:2px}
+@keyframes as-ping{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+
+/* ---------- Intro + vägar in ---------- */
+#alt-start .intro{text-align:center;max-width:720px;margin:0 auto 48px}
+#alt-start .intro h2{font-size:clamp(38px,6vw,64px);margin:12px 0 16px;text-transform:uppercase}
+#alt-start .intro p{font-size:22px;color:var(--muted)}
+#alt-start .tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+#alt-start .tiles li{display:flex}
+#alt-start .tile{--tc:var(--slate);--tf:var(--fg);position:relative;width:100%;aspect-ratio:4/5;border-radius:var(--r);overflow:hidden;background:var(--tc);color:var(--tf);box-shadow:var(--shadow);isolation:isolate;transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+#alt-start .tile--teal{--tc:#2f575f;--tf:#e5e3dc}
+#alt-start .tile--terra{--tc:#c07a63;--tf:#fff}
+#alt-start .tile--slate{--tc:#303636;--tf:#e5e3dc}
+#alt-start .tile__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .8s var(--ease)}
+#alt-start .tile::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--tc) 0%,var(--tc) 30%,color-mix(in srgb,var(--tc) 55%,transparent) 55%,transparent 80%)}
+#alt-start .tile__body{position:absolute;left:0;right:0;bottom:0;padding:24px 24px 26px;display:flex;flex-direction:column;gap:8px}
+#alt-start .tile__t{font-family:var(--head);font-size:24px;line-height:1.1;text-transform:uppercase}
+#alt-start .tile__d{font-size:17px;line-height:1.35;opacity:.92}
+#alt-start .tile__go{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.88);color:#1c1c1c;display:grid;place-content:center;font-size:18px;line-height:1;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .35s var(--ease)}
+#alt-start .tile:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+#alt-start .tile:hover .tile__img{transform:scale(1.06)}
+#alt-start .tile:hover .tile__go{transform:rotate(-45deg)}
+
+/* ---------- Nyheter ---------- */
+#alt-start .news{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+#alt-start .feature{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+#alt-start .feature:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+#alt-start .feature__img{aspect-ratio:16/10;overflow:hidden;background:var(--teal)}
+#alt-start .feature__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s var(--ease)}
+#alt-start .feature:hover .feature__img img{transform:scale(1.05)}
+#alt-start .feature__body{padding:30px 32px 32px;display:flex;flex-direction:column;gap:12px;flex:1}
+#alt-start .feature h3{font-size:clamp(24px,2.6vw,32px);text-transform:uppercase}
+#alt-start .feature p{font-size:19px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#alt-start .feature .textlink{margin-top:auto;padding-top:6px}
+#alt-start .meta{display:block;line-height:1.4;font-family:var(--head);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+#alt-start .side{display:flex;flex-direction:column;gap:12px}
+#alt-start .mini{flex:1;display:grid;grid-template-columns:minmax(0,36%) minmax(0,1fr);gap:18px;align-items:center;background:var(--card);border-radius:var(--r-sm);padding:12px 18px 12px 12px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s}
+#alt-start .mini:hover{transform:translateX(4px);box-shadow:var(--shadow-lg)}
+#alt-start .mini__img{width:100%;height:auto;aspect-ratio:16/9;align-self:center;border-radius:12px;overflow:hidden;background:var(--sage)}
+#alt-start .mini__img img{width:100%;height:100%;object-fit:cover;display:block}
+#alt-start .mini h4{font-size:clamp(17px,1.5vw,20px);line-height:1.12;text-transform:uppercase;margin-top:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- Kalender ---------- */
+#alt-start .cal{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+#alt-start .next{--nc:var(--teal);border-radius:var(--r);background:var(--nc);color:var(--fg);padding:40px 40px 36px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+#alt-start .next > *{position:relative;z-index:1}
+#alt-start .next::after{content:"";position:absolute;z-index:0;right:-40px;bottom:-110px;width:260px;height:379px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22672%2065%202656%203870%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%22113%22%3E%3Cpath%20d%3D%22M728.5%203935V1393A1271.5%201271.5%200%200%201%203271.5%201393V3935%22/%3E%3Cpath%20d%3D%22M917.5%203935V1393A1082.5%201082.5%200%200%201%203082.5%201393V3935%22/%3E%3Cpath%20d%3D%22M1105.5%203935V1393A894.5%20894.5%200%200%201%202894.5%201393V3935%22/%3E%3Cpath%20d%3D%22M1293.5%203935V1393A706.5%20706.5%200%200%201%202706.5%201393V3935%22/%3E%3Cpath%20d%3D%22M1482.5%203935V1393A517.5%20517.5%200%200%201%202517.5%201393V3935%22/%3E%3Cpath%20d%3D%22M1670.5%203935V1393A329.5%20329.5%200%200%201%202329.5%201393V3935%22/%3E%3Cpath%20d%3D%22M1858.5%203935V1393A141.5%20141.5%200%200%201%202141.5%201393V3935%22/%3E%3C/svg%3E") no-repeat center/contain;opacity:.14;pointer-events:none}
+#alt-start .next__img{display:block;margin:-40px -40px 10px;aspect-ratio:16/9;overflow:hidden;background:rgba(255,255,255,.08);position:relative}
+#alt-start .next__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s var(--ease)}
+#alt-start .next__img:hover img{transform:scale(1.05)}
+#alt-start .next__img::after{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(to top,var(--nc),transparent)}
+#alt-start .next--news{--nc:#c07a63;color:#fff}
+#alt-start .next.next--news h3{font-size:clamp(32px,3.8vw,50px);line-height:1.02;max-width:none;margin:6px 0 2px;-webkit-line-clamp:4}
+#alt-start .next--news .live{background:#fff}
+#alt-start .next--news .textlink{color:#fff}
+#alt-start .next--news h3 a:hover{text-decoration:underline;text-underline-offset:4px}
+#alt-start .next .eyebrow{color:inherit;opacity:.8;display:flex;align-items:center;gap:8px}
+#alt-start .next__date{display:flex;align-items:flex-end;gap:16px;margin:8px 0 4px}
+#alt-start .next__day{font-family:var(--head);font-size:88px;line-height:.8;letter-spacing:-.05em}
+#alt-start .next__mon{font-family:var(--head);font-size:14px;letter-spacing:.12em;text-transform:uppercase;line-height:1.3;opacity:.85;padding-bottom:4px}
+#alt-start .next h3{font-size:clamp(28px,3.4vw,44px);line-height:1.02;text-transform:uppercase;max-width:none;margin:4px 0 2px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+#alt-start .next p{font-size:19px;opacity:.88;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#alt-start .facts{display:flex;flex-wrap:wrap;gap:8px}
+#alt-start .fact{display:inline-flex;align-items:center;gap:6px;font-size:16px;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 14px}
+#alt-start .next__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:auto;padding-top:14px;align-items:center}
+#alt-start .next .textlink{color:var(--fg)}
+#alt-start .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+#alt-start .list li{flex:1;display:flex}
+#alt-start .ev{flex:1;display:grid;grid-template-columns:64px minmax(0,32%) minmax(0,1fr);gap:18px;align-items:center;background:var(--card);border-radius:var(--r-sm);padding:12px 20px 12px 12px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s}
+#alt-start .ev:hover{transform:translateX(4px);box-shadow:var(--shadow-lg)}
+#alt-start .ev__date{text-align:center;border-right:1px solid var(--line);padding-right:16px;margin-left:8px}
+#alt-start .ev__date b{display:block;font-family:var(--head);font-weight:400;font-size:40px;line-height:.9;letter-spacing:-.03em;color:var(--accent)}
+#alt-start .ev__date i{display:block;font-style:normal;font-family:var(--head);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+#alt-start .ev__img{width:100%;height:auto;aspect-ratio:16/9;align-self:center;border-radius:12px;overflow:hidden;background:var(--sage)}
+#alt-start .ev__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+#alt-start .ev:hover .ev__img img{transform:scale(1.08)}
+#alt-start h2,#alt-start h3,#alt-start h4,#alt-start p{overflow-wrap:normal;word-break:normal;hyphens:manual}
+#alt-start .ev__d{display:none}
+#alt-start .ev h4{font-size:clamp(17px,1.5vw,20px);line-height:1.12;text-transform:uppercase;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#alt-start .ev__sub{font-size:16px;color:var(--muted);margin-top:4px}
+#alt-start .ex{font-size:16px;line-height:1.35;color:var(--muted);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#alt-start .ev .ex + .ev__sub{margin-top:6px;font-size:15px}
+#alt-start .ev__go{display:none!important;width:36px;height:36px;border-radius:50%;background:var(--bg);display:grid;place-content:center;font-size:16px;transition:transform .3s var(--ease),background .3s}
+#alt-start .ev:hover .ev__go{transform:rotate(-45deg);background:#e2d7d0}
+
+/* ---------- Avslut ---------- */
+#alt-start .card--dark{margin-top:110px;background:var(--ink);color:#fff;border-radius:var(--r);padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;box-shadow:var(--shadow)}
+#alt-start .card--dark h3{font-size:30px;text-transform:uppercase}
+#alt-start .card--dark p{opacity:.8;margin-top:8px;max-width:46ch}
+#alt-start .card--dark .btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* ---------- Laddning / tomt ---------- */
+#alt-start .skel{border-radius:var(--r-sm);background:linear-gradient(100deg,#f3eeea 30%,#fbf9f7 50%,#f3eeea 70%);background-size:300% 100%;animation:as-shim 1.4s infinite;min-height:110px;flex:1}
+#alt-start .skel--big{min-height:440px;border-radius:var(--r)}
+#alt-start .empty{grid-column:1/-1;background:var(--card);border-radius:var(--r);padding:40px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+#alt-start .empty a{color:var(--ink);text-decoration:underline}
+#alt-start .in{animation:as-up .7s var(--ease) both}
+@keyframes as-shim{to{background-position:-150% 0}}
+@keyframes as-up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+@media (max-width:900px){
+  #alt-start .news,#alt-start .cal{grid-template-columns:minmax(0,1fr)}
+  #alt-start .tiles{grid-template-columns:repeat(3,1fr);gap:14px}
+  #alt-start .tile__d{display:none}
+  #alt-start .tile__t{font-size:19px}
+}
+@media (max-width:640px){
+  #alt-start{font-size:18px}
+  #alt-start .status{grid-template-columns:auto 1fr;padding:22px;gap:18px;margin-bottom:64px}
+  #alt-start .status .pill{grid-column:1/-1;justify-content:center}
+  #alt-start .status__big{font-size:64px}
+  #alt-start .status__main{font-size:21px}
+  #alt-start .tiles{grid-template-columns:1fr;gap:14px}
+  #alt-start .tile{aspect-ratio:16/10}
+  #alt-start .tile__d{display:block}
+  #alt-start .sec{margin-top:80px}
+  #alt-start .feature__body{padding:24px}
+  #alt-start .mini{grid-template-columns:minmax(0,36%) minmax(0,1fr);gap:14px;padding:10px 14px 10px 10px}
+  #alt-start .mini h4,#alt-start .ev h4{font-size:15px}
+  #alt-start .ex{font-size:15px;margin-top:4px}
+  #alt-start .next{padding:32px 26px 28px}
+  #alt-start .next__day{font-size:72px}
+  #alt-start .next__img{margin:-32px -26px 8px}
+  #alt-start .ev__date{display:none}
+  #alt-start .ev__d{display:inline}
+  #alt-start .ev{grid-template-columns:minmax(0,36%) minmax(0,1fr);padding:10px 14px 10px 10px!important;gap:14px;padding:12px 14px 12px 12px}
+  #alt-start .ev__date{margin-left:0}
+  #alt-start .ev__go{display:none}
+  #alt-start .card--dark{padding:28px;margin-top:80px}
+}
+@media (prefers-reduced-motion:reduce){
+  #alt-start *,#alt-start *::before,#alt-start *::after{animation:none!important;transition:none!important}
+}
+</style>
+
+  <!-- Status: ansökan -->
+  <div class="status" data-as="status" role="status" hidden="">
+    <div class="status__big" data-as="big" aria-hidden="true"></div>
+    <div>
+      <div class="status__label"><span class="live"></span><span data-as="status-label">Ansökningsperioder</span></div>
+      <div class="status__main" data-as="status-main">Start hösttermin: 15 mars – 15 april. Start vårtermin: 15 oktober – 15 november.</div>
+      <div class="status__sub" data-as="status-sub"></div>
+    </div>
+    <a class="pill pill--accent" data-as="apply" href="/ansokan">Så ansöker du <span class="arr">→</span></a>
+  </div>
+
+  <!-- Nyheter -->
+  <section class="sec" aria-labelledby="as-news-h">
+    <div class="sec-head">
+      <div><div class="eyebrow">Aktuellt</div><h2 id="as-news-h">Nyheter</h2></div>
+      <a class="textlink" href="/nyheter">Alla nyheter <span class="arr">→</span></a>
+    </div>
+    <div class="news" data-as="news" aria-live="polite">
+      <div class="skel skel--big"></div>
+      <div class="side"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+    </div>
+  </section>
+
+  <!-- Kalender -->
+  <section class="sec" aria-labelledby="as-cal-h">
+    <div class="sec-head">
+      <div><div class="eyebrow">Kalender</div><h2 id="as-cal-h">På gång</h2></div>
+      <a class="textlink" href="/kalender">Hela kalendern <span class="arr">→</span></a>
+    </div>
+    <div class="cal" data-as="cal" aria-live="polite">
+      <div class="skel skel--big"></div>
+      <div class="side"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+    </div>
+  </section>
+
+  <!-- Avslut -->
+  <div class="card--dark">
+    <div>
+      <h3>Funderar du på att plugga hos oss?</h3>
+      <p>Studievägledningen hjälper dig att hitta rätt utbildning – eller hör av dig med vad du undrar.</p>
+    </div>
+    <div class="btns">
+      <a class="pill pill--accent" href="/studievagledning">Studievägledning <span class="arr">→</span></a>
+      <a class="pill pill--light" href="/kontakt">Kontakt</a>
+    </div>
+  </div>
+
+<script>
+(function(){
+  /* ================= CONFIG – ändra här ================= */
+  var CONFIG = {
+    newsUrl: "/nyheter",
+    calUrl: "/kalender",
+    newsCount: 5,        // 1 stor + 4 små
+    eventCount: 5,       // 1 stor + 4 i listan
+    refreshMin: 15,      // hur ofta nyheter/kalender hämtas på nytt
+    // Ansökningsperioder (samma som på /ansokan): [månad (1–12), dag]
+    // Rutan "Ansökan är öppen" visas bara under perioderna och döljs annars.
+    // Perioderna upprepas automatiskt varje år.
+    periods: [
+      { term: "hösttermin", open: [3,15],  close: [4,15],  startOffset: 0 },
+      { term: "vårtermin",  open: [10,15], close: [11,15], startOffset: 1 }
+    ]
+  };
+  var TZ = "Europe/Stockholm";
+
+  /* ================= Hjälpfunktioner ================= */
+  var root = document.getElementById("alt-start");
+  if(!root || root.dataset.init) return; root.dataset.init = "1";
+  function $(k){ return root.querySelector('[data-as="'+k+'"]'); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function text(html){ var d=document.createElement("div"); d.innerHTML=html||""; return (d.textContent||"").replace(/\s+/g," ").trim(); }
+  function img(u,w){ return u ? u.split("?")[0]+"?format="+(w||"750w") : ""; }
+  function f(ts,o){ return new Intl.DateTimeFormat("sv-SE",Object.assign({timeZone:TZ},o)).format(new Date(ts)); }
+  function mon(ts){ return f(ts,{month:"short"}).replace(".",""); }
+  function dayKey(ts){ return f(ts,{year:"numeric",month:"2-digit",day:"2-digit"}); }
+  function daysUntil(ts){ return Math.round((new Date(dayKey(ts))-new Date(dayKey(Date.now())))/864e5); }
+  function rel(ts){
+    var d=daysUntil(ts);
+    if(d<=0) return "Pågår idag"; if(d===1) return "Imorgon";
+    if(d<14) return "Om "+d+" dagar"; if(d<60) return "Om "+Math.round(d/7)+" veckor";
+    return "Om "+Math.round(d/30)+" månader";
+  }
+  function when(e){
+    var t=function(x){return f(x,{hour:"2-digit",minute:"2-digit"});};
+    if(dayKey(e.startDate)===dayKey(e.endDate)) return f(e.startDate,{weekday:"long"})+" "+t(e.startDate)+"–"+t(e.endDate);
+    return f(e.startDate,{day:"numeric",month:"short"})+" – "+f(e.endDate,{day:"numeric",month:"short"});
+  }
+  function pic(u,w,alt){ return u ? '<img src="'+esc(img(u,w))+'" alt="'+esc(alt||"")+'" loading="lazy" onerror="this.remove()">' : ""; }
+  function getJSON(url){
+    return fetch(url+"?format=json&_="+Date.now(),{credentials:"same-origin"})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); });
+  }
+
+  /* Hela ord bryts aldrig: är ett ord för långt för rutan krymps rubrikens
+     textstorlek lite i taget tills det får plats (minst 60 % av originalet). */
+  function fit(scope){
+    [].forEach.call(scope.querySelectorAll(".next h3, .mini h4"),function(h){
+      h.style.fontSize="";
+      var size=parseFloat(getComputedStyle(h).fontSize), min=size*0.6;
+      var words=(h.textContent||"").split(/\s+/), longest=0;
+      var probe=document.createElement("span");
+      probe.style.cssText="position:absolute;visibility:hidden;white-space:nowrap;font:inherit;text-transform:inherit;letter-spacing:inherit";
+      h.appendChild(probe);
+      function widest(){ var m=0; words.forEach(function(w){ probe.textContent=w; m=Math.max(m,probe.getBoundingClientRect().width); }); return m; }
+      var avail=h.clientWidth;
+      while(avail>0 && widest()>avail && size>min){ size-=1; h.style.fontSize=size+"px"; }
+      h.removeChild(probe);
+    });
+  }
+
+  /* ================= Status (ansökan) ================= */
+  var MONTHS=["januari","februari","mars","april","maj","juni","juli","augusti","september","oktober","november","december"];
+  function fd(d){ return d.getDate()+" "+MONTHS[d.getMonth()]; }
+  function renderStatus(){
+    var now=new Date(), y=now.getFullYear(), list=[];
+    [y-1,y,y+1].forEach(function(yr){ CONFIG.periods.forEach(function(p){
+      list.push({term:p.term,startYear:yr+p.startOffset,open:new Date(yr,p.open[0]-1,p.open[1],0,0,0),close:new Date(yr,p.close[0]-1,p.close[1],23,59,59)});
+    });});
+    list.sort(function(a,b){return a.open-b.open;});
+    var today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+    function dt(d){ return Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-today)/864e5); }
+    var cur=list.filter(function(p){return now>=p.open&&now<=p.close;})[0];
+    var a=$("apply");
+    if(cur){
+      var days=dt(cur.close);
+      $("status").hidden=false;
+      $("big").innerHTML = days===0 ? "!<small>Sista dagen</small>" : days+"<small>"+(days===1?"dag kvar":"dagar kvar")+"</small>";
+      $("status-label").textContent="Ansökan är öppen";
+      $("status-main").textContent="Start "+cur.term+" "+cur.startYear;
+      $("status-sub").textContent= days===0 ? "Sista dagen att ansöka är idag." : "Ansök senast "+fd(cur.close)+".";
+      a.innerHTML='Ansök nu <span class="arr">→</span>'; a.classList.add("pill--accent");
+    } else {
+      // Ansökan är stängd: dölj rutan helt så att blocken under flyttas upp.
+      // Den visas automatiskt igen när nästa period öppnar.
+      $("status").hidden=true;
+    }
+  }
+
+  /* ================= Nyheter ================= */
+  function renderNews(items){
+    var el=$("news");
+    if(!items.length){ el.innerHTML='<div class="empty">Inga nyheter just nu.</div>'; return; }
+    var n=items[0];
+    var h='<article class="next next--news in">'+
+      (n.assetUrl?'<a class="next__img" href="'+esc(n.fullUrl)+'" tabindex="-1" aria-hidden="true">'+pic(n.assetUrl,"1000w")+'</a>':'')+
+      '<div class="eyebrow"><span class="live"></span>Senaste nytt · '+esc(f(n.publishOn,{day:"numeric",month:"long",year:"numeric"}))+'</div>'+
+      '<h3><a href="'+esc(n.fullUrl)+'">'+esc(n.title)+'</a></h3>'+
+      (text(n.excerpt)?'<p>'+esc(text(n.excerpt))+'</p>':'')+
+      '<div class="next__actions"><a class="pill pill--light" href="'+esc(n.fullUrl)+'">Läs mer <span class="arr">→</span></a>'+
+      '<a class="textlink" href="'+CONFIG.newsUrl+'">Alla nyheter <span class="arr">→</span></a></div></article><div class="side">';
+    items.slice(1,CONFIG.newsCount).forEach(function(m,i){
+      h+='<a class="mini in" style="animation-delay:'+(.08*(i+1))+'s" href="'+esc(m.fullUrl)+'">'+
+        '<span class="mini__img">'+pic(m.assetUrl,"750w")+'</span>'+
+        '<span><span class="meta">'+esc(f(m.publishOn,{day:"numeric",month:"long",year:"numeric"}))+'</span><h4>'+esc(m.title)+'</h4>'+(text(m.excerpt)?'<p class="ex">'+esc(text(m.excerpt))+'</p>':'')+'</span></a>';
+    });
+    el.innerHTML=h+'</div>'; fit(el);
+  }
+
+  /* ================= Kalender ================= */
+  function renderCal(events){
+    var el=$("cal");
+    if(!events.length){ el.innerHTML='<div class="empty">Inga kommande evenemang just nu – håll utkik! <a href="'+CONFIG.calUrl+'">Till kalendern</a></div>'; return; }
+    var e=events[0], loc=e.location&&e.location.addressTitle;
+    var h='<article class="next in">'+
+      (e.assetUrl?'<a class="next__img" href="'+esc(e.fullUrl)+'" tabindex="-1" aria-hidden="true">'+pic(e.assetUrl,"1000w")+'</a>':'')+
+      '<div class="eyebrow"><span class="live"></span>Nästa · '+esc(rel(e.startDate))+'</div>'+
+      '<div class="next__date"><span class="next__day">'+esc(f(e.startDate,{day:"numeric"}))+'</span>'+
+        '<span class="next__mon">'+esc(f(e.startDate,{month:"long"}))+'<br>'+esc(f(e.startDate,{year:"numeric"}))+'</span></div>'+
+      '<h3>'+esc(e.title)+'</h3>'+
+      (text(e.excerpt)?'<p>'+esc(text(e.excerpt))+'</p>':'')+
+      '<div class="facts"><span class="fact">◷ '+esc(when(e))+'</span>'+(loc?'<span class="fact">⌖ '+esc(loc)+'</span>':'')+'</div>'+
+      '<div class="next__actions"><a class="pill pill--light" href="'+esc(e.fullUrl)+'">Läs mer <span class="arr">→</span></a>'+
+      '<a class="textlink" href="'+esc(e.fullUrl)+'?format=ical">+ Lägg till i kalender</a></div></article>';
+    var rest=events.slice(1,CONFIG.eventCount);
+    if(rest.length){
+      h+='<ul class="list" role="list">';
+      rest.forEach(function(x,i){
+        var same=dayKey(x.startDate)===dayKey(x.endDate), t=function(v){return f(v,{hour:"2-digit",minute:"2-digit"});};
+        var meta= same ? esc(f(x.startDate,{weekday:"short",day:"numeric",month:"long"}).replace(".",""))+' · <span style="white-space:nowrap">'+esc(t(x.startDate)+"–"+t(x.endDate))+'</span>'
+                       : esc(f(x.startDate,{month:"long"})===f(x.endDate,{month:"long"}) ? f(x.startDate,{day:"numeric"})+"–"+f(x.endDate,{day:"numeric",month:"long"}) : f(x.startDate,{day:"numeric",month:"long"})+" – "+f(x.endDate,{day:"numeric",month:"long"}));
+        h+='<li><a class="mini in" style="animation-delay:'+(.08*(i+1))+'s" href="'+esc(x.fullUrl)+'">'+
+          '<span class="mini__img">'+pic(x.assetUrl,"750w")+'</span>'+
+          '<span><span class="meta">'+meta+'</span><h4>'+esc(x.title)+'</h4>'+
+          (text(x.excerpt)?'<p class="ex">'+esc(text(x.excerpt))+'</p>':'')+'</span></a></li>';
+      });
+      h+='</ul>';
+    }
+    el.innerHTML=h; fit(el);
+  }
+
+  /* ================= Hämta data ================= */
+  var P = window.ALT_START_PREVIEW; // används bara i förhandsvisning utanför sajten
+  function fail(key,url,label){ $(key).innerHTML='<div class="empty">'+label+' kunde inte laddas just nu. <a href="'+url+'">Öppna sidan</a></div>'; }
+  function load(){
+    renderStatus();
+    getJSON(CONFIG.newsUrl)
+      .then(function(d){ renderNews((d.items||[]).slice(0,CONFIG.newsCount)); })
+      .catch(function(){ P ? renderNews(P.news) : fail("news",CONFIG.newsUrl,"Nyheterna"); });
+    getJSON(CONFIG.calUrl)
+      .then(function(d){
+        var now=Date.now();
+        renderCal((d.upcoming||[]).filter(function(x){return x.endDate>=now;})
+          .sort(function(a,b){return a.startDate-b.startDate;}).slice(0,CONFIG.eventCount));
+      })
+      .catch(function(){ P ? renderCal(P.events) : fail("cal",CONFIG.calUrl,"Kalendern"); });
+  }
+  load();
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ fit(root); });
+  var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ fit(root); },120); });
+  setInterval(load, CONFIG.refreshMin*60*1000);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) load(); });
+})();
+</script>
+</div>

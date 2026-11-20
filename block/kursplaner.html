@@ -1,0 +1,315 @@
+<!-- ============================================================
+     ALT – Kursplaner v2 (kodblock för Squarespace)
+     Samma formspråk som startsidan (#alt-start).
+     Kursplanerna hämtas automatiskt från Google Drive-mappen
+     "KURSPLANER HEMSIDA". Döp PDF:erna "KOD Kursnamn 26–27.pdf".
+     Allt är avgränsat under #alt-kp och påverkar inte resten av sidan.
+     ============================================================ -->
+<div id="alt-kp">
+<style>
+#alt-kp{
+  --bg:#EDE5E0; --ink:#1C1C1C; --muted:#5a5652; --accent:#C07A63; --card:#FBF9F7; --line:rgba(28,28,28,.1);
+  --teal:#2f575f; --sage:#a6b6a1; --slate:#303636; --fg:#e5e3dc;
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  /* Knappar: hörnradie ≈ 25 % av knappens höjd */
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+#alt-kp *{box-sizing:border-box}
+#alt-kp h2,#alt-kp h3,#alt-kp h4{font-family:var(--head);font-weight:400;line-height:1.08;margin:0;color:inherit;letter-spacing:-.01em;overflow-wrap:normal;word-break:normal;hyphens:manual}
+#alt-kp p{margin:0}
+#alt-kp a{color:inherit;text-decoration:none}
+#alt-kp .eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#alt-kp .pill{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:15px 26px;border-radius:12px;border:0;cursor:pointer;white-space:nowrap;transition:transform .2s var(--ease),background .2s}
+#alt-kp .pill:hover{transform:scale(1.04);background:#000;color:#fff}
+#alt-kp .pill--accent{background:var(--accent)}
+#alt-kp .pill--accent:hover{background:#a96550}
+#alt-kp .pill--light{background:var(--fg);color:var(--ink)}
+#alt-kp .pill--light:hover{background:#fff;color:var(--ink)}
+#alt-kp .pill .arr,#alt-kp .textlink .arr{display:inline-block;transition:transform .2s var(--ease)}
+#alt-kp .pill:hover .arr,#alt-kp .textlink:hover .arr{transform:translateX(3px)}
+#alt-kp .textlink{color:var(--accent);font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+#alt-kp .textlink:hover{text-decoration:underline;text-underline-offset:3px}
+#alt-kp a:focus-visible,#alt-kp button:focus-visible,#alt-kp input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#alt-kp .meta{display:block;line-height:1.4;font-family:var(--head);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+/* ---------- Sök & filter (samma kort som statusrutan på startsidan) ---------- */
+#alt-kp .tools{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;background:var(--card);border-radius:var(--r);padding:28px 32px;box-shadow:var(--shadow)}
+#alt-kp .tools__big{font-family:var(--head);font-size:84px;line-height:.85;letter-spacing:-.04em;color:var(--accent);min-width:1ch;text-align:center}
+#alt-kp .tools__big small{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:10px;line-height:1.2}
+#alt-kp .tools__mid{display:flex;flex-direction:column;gap:12px;min-width:0}
+#alt-kp .search{display:flex;align-items:center;gap:10px;padding:0 18px;border-radius:999px;background:#fff;border:1px solid var(--line);transition:border-color .2s}
+#alt-kp .search:focus-within{border-color:var(--ink)}
+#alt-kp .search svg{width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;flex:none}
+#alt-kp .search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:20px;color:var(--ink);padding:13px 0}
+#alt-kp .search input:focus-visible{outline:0}
+#alt-kp .chips{display:flex;flex-wrap:wrap;gap:6px}
+#alt-kp .chip{font-family:var(--head);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+#alt-kp .chip:hover{border-color:var(--ink)}
+#alt-kp .chip.is-on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#alt-kp .chips + .chips{padding-left:12px;border-left:1px solid var(--line)}
+#alt-kp .filters{display:flex;flex-wrap:wrap;gap:6px 0;align-items:center}
+#alt-kp .filters .chips{margin-right:12px}
+
+/* ---------- Ämnesgenvägar ---------- */
+#alt-kp .subjects{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px;display:flex;flex-direction:column;gap:12px}
+#alt-kp .subjects[hidden]{display:none}
+#alt-kp .chip{text-align:left}
+#alt-kp .chip .n{color:var(--accent);margin-left:6px}
+#alt-kp .chip.is-on .n{color:#fff;opacity:.7}
+
+/* ---------- Sektioner ---------- */
+#alt-kp .sec{margin-top:110px;scroll-margin-top:120px}
+#alt-kp .sec:first-child{margin-top:80px}
+#alt-kp .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:32px;flex-wrap:wrap}
+#alt-kp .sec-head h2{font-size:clamp(32px,4.6vw,52px);text-transform:uppercase;margin-top:10px}
+
+/* ---------- Kurskort (samma som kalenderlistan på startsidan) ---------- */
+#alt-kp .list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#alt-kp .list li{display:flex}
+#alt-kp .ev{flex:1;display:grid;grid-template-columns:116px minmax(0,1fr) auto;gap:18px;align-items:center;background:var(--card);border-radius:var(--r-sm);padding:16px 20px 16px 12px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s}
+#alt-kp .ev:hover{transform:translateX(4px);box-shadow:var(--shadow-lg)}
+#alt-kp .ev__code{min-width:0;text-align:center;border-right:1px solid var(--line);padding-right:12px;margin-left:6px}
+#alt-kp .ev__code b{display:block;white-space:nowrap;font-family:var(--head);font-weight:400;font-size:19px;line-height:.95;letter-spacing:-.02em;color:var(--accent)}
+#alt-kp .ev__code i{display:block;white-space:nowrap;font-style:normal;font-family:var(--head);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+#alt-kp .nw{white-space:nowrap}
+#alt-kp .ev > span,#alt-kp .sec-head > div{min-width:0}
+#alt-kp .sec-head > div{flex:1 1 100%}
+#alt-kp .ev h4{font-size:clamp(17px,1.5vw,20px);line-height:1.18;text-transform:uppercase;margin-top:2px;padding-top:.18em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#alt-kp .ev__go{width:36px;height:36px;border-radius:50%;background:var(--bg);display:grid;place-content:center;font-size:16px;transition:transform .3s var(--ease),background .3s}
+#alt-kp .ev:hover .ev__go{transform:rotate(-45deg);background:#e2d7d0}
+
+/* ---------- Avslut ---------- */
+#alt-kp .card--dark{margin-top:110px;background:var(--ink);color:#fff;border-radius:var(--r);padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;box-shadow:var(--shadow)}
+#alt-kp .card--dark h3{font-size:30px;text-transform:uppercase}
+#alt-kp .card--dark p{opacity:.8;margin-top:8px;max-width:46ch}
+#alt-kp .card--dark .btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* ---------- Laddning / tomt ---------- */
+#alt-kp .skel{border-radius:var(--r-sm);background:linear-gradient(100deg,#f3eeea 30%,#fbf9f7 50%,#f3eeea 70%);background-size:300% 100%;animation:kp-shim 1.4s infinite;min-height:96px}
+#alt-kp .skel-wrap{margin-top:80px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#alt-kp .empty{margin-top:80px;background:var(--card);border-radius:var(--r);padding:40px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+#alt-kp .empty a{color:var(--ink);text-decoration:underline}
+#alt-kp .in{animation:kp-up .7s var(--ease) both}
+@keyframes kp-shim{to{background-position:-150% 0}}
+@keyframes kp-up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+@media (max-width:900px){
+  #alt-kp .list,#alt-kp .skel-wrap{grid-template-columns:minmax(0,1fr)}
+  #alt-kp .tools{grid-template-columns:auto 1fr}
+  #alt-kp .tools > .pill{grid-column:1/-1;justify-content:center}
+}
+@media (max-width:640px){
+  #alt-kp{font-size:18px}
+  #alt-kp .tools{grid-template-columns:1fr;padding:22px;gap:18px}
+  #alt-kp .tools__big{display:none}
+  #alt-kp .chips + .chips{padding-left:0;border-left:0}
+  #alt-kp .sec{margin-top:80px}
+  #alt-kp .ev{grid-template-columns:96px minmax(0,1fr);padding:12px 14px 12px 10px;gap:14px}
+  #alt-kp .ev__code{margin-left:4px;padding-right:10px}
+  #alt-kp .ev__code b{font-size:17px}
+  #alt-kp .ev h4{font-size:15px}
+  #alt-kp .ev__go{display:none}
+  #alt-kp .card--dark{padding:28px;margin-top:80px}
+}
+@media (prefers-reduced-motion:reduce){
+  #alt-kp *,#alt-kp *::before,#alt-kp *::after{animation:none!important;transition:none!important}
+}
+</style>
+
+  <!-- Sök & filter -->
+  <div class="tools" role="search">
+    <div class="tools__big" data-kp="big" aria-hidden="true">–<small>kursplaner</small></div>
+    <div class="tools__mid">
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input type="search" data-kp="q" placeholder="Sök kurskod eller kursnamn" aria-label="Sök kursplan" autocomplete="off">
+      </label>
+      <div class="filters">
+        <div class="chips" data-kp="level" role="group" aria-label="Nivå">
+          <button type="button" class="chip is-on" data-v="">Alla nivåer</button>
+          <button type="button" class="chip" data-v="grund">Grundnivå</button>
+          <button type="button" class="chip" data-v="avancerad">Avancerad</button>
+        </div>
+        <div class="chips" data-kp="year" role="group" aria-label="Läsår" hidden=""></div>
+      </div>
+    </div>
+    <a class="pill pill--accent" href="/s/Hogskolekurser-2026-2027-fsy5.pdf" target="_blank" rel="noopener">Kursöversikt 2026/27 <span class="arr">→</span></a>
+    <div class="subjects" data-kp="subjects" hidden="">
+      <div class="eyebrow">Ämne</div>
+      <div class="chips" data-kp="cat" role="group" aria-label="Ämne"></div>
+    </div>
+  </div>
+
+  <div data-kp="list" aria-live="polite">
+    <div class="skel-wrap"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+  </div>
+
+  <!-- Avslut -->
+  <div class="card--dark">
+    <div>
+      <h3>Vill du läsa hos oss?</h3>
+      <p>Se vilka program kurserna ingår i och vad som krävs för att bli antagen – eller ta hjälp av studievägledningen.</p>
+    </div>
+    <div class="btns">
+      <a class="pill pill--accent" href="/utbildning">Våra program <span class="arr">→</span></a>
+      <a class="pill pill--light" href="/ansokan">Ansökan</a>
+    </div>
+  </div>
+
+<script>
+(function(){
+  /* ================= CONFIG – ändra här ================= */
+  var API_KEY   = "AIzaSyAGar9HX_-g7r35VPXiu-xL1s-dyOrvNH8"; // projekt: alt-hemsida-kursplaner (begränsad till Drive API + altutbildning.se)
+  var FOLDER_ID = "1-zFMbyd_e1Odf_ps7N1qdqigWWG2nH0Z";       // KURSPLANER HEMSIDA
+  // Ämne utifrån kurskodens två första bokstäver (för PDF:er direkt i huvudmappen).
+  // Ligger PDF:en i en undermapp används undermappens namn som ämne i stället.
+  var PREFIX = {
+    AA:"Allmänna ämnen", BI:"Bibelvetenskap", BV:"Bibelvetenskap",
+    HS:"Historisk-systematisk teologi", KM:"Kyrko- och missionsstudier",
+    FL:"Ledarkurser, ges i samverkan", PT:"Praktisk teologi",
+    RR:"Religionshistoria och religionsbeteendevetenskap",
+    RI:"Religion och interkulturell teologi", ST:"Systematisk teologi"
+  };
+
+  /* ================= Hjälpfunktioner ================= */
+  var root = document.getElementById("alt-kp");
+  if(!root || root.dataset.init) return; root.dataset.init = "1";
+  function $(k){ return root.querySelector('[data-kp="'+k+'"]'); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  // Ord med bindestreck (t.ex. "Historisk-systematisk") hålls ihop på en rad.
+  function words(s){ return esc(s).replace(/(\S*-\S*)/g,'<span class="nw">$1</span>'); }
+
+  /* Hela ord bryts aldrig: är ett ord (eller en kurskod) för brett för sin ruta
+     krymps texten lite i taget tills det får plats (minst 55 % av originalet). */
+  function fit(scope){
+    [].forEach.call(scope.querySelectorAll(".sec-head h2, .ev h4, .ev__code b, .ev__code i"),function(h){
+      h.style.fontSize="";
+      var size=parseFloat(getComputedStyle(h).fontSize), min=size*0.55;
+      var ws=(h.textContent||"").split(/\s+/).filter(Boolean);
+      var probe=document.createElement("span");
+      probe.style.cssText="position:absolute;visibility:hidden;white-space:nowrap;font:inherit;text-transform:inherit;letter-spacing:inherit";
+      h.appendChild(probe);
+      function widest(){ var m=0; ws.forEach(function(w){ probe.textContent=w; m=Math.max(m,probe.getBoundingClientRect().width); }); return m; }
+      var avail=h.clientWidth;
+      while(avail>0 && widest()>avail+0.5 && size>min){ size-=1; h.style.fontSize=size+"px"; }
+      h.removeChild(probe);
+    });
+  }
+  function slug(s){ return "kp-"+s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-"); }
+  var all = [], state = { q:"", level:"", year:"", cat:"" };
+
+  function list(folderId, pageToken){
+    var q = encodeURIComponent("'"+folderId+"' in parents and trashed=false");
+    var url = "https://www.googleapis.com/drive/v3/files?q="+q+"&key="+API_KEY+
+      "&pageSize=1000&orderBy=name&fields=nextPageToken,files(id,name,mimeType)"+
+      (pageToken ? "&pageToken="+pageToken : "");
+    return fetch(url).then(function(r){ if(!r.ok) throw new Error("Drive svarade "+r.status); return r.json(); })
+      .then(function(d){
+        if(!d.nextPageToken) return d.files||[];
+        return list(folderId, d.nextPageToken).then(function(m){ return (d.files||[]).concat(m); });
+      });
+  }
+
+  function parse(file, category){
+    // Filnamn från Drive/Mac lagrar ofta Å/Ä/Ö som bokstav + separat prick/ring (NFD).
+    // NFC slår ihop dem till ett tecken så att rätt typsnitt används även i mobilen.
+    var base = file.name.normalize("NFC").replace(/\.pdf$/i,"").replace(/_+/g," ").trim(), year = "";
+    var y = base.match(/\s+(\d{2})\s*[–-]?\s*(\d{2})$/);
+    if(y){ year = "20"+y[1]+"/"+y[2]; base = base.slice(0,y.index).trim(); }
+    var m = base.match(/^([A-Z]{2}\d{2,3}[A-Z]?)\s*[-–:]?\s*(.*)$/);
+    var code = m ? m[1] : "", title = (m ? m[2] : base) || base, fl = /^FL/.test(code);
+    // "Jesaja språklig" / "Jesaja ickespråklig" -> "Jesaja (språklig)" / "Jesaja (icke-språklig)"
+    title = title.replace(/\s*[-–]?\s*\(?\s*(icke[\s-]?)?(språklig)\s*\)?\s*$/i, function(_, icke){
+      return " (" + (icke ? "icke-språklig" : "språklig") + ")";
+    });
+    var level = fl || !code ? "" : (/^[A-Z]{2}[45]\d\d/.test(code) ? "avancerad" : "grund");
+    return { code:code, title:title, level:level, year:year, fl:fl,
+      category: category || PREFIX[code.slice(0,2)] || "Övriga kurser",
+      url: "https://drive.google.com/file/d/"+file.id+"/view" };
+  }
+
+  /* ================= Rendering ================= */
+  function render(){
+    var q = state.q.toLowerCase(), groups = {}, total = 0;
+    all.forEach(function(k){
+      if(state.level && k.level !== state.level) return;
+      if(state.year && k.year !== state.year) return;
+      if(state.cat && k.category !== state.cat) return;
+      if(q && (k.code+" "+k.title).toLowerCase().indexOf(q) < 0) return;
+      (groups[k.category] = groups[k.category] || []).push(k); total++;
+    });
+    var names = Object.keys(groups).sort(function(a,b){ return a.localeCompare(b,"sv"); });
+
+    $("big").innerHTML = total+"<small>"+(total===1?"kursplan":"kursplaner")+"</small>";
+    if(!names.length){ $("list").innerHTML = '<div class="empty">Inga kursplaner matchar din sökning.</div>'; return; }
+
+    $("list").innerHTML = names.map(function(n){
+      var items = groups[n].sort(function(a,b){ return a.code.localeCompare(b.code,"sv") || b.year.localeCompare(a.year); });
+      return '<section class="sec" id="'+slug(n)+'" aria-label="'+esc(n)+'">'+
+        '<div class="sec-head"><div><div class="eyebrow">Ämne · '+items.length+(items.length===1?" kurs":" kurser")+'</div><h2>'+words(n)+'</h2></div></div>'+
+        '<ul class="list" role="list">'+items.map(function(k,i){
+          var lvl = k.level==="grund" ? "Grundnivå" : k.level==="avancerad" ? "Avancerad" : (k.fl ? "Samverkan" : "");
+          return '<li><a class="ev in" style="animation-delay:'+Math.min(.04*i,.4)+'s" href="'+esc(k.url)+'" target="_blank" rel="noopener" aria-label="Kursplan '+esc(k.code+" "+k.title)+' (PDF)">'+
+            '<span class="ev__code"><b>'+esc(k.code||"PDF")+'</b>'+(lvl?'<i>'+lvl+'</i>':'')+'</span>'+
+            '<span>'+(k.year?'<span class="meta">Läsår '+esc(k.year)+'</span>':'')+'<h4>'+words(k.title)+'</h4></span>'+
+            '<span class="ev__go" aria-hidden="true">→</span></a></li>';
+        }).join("")+'</ul></section>';
+    }).join("");
+    fit($("list"));
+  }
+
+  function chips(el, key){
+    el.addEventListener("click", function(e){
+      var b = e.target.closest(".chip"); if(!b) return;
+      [].forEach.call(el.querySelectorAll(".chip"), function(c){ c.classList.toggle("is-on", c===b); });
+      state[key] = b.getAttribute("data-v"); render();
+    });
+  }
+
+  /* ================= Hämta data ================= */
+  list(FOLDER_ID).then(function(items){
+    var folders = items.filter(function(f){ return f.mimeType==="application/vnd.google-apps.folder"; });
+    items.forEach(function(f){ if(/\.pdf$/i.test(f.name)) all.push(parse(f)); });
+    return Promise.all(folders.map(function(fo){
+      return list(fo.id).then(function(fs){ fs.forEach(function(f){ if(/\.pdf$/i.test(f.name)) all.push(parse(f, fo.name.normalize("NFC"))); }); });
+    }));
+  }).then(function(){
+    var years = all.map(function(k){ return k.year; }).filter(Boolean)
+      .filter(function(y,i,a){ return a.indexOf(y)===i; }).sort().reverse();
+    if(years.length > 1){
+      var el = $("year"); el.hidden = false;
+      el.innerHTML = '<button type="button" class="chip is-on" data-v="">Alla läsår</button>'+
+        years.map(function(y){ return '<button type="button" class="chip" data-v="'+y+'">'+y+'</button>'; }).join("");
+    }
+    // Ämnesknappar – ett per ämne, med antal kurser
+    var count = {};
+    all.forEach(function(k){ count[k.category] = (count[k.category]||0) + 1; });
+    var cats = Object.keys(count).sort(function(a,b){ return a.localeCompare(b,"sv"); });
+    if(cats.length > 1){
+      $("subjects").hidden = false;
+      $("cat").innerHTML = '<button type="button" class="chip is-on" data-v="">Alla ämnen</button>'+
+        cats.map(function(c){ return '<button type="button" class="chip" data-v="'+esc(c)+'">'+words(c)+'</button>'; }).join("");
+    }
+    render();
+  }).catch(function(e){
+    $("big").innerHTML = "!<small>Fel</small>";
+    $("list").innerHTML = '<div class="empty">Kursplanerna kunde inte laddas just nu. Försök igen om en stund. ('+esc(e.message)+')</div>';
+  });
+
+  var t; $("q").addEventListener("input", function(e){
+    clearTimeout(t); t = setTimeout(function(){ state.q = e.target.value.trim(); render(); }, 120);
+  });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ fit(root); });
+  var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ fit(root); },120); });
+  chips($("level"), "level");
+  chips($("year"), "year");
+  chips($("cat"), "cat");
+})();
+</script>
+</div>

@@ -1,0 +1,374 @@
+<!-- =====================================================================
+     ALT – Personalregister (Squarespace kodblock)
+     Hämtar personal från Google-kalkylarket "ALT Personalregister"
+     och bilder från Drive-mappen "Personalbilder - Hemsida".
+     ---------------------------------------------------------------------
+     Kalkylarket: en rad per person.
+       Namn | E-post | <ett arbetslag per kolumn> | Profilsida
+     Står det en titel i en arbetslagskolumn visas personen under det
+     arbetslaget med den titeln. Ny kolumn = nytt arbetslag (i den ordning
+     kolumnerna står). Raderna styr ordningen inom varje arbetslag.
+     Bilder: kolumnen "Bild-ID" (Drive-filens ID) används i första hand.
+     Är API_KEY inklistrad matchas bilder i mappen dessutom automatiskt mot
+     namnet (HT26/VT26 m.m. ignoreras) för personer utan Bild-ID.
+     ===================================================================== -->
+<div id="alt-pr">
+  <div class="tools in" role="search">
+    <div class="tools__mid">
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input type="search" placeholder="Sök namn eller titel" aria-label="Sök medarbetare" data-q="">
+      </label>
+    </div>
+    <div class="teams">
+      <span class="eyebrow">Arbetslag</span>
+      <div class="chips" data-chips=""></div>
+    </div>
+  </div>
+
+  <div data-out="">
+    <div class="skel-wrap" aria-hidden="true">
+      <div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+#alt-pr{
+  --bg:#EDE5E0; --ink:#1C1C1C; --muted:#5a5652; --accent:#C07A63; --card:#FBF9F7; --line:rgba(28,28,28,.1);
+  --teal:#2f575f; --sage:#a6b6a1; --slate:#303636; --fg:#e5e3dc;
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+#alt-pr *{box-sizing:border-box}
+#alt-pr h2,#alt-pr h3{font-family:var(--head);font-weight:400;line-height:1.08;margin:0;color:inherit;letter-spacing:-.01em;overflow-wrap:normal;word-break:normal;hyphens:manual}
+#alt-pr p{margin:0}
+#alt-pr a{color:inherit;text-decoration:none}
+#alt-pr .eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#alt-pr a:focus-visible,#alt-pr button:focus-visible,#alt-pr input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* ---------- Sök & filter (samma kort som på Kursplaner) ---------- */
+#alt-pr .tools{display:grid;grid-template-columns:1fr;gap:24px;align-items:center;background:var(--card);border-radius:var(--r);padding:28px 32px;box-shadow:var(--shadow)}
+#alt-pr .tools__mid{display:flex;flex-direction:column;gap:12px;min-width:0}
+#alt-pr .search{display:flex;align-items:center;gap:10px;padding:0 18px;min-height:52px;border-radius:13px;background:#fff;border:1px solid var(--line);transition:border-color .2s}
+#alt-pr .search:focus-within{border-color:var(--ink)}
+#alt-pr .search svg{width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;flex:none}
+#alt-pr .search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:20px;color:var(--ink);padding:12px 0;-webkit-appearance:none;appearance:none}
+#alt-pr .search input:focus-visible{outline:0}
+#alt-pr .teams{border-top:1px solid var(--line);padding-top:22px;display:flex;flex-direction:column;gap:12px}
+#alt-pr .chips{display:flex;flex-wrap:wrap;gap:6px}
+#alt-pr .chip{font-family:var(--head);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:0 16px;min-height:36px;display:inline-flex;align-items:center;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;text-align:left;transition:background .2s,color .2s,border-color .2s}
+#alt-pr .chip:hover{border-color:var(--ink)}
+#alt-pr .chip.is-on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ---------- Sektioner (arbetslag) ---------- */
+#alt-pr [data-out] > .sec{margin:0;padding-top:96px;scroll-margin-top:40px}
+#alt-pr [data-out] > .sec:first-child{padding-top:80px}
+#alt-pr .sec[hidden]{display:none}
+#alt-pr .sec-head{margin-bottom:32px;text-align:center}
+#alt-pr .sec-head h2{font-size:clamp(22px,4.6vw,52px);text-transform:uppercase;margin-top:0;max-width:100%}
+
+/* ---------- Personkort ---------- */
+#alt-pr .grid{--cols:4;--gap:16px;list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:var(--gap)}
+#alt-pr .grid li{display:flex;width:calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols))}
+#alt-pr .grid li[hidden]{display:none}
+#alt-pr .grid li.br{flex:0 0 100%;width:100%;height:0;margin-top:calc(-1 * var(--gap));padding:0;pointer-events:none}
+#alt-pr .pr{position:relative;flex:1;display:flex;flex-direction:column;background:var(--card);border-radius:var(--r-sm);padding:12px 12px 18px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s}
+#alt-pr .pr:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+#alt-pr .pr__img{position:relative;aspect-ratio:4/5;border-radius:999px 999px 12px 12px;overflow:hidden;background:var(--fg)}
+#alt-pr .pr__img img{width:100%;height:100%;object-fit:cover;object-position:50% 25%;display:block;transition:transform .6s var(--ease)}
+#alt-pr .pr:hover .pr__img img{transform:scale(1.04)}
+#alt-pr .pr__init{position:absolute;inset:0;display:grid;place-content:center;font-family:var(--head);font-size:48px;letter-spacing:-.02em;color:#fff;background:var(--sage)}
+#alt-pr .pr__body{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:16px 6px 0}
+#alt-pr .pr h3{font-size:clamp(15px,1.3vw,18px);line-height:1.15;text-transform:uppercase;padding-top:.12em;min-height:calc(2 * 1.15em + .12em);display:flex;align-items:center;justify-content:center}
+#alt-pr .pr__title{display:flex;align-items:flex-start;justify-content:center;line-height:1.35;font-family:var(--head);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:6px;min-height:calc(2 * 1.35em)}
+#alt-pr .pr__link::after{content:"";position:absolute;inset:0;border-radius:var(--r-sm);z-index:1}
+#alt-pr .pr__mail{position:relative;z-index:2;align-self:stretch;display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 6px 0;padding-top:12px;border-top:1px solid var(--line);font-family:var(--head);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+#alt-pr .pr__mail .arr{display:inline-block;transition:transform .2s var(--ease)}
+#alt-pr .pr__mail:hover{color:var(--accent)}
+#alt-pr .pr__mail:hover .arr{transform:translateX(3px)}
+
+/* ---------- Laddning / tomt ---------- */
+#alt-pr .skel{border-radius:var(--r-sm);background:linear-gradient(100deg,#f3eeea 30%,#fbf9f7 50%,#f3eeea 70%);background-size:300% 100%;animation:pr-shim 1.4s infinite;aspect-ratio:4/6}
+#alt-pr .skel-wrap{margin-top:80px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+#alt-pr .empty{margin-top:80px;background:var(--card);border-radius:var(--r);padding:40px;text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+#alt-pr .empty a{color:var(--ink);text-decoration:underline}
+#alt-pr .in{animation:pr-up .7s var(--ease) both}
+@keyframes pr-shim{to{background-position:-150% 0}}
+@keyframes pr-up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+@media (max-width:1100px){
+  #alt-pr .grid{--cols:3}
+  #alt-pr .skel-wrap{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:800px){
+  #alt-pr .grid{--cols:2}
+  #alt-pr .skel-wrap{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  #alt-pr{font-size:18px}
+  #alt-pr .tools{grid-template-columns:1fr;padding:22px;gap:18px}
+  #alt-pr .teams{padding-top:18px}
+  #alt-pr [data-out] > .sec{padding-top:52px}
+  #alt-pr [data-out] > .sec:first-child{padding-top:48px}
+  #alt-pr .sec-head{margin-bottom:22px}
+  #alt-pr .sec-head h2{font-size:clamp(20px,7vw,32px)}
+  #alt-pr .grid{--gap:10px}
+  #alt-pr .pr{padding:8px 8px 14px}
+  #alt-pr .pr__body{padding:12px 2px 0}
+  #alt-pr .pr h3{font-size:13px}
+  #alt-pr .pr__title{font-size:9.5px;letter-spacing:.08em}
+  #alt-pr .pr__mail{font-size:11px;margin:10px 2px 0;padding-top:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  #alt-pr *,#alt-pr *::before,#alt-pr *::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<script>
+(function(){
+  /* ---------- Inställningar ---------- */
+  var API_KEY   = 'AIzaSyAGar9HX_-g7r35VPXiu-xL1s-dyOrvNH8';   // samma nyckel som Kursplaner-blocket
+  var SHEET_ID  = '1ce6RIhRtCEgDXdIAxtf36NvnrSMaLk49tU4GfF0feFg';   // "ALT Personalregister"
+  var SHEET_TAB = 'Blad1';
+  var FOLDER_ID = '1stOth3Eo2LZ57_sRF-AvWgdF0KRfoN7w';              // "Personalbilder - Hemsida"
+  var IMG_WIDTH = 700;
+  var SITE      = 'https://www.altutbildning.se';
+  /* Kolumner som inte är arbetslag (allt annat räknas som ett arbetslag): */
+  var FIXED     = ['namn','e-post','epost','mail','profilsida','profil','länk','bild','bild-id'];
+
+  var root = document.getElementById('alt-pr');
+  if(!root) return;
+  var out = root.querySelector('[data-out]');
+  var qEl = root.querySelector('[data-q]');
+  var chipsEl = root.querySelector('[data-chips]');
+  
+  /* ---------- Hjälpfunktioner ---------- */
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function fold(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+  function slugify(s){return fold(s).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+  function initials(n){return n.split(/[\s-]+/).filter(Boolean).map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();}
+
+  /* Normalisera ett namn/filnamn för matchning: "Åsa Molin HT25.jpg" -> "asa molin" */
+  function normName(s){
+    return fold(s)
+      .replace(/\.(jpe?g|png|webp|gif|heic|tiff?)$/,'')
+      .replace(/\b(ht|vt)\s?\d{2,4}\b/g,' ')
+      .replace(/\b(portratt|portrait|profil|profilbild|bild|beskuren|kopia|copy|final)\b/g,' ')
+      .replace(/\d+/g,' ')
+      .replace(/[^a-z]+/g,' ')
+      .trim().replace(/\s+/g,' ');
+  }
+  function lev(a,b){
+    if(a===b) return 0;
+    var m=a.length,n=b.length,d=[],i,j;
+    for(i=0;i<=m;i++){d[i]=[i];}
+    for(j=1;j<=n;j++){d[0][j]=j;}
+    for(i=1;i<=m;i++)for(j=1;j<=n;j++){
+      d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+    }
+    return d[m][n];
+  }
+  function score(person,file){
+    if(file===person) return 100;
+    if(file.indexOf(person+' ')===0) return 90;                 // "anna berg extra"
+    if(person.indexOf(file+' ')===0 && file.split(' ').length>=2) return 75; // "lena maria" -> "lena maria doss"
+    var d=lev(person,file);
+    if(d<=2 && person.length>8) return 60-d;                     // stavfel, t.ex. Novachek/Nowachek
+    return 0;
+  }
+
+  /* Enkel CSV-tolk (klarar citattecken, kommatecken och radbrytningar i celler) */
+  function parseCSV(t){
+    var rows=[],row=[],cur='',q=false,i,c;
+    for(i=0;i<t.length;i++){
+      c=t[i];
+      if(q){
+        if(c==='"'){ if(t[i+1]==='"'){cur+='"';i++;} else q=false; }
+        else cur+=c;
+      } else if(c==='"') q=true;
+      else if(c===','){row.push(cur);cur='';}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur='';}
+      else if(c!=='\r') cur+=c;
+    }
+    if(cur!==''||row.length){row.push(cur);rows.push(row);}
+    return rows;
+  }
+
+  /* ---------- Hämta data ---------- */
+  function getSheet(){
+    var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(SHEET_TAB);
+    return fetch(url).then(function(r){ if(!r.ok) throw new Error('sheet '+r.status); return r.text(); }).then(parseCSV);
+  }
+  function getImages(){
+    var files=[];
+    if(!API_KEY||/KLISTRA/.test(API_KEY)) return Promise.resolve([]);
+    function page(token){
+      var p=new URLSearchParams({
+        q:"'"+FOLDER_ID+"' in parents and trashed=false and mimeType contains 'image/'",
+        fields:'nextPageToken,files(id,name)',pageSize:'1000',key:API_KEY
+      });
+      if(token) p.set('pageToken',token);
+      return fetch('https://www.googleapis.com/drive/v3/files?'+p).then(function(r){return r.json();}).then(function(j){
+        if(j.error) throw new Error(j.error.message);
+        files=files.concat(j.files||[]);
+        return j.nextPageToken?page(j.nextPageToken):files;
+      });
+    }
+    return page().catch(function(e){ console.warn('[Personalregister] Bilder kunde inte hämtas:',e); return []; });
+  }
+
+  /* ---------- Bygg modellen ---------- */
+  function build(rows,files){
+    rows=rows.filter(function(r){return r.some(function(c){return String(c).trim();});});
+    var head=rows.shift().map(function(h){return String(h).trim();});
+    var low=head.map(function(h){return fold(h);});
+    function col(names){for(var i=0;i<low.length;i++){if(names.indexOf(low[i])>-1) return i;}return -1;}
+    var iName=col(['namn']), iMail=col(['e-post','epost','mail','email']), iProf=col(['profilsida','profil','länk','lank']), iImg=col(['bild-id','bild']);
+    var fixed=FIXED.map(fold);
+    var teams=[];
+    head.forEach(function(h,i){ if(h && fixed.indexOf(low[i])<0) teams.push({name:h,col:i,people:[]}); });
+
+    var people=rows.map(function(r){
+      var name=String(r[iName]||'').trim();
+      if(!name) return null;
+      var prof=iProf>-1?String(r[iProf]||'').trim():'';
+      if(!prof) prof=SITE+'/'+slugify(name);
+      else if(prof.charAt(0)==='/') prof=SITE+prof;
+      else if(!/^https?:\/\//i.test(prof)) prof=SITE+'/'+prof;
+      return {name:name, mail:iMail>-1?String(r[iMail]||'').trim():'', url:prof,
+              img:iImg>-1?String(r[iImg]||'').trim():'', key:normName(name)};
+    }).filter(Boolean);
+
+    /* Matcha bilder: bästa poäng först, varje bild och person används en gång */
+    var nf=files.map(function(f){return {id:f.id,name:f.name,key:normName(f.name)};});
+    people.forEach(function(p){
+      if(!p.img) return;                                        // manuell "Bild"-kolumn: filnamn eller Drive-ID
+      var hit=nf.filter(function(f){return f.name===p.img||f.id===p.img||f.key===normName(p.img);})[0];
+      p.photo=hit?hit.id:(/^[\w-]{20,}$/.test(p.img)?p.img:null);
+      if(hit) hit.used=true;
+    });
+    var pairs=[];
+    people.forEach(function(p,pi){ if(p.photo) return; nf.forEach(function(f,fi){ if(f.used) return; var s=score(p.key,f.key); if(s) pairs.push([s,pi,fi]); }); });
+    pairs.sort(function(a,b){return b[0]-a[0];});
+    pairs.forEach(function(x){ var p=people[x[1]],f=nf[x[2]]; if(p.photo||f.used) return; p.photo=f.id; f.used=true; });
+    var missing=people.filter(function(p){return !p.photo;}).map(function(p){return p.name;});
+    var unused=nf.filter(function(f){return !f.used;}).map(function(f){return f.name;});
+    if(missing.length) console.info('[Personalregister] Saknar bild:',missing.join(', '));
+    if(unused.length) console.info('[Personalregister] Bilder utan matchning:',unused.join(', '));
+
+    /* Fördela per arbetslag (radordning = ordning inom arbetslaget) */
+    rows.forEach(function(r,ri){
+      var p=people.filter(function(x){return x.name===String(r[iName]||'').trim();})[0];
+      if(!p) return;
+      teams.forEach(function(t){ var title=String(r[t.col]||'').trim(); if(title) t.people.push({p:p,title:title}); });
+    });
+    return {teams:teams.filter(function(t){return t.people.length;}), people:people};
+  }
+
+  /* ---------- Rendera ---------- */
+  function card(e){
+    var p=e.p, img;
+    if(p.photo){
+      var src='https://lh3.googleusercontent.com/d/'+p.photo+'=w'+IMG_WIDTH;
+      var alt='https://drive.google.com/thumbnail?id='+p.photo+'&sz=w'+IMG_WIDTH;
+      img='<img src="'+src+'" alt="'+esc(p.name)+'" loading="lazy" decoding="async" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=\''+alt+'\'}">';
+    } else {
+      img='<span class="pr__init" aria-hidden="true">'+esc(initials(p.name))+'</span>';
+    }
+    return '<li data-s="'+esc(fold(p.name+' '+e.title))+'"><article class="pr">'+
+      '<div class="pr__img">'+img+'</div>'+
+      '<div class="pr__body">'+
+        '<h3><a class="pr__link" href="'+esc(p.url)+'">'+esc(p.name)+'</a></h3>'+
+        '<span class="pr__title">'+esc(e.title)+'</span>'+
+      '</div>'+
+      (p.mail?'<a class="pr__mail" href="mailto:'+esc(p.mail)+'" title="'+esc(p.mail)+'" aria-label="Mejla '+esc(p.name)+' ('+esc(p.mail)+')">Maila mig <span class="arr" aria-hidden="true">→</span></a>':'<span class="pr__mail" aria-hidden="true">&nbsp;</span>')+
+    '</article></li>';
+  }
+
+  var state={team:'all',q:''}, model;
+
+  function render(m){
+    model=m;
+    out.innerHTML=m.teams.map(function(t,i){
+      return '<section class="sec in" id="pr-'+slugify(t.name)+'" data-team="'+i+'" aria-labelledby="pr-h-'+i+'">'+
+        '<div class="sec-head">'+
+        '<h2 id="pr-h-'+i+'">'+esc(t.name)+'</h2></div>'+
+        '<ul class="grid">'+t.people.map(card).join('')+'</ul></section>';
+    }).join('')+'<div class="empty" data-empty hidden>Ingen medarbetare matchar sökningen.</div>';
+
+    chipsEl.innerHTML='<button type="button" class="chip is-on" data-t="all">Alla</button>'+
+      m.teams.map(function(t,i){return '<button type="button" class="chip" data-t="'+i+'">'+esc(t.name)+'</button>';}).join('');
+    apply();
+  }
+
+  /* Krymper en rubrik som är bredare än sin behållare (t.ex. långa ord på mobil) */
+  function fit(){
+    out.querySelectorAll('.sec-head h2, .pr h3').forEach(function(h){
+      h.style.fontSize='';
+      var w=h.clientWidth, guard=0;
+      if(!w) return;
+      var fs=parseFloat(getComputedStyle(h).fontSize);
+      while(h.scrollWidth>w+1 && fs>11 && guard++<40){ fs-=1; h.style.fontSize=fs+'px'; }
+    });
+  }
+  /* Jämna rader: fördelar korten så att raderna blir så lika långa som möjligt
+     (t.ex. 5 = 3+2, 9 = 3+3+3, 14 = 4+4+3+3). Kortens storlek ändras inte. */
+  function balance(){
+    out.querySelectorAll('.grid').forEach(function(ul){
+      ul.querySelectorAll('li.br').forEach(function(b){ b.remove(); });
+      var items=[].filter.call(ul.children,function(li){ return !li.hidden; });
+      var n=items.length, max=parseInt(getComputedStyle(ul).getPropertyValue('--cols'),10)||4;
+      if(n<=max) return;
+      var rows=Math.ceil(n/max), base=Math.floor(n/rows), extra=n%rows, idx=0;
+      for(var r=0;r<rows-1;r++){
+        idx+=base+(r<extra?1:0);
+        var br=document.createElement('li'); br.className='br'; br.setAttribute('aria-hidden','true');
+        items[idx-1].parentNode.insertBefore(br,items[idx-1].nextSibling);
+      }
+    });
+  }
+  var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){ balance(); fit(); },150); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ fit(); });
+
+  function apply(){
+    var q=fold(state.q).trim(), any=false;
+    out.querySelectorAll('.sec').forEach(function(sec){
+      var on=state.team==='all'||sec.getAttribute('data-team')===state.team, n=0;
+      sec.querySelectorAll('li:not(.br)').forEach(function(li){
+        var ok=on&&(!q||li.getAttribute('data-s').indexOf(q)>-1);
+        li.hidden=!ok;
+        if(ok) n++;
+      });
+      sec.hidden=!n;
+      if(n) any=true;
+    });
+    out.querySelector('[data-empty]').hidden=any;
+    balance();
+    fit();
+    chipsEl.querySelectorAll('.chip').forEach(function(c){
+      var on=c.getAttribute('data-t')===state.team;
+      c.classList.toggle('is-on',on); c.setAttribute('aria-pressed',on);
+    });
+  }
+
+  chipsEl.addEventListener('click',function(e){
+    var b=e.target.closest('.chip'); if(!b) return;
+    state.team=b.getAttribute('data-t'); apply();
+    if(state.team!=='all'){ var s=out.querySelector('.sec[data-team="'+state.team+'"]'); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+  qEl.addEventListener('input',function(){ state.q=qEl.value; apply(); });
+
+  Promise.all([getSheet(),getImages()]).then(function(r){ render(build(r[0],r[1])); })
+    .catch(function(e){
+      console.error('[Personalregister]',e);
+      out.innerHTML='<div class="empty">Personalregistret kunde inte laddas just nu. Kontakta oss på <a href="mailto:info@altutbildning.se">info@altutbildning.se</a>.</div>';
+    });
+})();
+</script>
