@@ -21,7 +21,7 @@ En ändring som sparas (committas) här syns på hemsidan efter 1–2 minuter.
 |---|---|---|
 | `sidfot` | alla sidor (sidfot) | Sidfoten (ligger i sidfoten på alla sidor) |
 | `startsida` | / (startsidan) | Startsidan, allt under videon |
-| `dagens-ord` | / (startsidan) | Dagens ord (grekiska + hebreiska) på startsidan |
+| `dagens-ord` | / (startsidan) | Dagens ord (grekiska) på startsidan |
 | `kontakt` | /kontakt | Översta delen av /kontakt |
 | `personalregister` | /kontakt | Personalregistret på /kontakt |
 | `pastorsprogram` | /pastorsprogram | Klickbar årsplan på /pastorsprogram |

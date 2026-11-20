@@ -1,10 +1,12 @@
 <!--
   ============================================================
-  ALT – DAGENS ORD (grekiska + hebreiska) – för altutbildning.se
+  ALT – DAGENS ORD (grekiska) – för altutbildning.se
   ============================================================
   Klistra in HELA filen i ett Squarespace-kodblock.
   Design: samma formspråk som kurskatalogen och ansökningsguiden.
   Orden byts automatiskt varje dag (samma ord för alla besökare samma dag).
+  Bara grekiskan visas. Vill du ta tillbaka hebreiskan: ta bort // framför
+  hebreiska-raden i LANGS längre ner och sätt .ao-grid till repeat(2,minmax(0,1fr)).
   Lägg till fler ord i listorna GR och HE längre ner:
     [ord, translitteration, betydelse, förklaring, Strong-nummer, versreferens]
   ============================================================
@@ -16,7 +18,7 @@
     <div>
       <p class="ao-eyebrow ao-date"></p>
       <h2 class="ao-title">Dagens ord</h2>
-      <p class="ao-lead">Gissa vad orden betyder – och vänd sedan korten.</p>
+      <p class="ao-lead">Gissa vad ordet betyder – och vänd sedan kortet.</p>
     </div>
   </header>
   <div class="ao-grid"></div>
@@ -50,7 +52,7 @@
 #altord .ao-lead{font-size:18px;color:var(--muted)}
 
 /* ---------- Kort ---------- */
-#altord .ao-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+#altord .ao-grid{display:grid;grid-template-columns:1fr;gap:20px}
 #altord .ao-flip{perspective:1600px;animation:ao-up .6s var(--ease) both}
 #altord .ao-flip:nth-child(2){animation-delay:.08s}
 #altord .ao-flip{display:flex}
@@ -385,7 +387,7 @@ function bibUrl(ref){
 var ARCHES = '<svg class="ao-arches" viewBox="325 29 1282 1871" preserveAspectRatio="xMaxYMin meet" aria-hidden="true"><path d="M351 1900V670A614 614 0 0 1 1579 670V1900"/><path d="M442 1900V670A523 523 0 0 1 1488 670V1900"/><path d="M533 1900V670A432 432 0 0 1 1397 670V1900"/><path d="M624 1900V670A341 341 0 0 1 1306 670V1900"/><path d="M715 1900V670A250 250 0 0 1 1215 670V1900"/><path d="M806 1900V670A159 159 0 0 1 1124 670V1900"/><path d="M897 1900V670A68 68 0 0 1 1033 670V1900"/></svg>';
 var LANGS = [
   { list:GR, cls:'gr', lang:'grc', tts:'el-GR', label:'Grekiska', sub:'Nya testamentet', c:'#2f575f', fg:'#ffffff', shift:0 },
-  { list:HE, cls:'he', lang:'he',  tts:'he-IL', label:'Hebreiska', sub:'Gamla testamentet', c:'#c07a63', fg:'#ffffff', shift:7 }
+  // { list:HE, cls:'he', lang:'he',  tts:'he-IL', label:'Hebreiska', sub:'Gamla testamentet', c:'#c07a63', fg:'#ffffff', shift:7 }
 ];
 var canSpeak = 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
 var $ = function(s){ return root.querySelector(s); };
