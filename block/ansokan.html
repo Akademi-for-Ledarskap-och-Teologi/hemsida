@@ -57,14 +57,6 @@
 
 /* ---------- Programrutor ---------- */
 #alt-ansokan .tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-/* Programrutor på breda sidor – som i kurskatalogen */
-@container altans (min-width:1250px){
-  #alt-ansokan .tile{aspect-ratio:5/4}
-}
-@container altans (min-width:1900px){
-  #alt-ansokan .tiles{grid-template-columns:repeat(6,1fr)}
-  #alt-ansokan .tile{aspect-ratio:4/5}
-}
 #alt-ansokan .tiles li{display:flex}
 #alt-ansokan .tile[data-path="teologi"]   {--tc:#2f575f;--tf:#e5e3dc}
 #alt-ansokan .tile[data-path="pastor"]    {--tc:#c07a63;--tf:#fff}
@@ -221,6 +213,14 @@
 #alt-ansokan details.student h4{font-size:14px;text-transform:uppercase;margin-bottom:6px}
 #alt-ansokan details.student a{color:var(--ink)}
 
+/* Programrutor på breda sidor – som i kurskatalogen */
+@container altans (min-width:1250px){
+  #alt-ansokan .tile{aspect-ratio:5/4}
+}
+@container altans (min-width:1900px){
+  #alt-ansokan .tiles{grid-template-columns:repeat(6,1fr)}
+  #alt-ansokan .tile{aspect-ratio:4/5}
+}
 @media (max-width:900px){
   #alt-ansokan .tiles{grid-template-columns:repeat(2,1fr)}
 }
