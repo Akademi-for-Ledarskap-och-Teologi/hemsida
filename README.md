@@ -30,6 +30,8 @@ En ändring som sparas (committas) här syns på hemsidan efter 1–2 minuter.
 | `bibellasningskalkylator` | /vanliga-fragor | Bibelläsningskalkylatorn på /vanliga-fragor |
 | `ips-publikationer` | /ips-publikationer | Publikationslistan på /ips-publikationer |
 | `uppsatser` | /uppsatser | Uppsatsarkivet på /uppsatser |
+| `kurskatalog` | /kurskatalog (opublicerad) | Kurskatalogen med studieplan |
+| `ansokan` | /testansokan (opublicerad) | Ny ansökningsguide, ska ersätta /ansokan |
 
 ## Ändra något
 
