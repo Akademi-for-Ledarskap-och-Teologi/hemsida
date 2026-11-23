@@ -29,6 +29,7 @@ En ändring som sparas (committas) här syns på hemsidan efter 1–2 minuter.
 | `teologiaret` | /teologiaret | Klickbar studieplan på /teologiaret |
 | `teologiprogram` | /teologiprogram | Klickbar årsplan på Teologiprogrammets sida |
 | `diakoniterminen` | /diakoniterminen | Klickbar studiegång på /diakoniterminen |
+| `missionsterminen` | /missionsterminen | Klickbar studiegång på /missionsterminen |
 | `bibellasningskalkylator` | /vanliga-fragor | Bibelläsningskalkylatorn på /vanliga-fragor |
 | `ips-publikationer` | /ips-publikationer | Publikationslistan på /ips-publikationer |
 | `uppsatser` | /uppsatser | Uppsatsarkivet på /uppsatser |
