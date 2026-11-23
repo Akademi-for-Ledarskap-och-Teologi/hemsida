@@ -1,0 +1,679 @@
+<!-- ============================================================
+     ALT – Ansökningsguide v2 (kodblock för Squarespace)
+     Klistra in hela detta block i ett Code Block på /ansokan.
+     Allt är avgränsat under #alt-ansokan och påverkar inte resten av sidan.
+     Datum för ansökningsperioderna ändras i CONFIG i skriptet.
+     ============================================================ -->
+<div id="alt-ansokan">
+<style>
+#alt-ansokan{
+  --bg:#EDE5E0; --ink:#1C1C1C; --muted:#5a5652; --accent:#C07A63; --card:#FBF9F7; --line:rgba(28,28,28,.1);
+  --c:#1C1C1C; --fg:#E5E3DC; /* temafärg – byts till valt programs färg */
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
+  max-width:1040px; margin:0 auto; -webkit-font-smoothing:antialiased;hyphens:none;-webkit-hyphens:none;word-break:normal;overflow-wrap:normal;
+}
+#alt-ansokan *{box-sizing:border-box}
+#alt-ansokan h2,#alt-ansokan h3,#alt-ansokan h4{font-family:var(--head);font-weight:400;line-height:1.08;margin:0;color:inherit;letter-spacing:-.01em}
+#alt-ansokan p{margin:0}
+#alt-ansokan a{color:inherit}
+#alt-ansokan button{font:inherit;color:inherit}
+#alt-ansokan .eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#alt-ansokan .pill{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;text-decoration:none;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:15px 26px;border-radius:12px;border:0;cursor:pointer;transition:transform .2s var(--ease),background .2s}
+#alt-ansokan .pill:hover{transform:scale(1.04);background:#000;color:#fff}
+#alt-ansokan .pill--accent{background:var(--accent)}
+#alt-ansokan .pill--accent:hover{background:#a96550}
+#alt-ansokan .pill--theme{background:var(--c);color:var(--fg)}
+#alt-ansokan .pill--theme:hover{background:var(--c);color:var(--fg);filter:brightness(.92)}
+#alt-ansokan .pill .arr{transition:transform .2s var(--ease)}
+#alt-ansokan .pill:hover .arr{transform:translateX(3px)}
+#alt-ansokan .textlink{color:var(--accent);text-decoration:none;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+#alt-ansokan .textlink:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Status ---------- */
+#alt-ansokan .status{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;background:var(--card);border-radius:var(--r);padding:28px 32px;box-shadow:var(--shadow);margin-bottom:96px}
+#alt-ansokan .status__big{font-family:var(--head);font-size:84px;line-height:.85;letter-spacing:-.04em;color:var(--accent);min-width:1ch;text-align:center}
+#alt-ansokan .status__big small{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:10px;line-height:1.2}
+#alt-ansokan .status__label{display:flex;align-items:center;gap:8px;font-family:var(--head);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+#alt-ansokan .live{position:relative;width:10px;height:10px;border-radius:50%;background:#4f8a5b}
+#alt-ansokan .live::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;animation:alt-ping 1.8s var(--ease) infinite}
+#alt-ansokan .status.is-closed .live{background:var(--accent)}
+#alt-ansokan .status.is-closed .live::after{animation:none}
+#alt-ansokan .status__main{font-size:26px;line-height:1.25}
+#alt-ansokan .status__sub{font-size:17px;color:var(--muted);margin-top:2px}
+@keyframes alt-ping{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+
+/* ---------- Intro ---------- */
+#alt-ansokan .intro{text-align:center;max-width:720px;margin:0 auto 48px}
+#alt-ansokan .intro h2{font-size:clamp(38px,6vw,64px);margin:12px 0 16px;text-transform:uppercase}
+#alt-ansokan .intro p{font-size:22px;color:var(--muted)}
+#alt-ansokan .intro .eyebrow{font-size:clamp(20px,2.6vw,28px);letter-spacing:.18em}
+
+/* ---------- Programrutor ---------- */
+#alt-ansokan .tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+#alt-ansokan .tiles li{display:flex}
+#alt-ansokan .tile[data-path="teologi"]   {--tc:#2f575f;--tf:#e5e3dc}
+#alt-ansokan .tile[data-path="pastor"]    {--tc:#c07a63;--tf:#fff}
+#alt-ansokan .tile[data-path="diakoni"]   {--tc:#a6b6a1;--tf:#1c1c1c}
+#alt-ansokan .tile[data-path="mission"]   {--tc:#c8a24a;--tf:#1c1c1c}
+#alt-ansokan .tile[data-path="master"]    {--tc:#303636;--tf:#e5e3dc}
+#alt-ansokan .tile[data-path="fristaende"]{--tc:#c5c2a0;--tf:#1c1c1c}
+#alt-ansokan .tile{container-type:inline-size;position:relative;width:100%;aspect-ratio:4/5;border:0;padding:0;border-radius:var(--r);overflow:hidden;cursor:pointer;text-align:left;background:var(--tc);color:var(--tf);box-shadow:var(--shadow);isolation:isolate;transition:transform .45s var(--ease),box-shadow .45s var(--ease),opacity .35s,filter .35s}
+#alt-ansokan .tile__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .8s var(--ease)}
+#alt-ansokan .tile::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--tc) 0%,var(--tc) 34%,color-mix(in srgb,var(--tc) 55%,transparent) 58%,transparent 82%)}
+#alt-ansokan .tile__body{position:absolute;left:0;right:0;bottom:0;padding:24px 24px 26px;display:flex;flex-direction:column;gap:8px}
+#alt-ansokan .tile__t{font-family:var(--head);font-size:clamp(15px,6.4cqi,22px);line-height:1.1;text-transform:uppercase;letter-spacing:-.005em;hyphens:none}
+#alt-ansokan .tile__d{font-size:17px;line-height:1.35;opacity:.92}
+#alt-ansokan .tile__go{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:25%;background:rgba(255,255,255,.88);color:#1c1c1c;display:grid;place-content:center;font-size:18px;line-height:1;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .35s var(--ease),background .35s}
+#alt-ansokan .tile:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+#alt-ansokan .tile:hover .tile__img{transform:scale(1.06)}
+#alt-ansokan .tile:hover .tile__go{transform:rotate(90deg)}
+#alt-ansokan .tile:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+#alt-ansokan .tiles.has-choice .tile[aria-pressed="false"]{opacity:.5;filter:saturate(.6)}
+#alt-ansokan .tiles.has-choice .tile[aria-pressed="false"]:hover{opacity:.9;filter:none}
+#alt-ansokan .tile[aria-pressed="true"]{box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--tc),var(--shadow-lg);transform:translateY(-4px)}
+#alt-ansokan .tile[aria-pressed="true"] .tile__go{background:var(--tc);color:var(--tf);transform:none}
+#alt-ansokan .tile[aria-pressed="true"] .tile__go::before{content:"✓";font-weight:700}
+#alt-ansokan .tile[aria-pressed="false"] .tile__go::before{content:"+"}
+#alt-ansokan .clear-row{display:flex;justify-content:center;min-height:56px;align-items:center}
+#alt-ansokan .clear{background:var(--card);border:0;border-radius:10px;padding:9px 18px;font-size:16px;cursor:pointer;box-shadow:var(--shadow);transition:transform .2s var(--ease)}
+#alt-ansokan .clear:hover{transform:scale(1.04)}
+
+/* ---------- Resultat ---------- */
+#alt-ansokan .result{display:none;margin-top:32px}
+#alt-ansokan .result.is-visible{display:block}
+#alt-ansokan .result.is-visible > *{animation:alt-up .7s var(--ease) both}
+#alt-ansokan .result.is-visible > *:nth-child(2){animation-delay:.08s}
+#alt-ansokan .result.is-visible > *:nth-child(3){animation-delay:.16s}
+#alt-ansokan .result.is-visible > *:nth-child(4){animation-delay:.24s}
+@keyframes alt-up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+#alt-ansokan .hero{container-type:inline-size;border-radius:var(--r);background:var(--c);color:var(--fg);padding:56px 48px;position:relative;overflow:hidden;margin-bottom:24px}
+#alt-ansokan .arches{position:absolute;right:4%;top:28px;height:150%;width:auto;color:currentColor;opacity:.16;pointer-events:none}
+#alt-ansokan .arches path{fill:none;stroke:currentColor;stroke-width:55;stroke-linecap:butt}
+@media (max-width:640px){#alt-ansokan .arches{right:-18%;height:130%;opacity:.12}}
+#alt-ansokan .hero .eyebrow{color:inherit;opacity:.75}
+#alt-ansokan .hero h3{font-size:clamp(18px,6cqi,52px);text-transform:uppercase;margin:10px 0 12px;max-width:100%;position:relative;z-index:1}
+#alt-ansokan .hero p{position:relative;z-index:1}
+#alt-ansokan .hero p{font-size:21px;max-width:40ch;opacity:.9}
+
+#alt-ansokan .period{position:relative;z-index:1;margin-top:28px;display:flex;flex-direction:column;gap:12px}
+#alt-ansokan .period__status{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+#alt-ansokan .period__chip{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;border-radius:9px;background:var(--fg);color:var(--c)}
+#alt-ansokan .period__chip i{width:8px;height:8px;border-radius:50%;background:#4f8a5b;position:relative}
+#alt-ansokan .period__chip.is-open i::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;animation:alt-ping 1.8s var(--ease) infinite}
+#alt-ansokan .period__chip.is-closed i{background:#b4553d}
+#alt-ansokan .period__now{font-size:18px}
+#alt-ansokan .period__list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:16px;opacity:.85}
+#alt-ansokan .period__list b{font-family:var(--head);font-weight:400;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+#alt-ansokan .panel{background:var(--card);border-radius:var(--r);padding:40px 44px;box-shadow:var(--shadow);margin-bottom:24px}
+#alt-ansokan .panel__head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
+#alt-ansokan .panel__head h3{font-size:30px;text-transform:uppercase}
+#alt-ansokan .panel__head p{color:var(--muted);font-size:17px;margin-top:6px}
+
+/* Ring */
+#alt-ansokan .ring{position:relative;width:84px;height:84px;flex:0 0 84px}
+#alt-ansokan .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+#alt-ansokan .ring circle{fill:none;stroke-width:8}
+#alt-ansokan .ring .bg{stroke:var(--line)}
+#alt-ansokan .ring .fg{stroke:var(--c);stroke-linecap:round;transition:stroke-dashoffset .6s var(--ease)}
+#alt-ansokan .ring span{position:absolute;inset:0;display:grid;place-content:center;font-family:var(--head);font-size:18px}
+#alt-ansokan .ring.is-full span{color:var(--ink)}
+#alt-ansokan .done-msg{display:none;align-items:center;gap:10px;background:color-mix(in srgb,var(--c) 18%,#fff);border-radius:var(--r-sm);padding:14px 18px;margin-top:16px;font-size:18px}
+#alt-ansokan .done-msg.is-visible{display:flex;animation:alt-up .5s var(--ease) both}
+
+/* Checklista */
+#alt-ansokan .check{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+#alt-ansokan .check li{display:grid;grid-template-columns:30px 1fr;gap:4px 16px;align-items:start;background:#fff;border-radius:var(--r-sm);padding:16px 18px;transition:background .25s,transform .25s var(--ease)}
+#alt-ansokan .check li:hover{transform:translateX(3px)}
+#alt-ansokan .check input{appearance:none;-webkit-appearance:none;width:28px;height:28px;margin:0;border-radius:25%;border:2px solid rgba(28,28,28,.28);cursor:pointer;display:grid;place-content:center;background:#fff;transition:background .25s,border-color .25s,transform .25s var(--ease)}
+#alt-ansokan .check input:checked{background:var(--c);border-color:var(--c);transform:scale(1.08)}
+#alt-ansokan .check input:checked::after{content:"";width:7px;height:13px;border:solid var(--fg);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+#alt-ansokan .check input:focus-visible,#alt-ansokan button:focus-visible,#alt-ansokan a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#alt-ansokan .check label{cursor:pointer;padding-top:1px}
+#alt-ansokan .check .t{display:block;font-size:20px;line-height:1.3;transition:opacity .25s}
+#alt-ansokan .check .d{display:block;font-size:16px;color:var(--muted)}
+#alt-ansokan .check li.is-done{background:color-mix(in srgb,var(--c) 10%,#fff)}
+#alt-ansokan .check li.is-done .t{opacity:.5;text-decoration:line-through}
+#alt-ansokan .opt{display:inline-block;font-family:var(--head);font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--bg);border-radius:5px;padding:3px 9px;margin-left:8px;vertical-align:3px;white-space:nowrap}
+#alt-ansokan .dls{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+#alt-ansokan .dl{display:inline-flex;align-items:center;gap:6px;font-size:15px;text-decoration:none;background:var(--bg);border-radius:8px;padding:6px 14px;transition:background .2s}
+#alt-ansokan .dl:hover{background:#e2d7d0}
+#alt-ansokan .dl::before{content:"↓";font-family:var(--head);font-size:11px}
+
+/* Steg-karusell */
+#alt-ansokan .note{display:flex;gap:12px;align-items:flex-start;background:var(--bg);border-radius:var(--r-sm);padding:14px 18px;font-size:17px;margin-bottom:24px}
+#alt-ansokan .note b{font-family:var(--head);font-weight:400;font-size:12px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;padding-top:3px}
+#alt-ansokan .nav{display:flex;gap:8px}
+#alt-ansokan .nav button{width:44px;height:44px;border-radius:25%;border:0;background:var(--bg);cursor:pointer;font-size:18px;transition:background .2s,transform .2s var(--ease),opacity .2s}
+#alt-ansokan .nav button:hover{background:#e2d7d0;transform:scale(1.06)}
+#alt-ansokan .nav button:disabled{opacity:.35;cursor:default;transform:none}
+#alt-ansokan .steps{list-style:none;margin:0 -44px;padding:4px 44px 12px;display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 44px;scrollbar-width:none;counter-reset:s}
+#alt-ansokan .steps::-webkit-scrollbar{display:none}
+#alt-ansokan .steps li{counter-increment:s;flex:0 0 280px;scroll-snap-align:start;background:#fff;border-radius:var(--r-sm);padding:24px 24px 28px;font-size:18px;line-height:1.45;min-height:250px;display:flex;flex-direction:column;gap:14px}
+#alt-ansokan .steps li::before{content:counter(s);font-family:var(--head);font-size:56px;line-height:.9;letter-spacing:-.04em;color:var(--c)}
+#alt-ansokan .steps li.last{background:var(--c);color:var(--fg)}
+#alt-ansokan .steps li.last::before{content:"✓";color:var(--fg)}
+#alt-ansokan .steps strong{font-weight:600}
+#alt-ansokan .ui{font-family:var(--head);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;background:var(--bg);color:var(--ink);padding:3px 8px;border-radius:5px;white-space:nowrap}
+#alt-ansokan .steps a{color:inherit}
+#alt-ansokan .dots{display:flex;gap:6px;justify-content:center;margin-top:10px}
+#alt-ansokan .dots i{width:7px;height:7px;border-radius:99px;background:var(--line);transition:width .3s var(--ease),background .3s}
+#alt-ansokan .dots i.on{width:22px;background:var(--ink)}
+
+/* Kostnader */
+#alt-ansokan .costs{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:24px;overflow:hidden}
+#alt-ansokan .costs__btn{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;background:none;border:0;padding:24px 44px;cursor:pointer;text-align:left}
+#alt-ansokan .costs__t{display:block;font-family:var(--head);font-size:22px;text-transform:uppercase;line-height:1.1}
+#alt-ansokan .costs__hint{display:block;font-size:16px;color:var(--muted);margin-top:4px}
+#alt-ansokan .costs .toggle{flex:0 0 44px;width:44px;height:44px;border-radius:25%;background:var(--bg);display:grid;place-content:center;transition:background .2s,transform .35s var(--ease)}
+#alt-ansokan .costs .toggle::before{content:"";width:10px;height:10px;border:solid var(--ink);border-width:0 2.5px 2.5px 0;transform:translateY(-2px) rotate(45deg)}
+#alt-ansokan .costs__btn:hover .toggle{background:#e2d7d0}
+#alt-ansokan .costs__btn[aria-expanded="true"] .toggle{transform:rotate(180deg)}
+#alt-ansokan .costs__body{padding:0 44px 40px}
+#alt-ansokan .costs__body[hidden]{display:none!important}
+#alt-ansokan .costs__body:not([hidden]){animation:alt-up .45s var(--ease) both}
+#alt-ansokan .costs__intro{font-size:17px;color:var(--muted);margin-bottom:20px}
+#alt-ansokan .fees{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+#alt-ansokan .fee{background:#fff;border-radius:var(--r-sm);padding:22px 22px 24px;display:flex;flex-direction:column;gap:6px}
+#alt-ansokan .fee__l{font-size:15px;color:var(--muted);line-height:1.3;min-height:2.6em}
+#alt-ansokan .fee__v{font-family:var(--head);font-size:40px;line-height:1;letter-spacing:-.03em}
+#alt-ansokan .fee__v small{font-size:16px;letter-spacing:0;margin-left:3px}
+#alt-ansokan .fee__s{font-size:15px;color:var(--muted)}
+#alt-ansokan .fee--hl{background:var(--c);color:var(--fg)}
+#alt-ansokan .fee--hl .fee__l,#alt-ansokan .fee--hl .fee__s{color:inherit;opacity:.8}
+#alt-ansokan .small{font-size:16px;color:var(--muted)}
+#alt-ansokan .small + .small{margin-top:8px}
+#alt-ansokan .small a{color:var(--ink)}
+
+#alt-ansokan .final{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;padding:24px 0 8px}
+
+/* Mer */
+#alt-ansokan .more{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:96px}
+#alt-ansokan .card{background:var(--card);border-radius:var(--r);padding:32px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;font-size:18px}
+#alt-ansokan .card h3{font-size:22px;text-transform:uppercase}
+#alt-ansokan .card a{color:var(--ink)}
+#alt-ansokan .card .dl{align-self:flex-start;margin-top:auto}
+#alt-ansokan .card--dark{grid-column:1/-1;background:var(--ink);color:#fff;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:40px}
+#alt-ansokan .card--dark h3{font-size:30px}
+#alt-ansokan .card--dark p{opacity:.8;margin-top:8px}
+#alt-ansokan .card--dark a{color:#fff}
+#alt-ansokan details.student{grid-column:1/-1;background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+#alt-ansokan details.student summary{list-style:none;cursor:pointer;padding:22px 32px;display:flex;justify-content:space-between;align-items:center;font-family:var(--head);font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+#alt-ansokan details.student summary::-webkit-details-marker{display:none}
+#alt-ansokan details.student summary::after{content:"+";font-size:22px;transition:transform .3s var(--ease)}
+#alt-ansokan details.student[open] summary::after{transform:rotate(45deg)}
+#alt-ansokan details.student .inner{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;padding:0 32px 28px;font-size:17px}
+#alt-ansokan details.student h4{font-size:14px;text-transform:uppercase;margin-bottom:6px}
+#alt-ansokan details.student a{color:var(--ink)}
+
+@media (max-width:900px){
+  #alt-ansokan .tiles{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  #alt-ansokan{font-size:18px}
+  #alt-ansokan .status{grid-template-columns:auto 1fr;padding:22px;gap:18px;margin-bottom:64px}
+  #alt-ansokan .status .pill{grid-column:1/-1;justify-content:center}
+  #alt-ansokan .status__big{font-size:64px}
+  #alt-ansokan .status__main{font-size:21px}
+  #alt-ansokan .tiles{grid-template-columns:1fr;gap:14px}
+  #alt-ansokan .tile{aspect-ratio:16/11}
+  #alt-ansokan .hero{padding:36px 26px}
+  #alt-ansokan .panel{padding:28px 22px}
+  #alt-ansokan .costs__btn{padding:20px 22px}
+  #alt-ansokan .costs__body{padding:0 22px 28px}
+  #alt-ansokan .steps{margin:0 -22px;padding:4px 22px 12px;scroll-padding:0 22px}
+  #alt-ansokan .steps li{flex-basis:78%}
+  #alt-ansokan .panel__head h3{font-size:24px}
+  #alt-ansokan .ring{width:68px;height:68px;flex-basis:68px}
+  #alt-ansokan .more,#alt-ansokan details.student .inner{grid-template-columns:1fr}
+  #alt-ansokan .card--dark{padding:28px}
+}
+@media (prefers-reduced-motion:reduce){
+  #alt-ansokan *,#alt-ansokan *::before,#alt-ansokan *::after{animation:none!important;transition:none!important}
+}
+</style>
+
+  <!-- Status -->
+  <div class="status" data-alt="status" role="status">
+    <div class="status__big" data-alt="big" aria-hidden="true"></div>
+    <div>
+      <div class="status__label"><span class="live"></span><span data-alt="status-label">Ansökningsperioder</span></div>
+      <div class="status__main" data-alt="status-main">Start hösttermin: 15 mars – 15 april. Start vårtermin: 15 oktober – 15 november.</div>
+      <div class="status__sub" data-alt="status-sub"></div>
+    </div>
+    <a class="pill pill--accent" data-alt="apply" href="https://open24.ist-asp.com/alt/vux/Vux/Start" target="_blank" rel="noopener">Ansök nu <span class="arr">→</span></a>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    <div class="eyebrow">Ansökan</div>
+    <h2>Vad vill du söka?</h2>
+    <p>Välj din utbildning – så visar vi exakt vad du behöver och hur du gör.</p>
+  </div>
+
+  <ul class="tiles" role="list">
+    <li><button type="button" class="tile" data-path="teologi" aria-pressed="false">
+      <img class="tile__img" src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/acd91f40-fa2f-404e-8299-a738fe0c6950/DSC04094.jpg?format=750w" alt="" loading="lazy">
+      <span class="tile__go" aria-hidden="true"></span>
+      <span class="tile__body"><span class="tile__t">Teologiåret / Teologiprogrammet</span><span class="tile__d">Är du nyfiken på att stanna upp och tänka djupare kring de stora frågorna i livet?</span></span></button></li>
+    <li><button type="button" class="tile" data-path="pastor" aria-pressed="false">
+      <img class="tile__img" src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/bbc6e113-7616-424e-9019-886f24b6da2e/Arches+-+2.jpg?format=750w" alt="" loading="lazy">
+      <span class="tile__go" aria-hidden="true"></span>
+      <span class="tile__body"><span class="tile__t">Pastorsprogrammet</span><span class="tile__d">Är du redo att utforska din kallelse för tjänst i Guds rike?</span></span></button></li>
+    <li><button type="button" class="tile" data-path="diakoni" aria-pressed="false">
+      <img class="tile__img" src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/372f6162-4fea-4831-968b-76507330e295/unsplash-image-nF8xhLMmg0c.jpg?format=750w" alt="" loading="lazy">
+      <span class="tile__go" aria-hidden="true"></span>
+      <span class="tile__body"><span class="tile__t">Diakoniterminen</span><span class="tile__d">Längtar du efter att stödja människor i olika typer av utsatthet?</span></span></button></li>
+    <li><button type="button" class="tile" data-path="mission" aria-pressed="false">
+      <img class="tile__img" src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/3fdddcb2-83a7-42e9-beef-f61654c1ead0/DSC01665.jpg?format=750w" alt="" loading="lazy">
+      <span class="tile__go" aria-hidden="true"></span>
+      <span class="tile__body"><span class="tile__t">Missionsterminen</span><span class="tile__d">Vill du arbeta interkulturellt utomlands eller i Sverige?</span></span></button></li>
+    <li><button type="button" class="tile" data-path="master" aria-pressed="false">
+      <img class="tile__img" src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/1774513755858-KA5RKGEVLH5FSOJBDWL1/unsplash-image-hHL08lF7Ikc.jpg?format=750w" alt="" loading="lazy">
+      <span class="tile__go" aria-hidden="true"></span>
+      <span class="tile__body"><span class="tile__t">Masterprogrammet</span><span class="tile__d">Vad innebär det att tänka teologiskt på avancerad nivå?</span></span></button></li>
+    <li><button type="button" class="tile" data-path="fristaende" aria-pressed="false">
+      <img class="tile__img" src="https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/fd9cf3d1-1b1e-40f8-b341-d20f4d0dbf89/ALT+Dagarna+HT2639+-+stor.jpeg?format=750w" alt="" loading="lazy">
+      <span class="tile__go" aria-hidden="true"></span>
+      <span class="tile__body"><span class="tile__t">Fristående kurs</span><span class="tile__d">Vill du fördjupa dig i teologins värld?</span></span></button></li>
+  </ul>
+  <div class="clear-row"><button type="button" class="clear" data-alt="clear" hidden="">× Rensa valet</button></div>
+
+  <!-- Resultat -->
+  <div class="result" data-alt="result" aria-live="polite">
+    <div class="hero">
+      <svg class="arches" viewBox="325 29 1282 1871" preserveAspectRatio="xMaxYMin meet" aria-hidden="true"><path d="M351 1900V670A614 614 0 0 1 1579 670V1900"></path><path d="M442 1900V670A523 523 0 0 1 1488 670V1900"></path><path d="M533 1900V670A432 432 0 0 1 1397 670V1900"></path><path d="M624 1900V670A341 341 0 0 1 1306 670V1900"></path><path d="M715 1900V670A250 250 0 0 1 1215 670V1900"></path><path d="M806 1900V670A159 159 0 0 1 1124 670V1900"></path><path d="M897 1900V670A68 68 0 0 1 1033 670V1900"></path></svg>
+      <div class="eyebrow">Din ansökan</div>
+      <h3 data-alt="hero-title"></h3>
+      <p data-alt="hero-sub"></p>
+      <div class="period" data-alt="period"></div>
+    </div>
+
+    <section class="panel">
+      <div class="panel__head">
+        <div><h3>Detta behöver du</h3><p>Bocka av allt eftersom – listan sparas i din webbläsare.</p></div>
+        <div class="ring" data-alt="ring"><svg viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"></circle><circle class="fg" cx="42" cy="42" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"></circle></svg><span data-alt="ring-txt">0/0</span></div>
+      </div>
+      <ul class="check" data-alt="docs"></ul>
+      <div class="done-msg" data-alt="done">🎉 <span>Allt obligatoriskt är klart – dags att skicka in!</span></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <div><h3>Så ansöker du</h3><p>Steg för steg i ansökningssystemet.</p></div>
+        <div class="nav"><button type="button" data-alt="prev" aria-label="Föregående steg">←</button><button type="button" data-alt="next" aria-label="Nästa steg">→</button></div>
+      </div>
+      <div class="note"><b>Obs</b><span>Saknar du svenskt personnummer? Mejla först för- och efternamn, födelsedatum och adress till <a href="mailto:antagning@altutbildning.se">antagning@altutbildning.se</a>.</span></div>
+      <ol class="steps" data-alt="steps"></ol>
+      <div class="dots" data-alt="dots"></div>
+    </section>
+
+    <section class="costs" data-alt="costs">
+      <button type="button" class="costs__btn" data-alt="costs-btn" aria-expanded="false" aria-controls="alt-costs-body">
+        <span><span class="costs__t">Vad kostar det?</span><span class="costs__hint" data-alt="costs-hint">Visa avgifter</span></span><span class="toggle" aria-hidden="true"></span>
+      </button>
+      <div class="costs__body" id="alt-costs-body" data-alt="costs-body" hidden="">
+      <p class="costs__intro">All undervisning är kostnadsfri. Terminsavgiften täcker studentrelaterade kostnader.</p>
+      <div class="fees" data-alt="fees"></div>
+      <p class="small" data-alt="fee-notes"></p>
+      <p class="small"><strong>Studiemedel</strong> söker du själv hos <a href="https://www.csn.se" target="_blank" rel="noopener">CSN</a>. Mer om avgifter finns i <a href="https://altutbildning.se/s/Studiehandbok-2026-2027-PDF-lde6.pdf" target="_blank" rel="noopener">Studiehandboken</a>.</p>
+      </div>
+    </section>
+
+    <div class="final">
+      <a class="pill pill--theme" href="https://open24.ist-asp.com/alt/vux/Vux/Start" target="_blank" rel="noopener">Gå till ansökningssidan <span class="arr">→</span></a>
+    </div>
+  </div>
+
+  <!-- Mer -->
+  <div class="more">
+    <div class="card">
+      <div class="eyebrow">Behörighet</div>
+      <h3>Saknar du behörighet?</h3>
+      <p>Du kan ansöka om prövning av <strong>reell kompetens</strong> – andra meriter som visar att du har förutsättningar att klara utbildningen – eller om undantag från behörighetskraven. Skicka blanketten till <a href="mailto:studievagledare@altutbildning.se">studievagledare@altutbildning.se</a>.</p>
+      <a class="dl" href="https://altutbildning.se/s/Ansokan-om-undantag-fran-behorighetskrav-fk33.pdf" target="_blank" rel="noopener">Blankett (PDF)</a>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Tillgodoräknande</div>
+      <h3>Tidigare studier?</h3>
+      <p>Har du läst på högskola eller bibelskola tidigare kan det räknas in. Bifoga intyg i ansökan – efter antagning söker du tillgodoräknande i <a href="https://www.student.ladok.se" target="_blank" rel="noopener">Ladok</a>.</p>
+      <a class="dl" href="https://altutbildning.se/s/Regler-och-handlaggningsordning-for-tillgodoraknande-vid-ALT-hogskola-fp5h.pdf" target="_blank" rel="noopener">Regler för tillgodoräknande (PDF)</a>
+    </div>
+    <div class="card card--dark">
+      <div>
+        <h3>Frågor om din ansökan?</h3>
+        <p>Studievägledningen hjälper dig att välja rätt. Tekniskt problem? Mejla <a href="mailto:antagning@altutbildning.se">antagning@altutbildning.se</a>.</p>
+      </div>
+      <a class="pill pill--accent" href="/studievagledning">Kontakta studievägledare <span class="arr">→</span></a>
+    </div>
+    <details class="student">
+      <summary>Redan student? Examen och utbildningsbevis</summary>
+      <div class="inner">
+        <div><h4>Examen</h4><p>Examensansökan görs i <a href="https://www.student.ladok.se" target="_blank" rel="noopener">Ladok</a>. Har du dina ALT-studier i det tidigare systemet Studeo kontaktar du <a href="/studievagledning">studievägledare</a>.</p></div>
+        <div><h4>Utbildningsbevis</h4><p>För utbildningsbevis (inte akademisk examen), oavsett om dina studier finns i Ladok eller Studeo: <a href="https://altutbildning.se/s/ans_C3_B6kan-om-utbildningsbevis.pdf" target="_blank" rel="noopener">ansökningsblankett (PDF)</a>.</p></div>
+      </div>
+    </details>
+  </div>
+
+<script>
+(function(){
+  /* ================= CONFIG – ändra här ================= */
+  var CONFIG = {
+    applyUrl: "https://open24.ist-asp.com/alt/vux/Vux/Start",
+    // Ansökningsperioder: [månad (1–12), dag]. Sista dagen räknas med till kl. 23.59.
+    periods: [
+      { key:"ht", term: "hösttermin", open: [3,15],  close: [4,15],  startOffset: 0 },
+      { key:"vt", term: "vårtermin",  open: [10,15], close: [11,15], startOffset: 1 }
+    ],
+    // Bilderna på programrutorna hämtas automatiskt från denna sida.
+    // Varje ruta matchas mot rubriken i sektionen (små/stora bokstäver spelar ingen roll).
+    imageSource: "/utbildning",
+    imageMatch: { teologi:"teologiåret", pastor:"pastorsprogram", diakoni:"diakonitermin",
+                  mission:"missionstermin", master:"masterprogram", fristaende:"fristående" }
+  };
+  var F = "https://altutbildning.se/s/";
+
+  /* Programfärger – samma som i kurskatalogen (bakgrund, text) */
+  var THEME = {
+    teologi:["#2f575f","#e5e3dc"], pastor:["#c07a63","#ffffff"], diakoni:["#a6b6a1","#1c1c1c"],
+    mission:["#c8a24a","#1c1c1c"], master:["#303636","#e5e3dc"], fristaende:["#c5c2a0","#1c1c1c"]
+  };
+
+  var BASE_DOCS = [
+    { id:"betyg", t:"Gymnasiebetyg", d:"Vidimerade, inscannat original – inte en skärmdump från antagning.se." },
+    { id:"hogskola", t:"Intyg från tidigare högskolestudier", d:"Inscannat original.", opt:true },
+    { id:"funktion", t:"Intyg om dyslexi eller annan funktionsnedsättning", opt:true }
+  ];
+  var TJANST = {
+    pastor:  { name:"Pastorsprogrammet", brev:F+"Mall-personligt-brev-Pastorsprogrammet.docx", rek:F+"Mall-Forsamlingsrekommendation.docx" },
+    diakoni: { name:"Diakoniterminen",   brev:F+"Personligt-brev-Diakoniterminen.docx",       rek:F+"Rekommendation-Diakoniterminen.docx" },
+    mission: { name:"Missionsterminen",  brev:F+"Personligt-brev-Missionsterminen-rfaj.docx",  rek:F+"Rekommendation-Missionsterminen.docx" }
+  };
+  function tjanstDocs(key){
+    var p = TJANST[key];
+    return BASE_DOCS.concat([
+      { id:"cv", t:"CV", dl:[["Mall CV", F+"ALT-CV-mall.docx"]] },
+      { id:"brev", t:"Personligt brev inklusive referenser", dl:[["Mall personligt brev", p.brev]] },
+      { id:"personbevis", t:"Personbevis", d:"Beställs från Skatteverket.", dl:[["Beställ personbevis","https://www.skatteverket.se/privat/folkbokforing/bestallpersonbevis.4.18e1b10334ebe8bc80003671.html"]] },
+      { id:"bibelskola", t:"Vidimerat intyg från studier på bibelskola", d:"Inscannat.", opt:true },
+      { id:"rek", t:"Rekommendation", d:"Din referent mejlar den direkt till antagning@altutbildning.se – du laddar inte upp den själv.", dl:[["Mall rekommendation", p.rek]] }
+    ]);
+  }
+  function tjanstPath(key, name, sub, terms){
+    return {
+      name: name, sub: sub, terms: terms,
+      docs: function(){ return tjanstDocs(key); },
+      pick: "Kurspaket", rek: true, prog: true,
+      fees: [{l:"Terminsavgift, heltid",v:"1 800",s:"Halvtid 1 380 kr",hl:true},{l:"Kvartsfart",v:"720"},{l:"Kårobligatorium",v:"120",s:"Halvtid 60 kr"},{l:"Litteratur och kompendier",v:"ca 2 000",s:"per termin"}]
+    };
+  }
+
+  var PATHS = {
+    teologi: {
+      name:"Teologiåret / Teologiprogrammet", sub:"Börja med ett grundår i teologi – och fortsätt mot en kandidatexamen om du vill.", terms:["ht"],
+      docs: function(){ return BASE_DOCS; }, pick: "Kurspaket", prog: true,
+      fees: [{l:"Teologiåret och Teologiprogrammet år 1",v:"1 800",s:"Halvtid 1 380 kr",hl:true},{l:"Teologiprogrammet år 2 och 3",v:"900",s:"Halvtid 600 kr"},{l:"Kårobligatorium",v:"120",s:"Halvtid 60 kr"},{l:"Litteratur och kompendier",v:"ca 2 000",s:"per termin"}]
+    },
+    pastor:  tjanstPath("pastor",  "Pastorsprogrammet", "Teologi och ledarskap med siktet inställt på tjänst i Guds rike.", ["ht"]),
+    diakoni: tjanstPath("diakoni", "Diakoniterminen",   "Socialt arbete och diakoni med teologisk fördjupning och reflektion.", ["ht"]),
+    mission: tjanstPath("mission", "Missionsterminen",  "Kultur, omvärld och din roll i interkulturella sammanhang.", ["vt"]),
+    master: {
+      name:"Masterprogrammet", sub:"Fördjupa din teologiska kompetens på avancerad nivå.", terms:["ht"],
+      docs: function(){ return [
+        { id:"kandidat", t:"Examensbevis, teologie kandidatexamen eller motsvarande", d:"Vidimerat, inscannat original. OBS! Laddas upp under kategorin ”Gymnasiebetyg”." },
+        { id:"funktion", t:"Intyg om dyslexi eller annan funktionsnedsättning", opt:true }
+      ]; },
+      pick: "Kurspaket", prog: true,
+      upload: "Ladda upp ditt <strong>examensbevis</strong> under kategorin <span class=\"ui\">Gymnasiebetyg</span>. Övriga dokument laddar du upp på <strong>Min sida</strong>.",
+      fees: [{l:"Terminsavgift, heltid",v:"400",s:"Halvtid 250 kr",hl:true},{l:"Kårobligatorium",v:"120",s:"Halvtid 60 kr"},{l:"Litteratur och kompendier",v:"ca 2 000",s:"per termin"}]
+    },
+    fristaende: {
+      name:"Fristående kurs", sub:"Läs en eller flera kurser – på plats, i hybridform eller på distans.", terms:["ht","vt"],
+      docs: function(){ return BASE_DOCS; }, pick: "Kurser", prog: false,
+      fees: [{l:"Terminsavgift",v:"250",s:"125 kr upp till halvtid",hl:true},{l:"Fristående D-kurs",v:"0",s:"Ingen terminsavgift"},{l:"Litteratur och kompendier",v:"ca 2 000",s:"per termin"}],
+      feeNotes: "Ingen kårobligatorium för fristående kurser."
+    }
+  };
+
+  /* ================= Hjälpfunktioner ================= */
+  var root = document.getElementById("alt-ansokan");
+  if(!root) return;
+  function $(k){ return root.querySelector('[data-alt="'+k+'"]'); }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+  var store = {
+    get:function(k){ try{ return JSON.parse(localStorage.getItem("altAnsokan:"+k)); }catch(e){ return null; } },
+    set:function(k,v){ try{ localStorage.setItem("altAnsokan:"+k, JSON.stringify(v)); }catch(e){} }
+  };
+  var MONTHS = ["januari","februari","mars","april","maj","juni","juli","augusti","september","oktober","november","december"];
+  function fmt(d){ return d.getDate()+" "+MONTHS[d.getMonth()]; }
+
+  /* ================= Status ================= */
+  function periodList(keys){
+    var now = new Date(), y = now.getFullYear(), list = [];
+    [y-1,y,y+1].forEach(function(yr){
+      CONFIG.periods.forEach(function(p){
+        if(keys && keys.indexOf(p.key)<0) return;
+        list.push({ key:p.key, term:p.term, startYear:yr+p.startOffset,
+          open:new Date(yr,p.open[0]-1,p.open[1],0,0,0),
+          close:new Date(yr,p.close[0]-1,p.close[1],23,59,59) });
+      });
+    });
+    return list.sort(function(a,b){ return a.open-b.open; });
+  }
+  function daysTo(d){
+    var n = new Date(), today = new Date(n.getFullYear(),n.getMonth(),n.getDate());
+    return Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-today)/864e5);
+  }
+  function renderStatus(){
+    var now = new Date(), list = periodList();
+    var cur = list.filter(function(p){ return now>=p.open && now<=p.close; })[0];
+    if(cur){
+      var days = daysTo(cur.close);
+      $("big").innerHTML = days===0 ? "!" + "<small>Sista dagen</small>" : days + "<small>"+(days===1?"dag kvar":"dagar kvar")+"</small>";
+      $("status-label").textContent = "Ansökan är öppen";
+      $("status-main").textContent = "Start "+cur.term+" "+cur.startYear;
+      $("status-sub").textContent = days===0 ? "Sista dagen att ansöka är idag." : "Ansök senast "+fmt(cur.close)+".";
+    } else {
+      var next = list.filter(function(p){ return p.open>now; })[0];
+      var d2 = daysTo(next.open);
+      $("status").classList.add("is-closed");
+      $("big").innerHTML = d2 + "<small>"+(d2===1?"dag":"dagar")+" tills</small>";
+      $("status-label").textContent = "Ansökan är stängd";
+      $("status-main").textContent = "Nästa period öppnar "+fmt(next.open);
+      $("status-sub").textContent = "Start "+next.term+" "+next.startYear+" · ansökan "+fmt(next.open)+" – "+fmt(next.close)+".";
+      var a = $("apply"); a.innerHTML = "Till ansökningssidan <span class=\"arr\">→</span>"; a.classList.remove("pill--accent");
+    }
+  }
+
+  /* ================= Val och resultat ================= */
+  var state = { path:null };
+  var C = 2*Math.PI*36;
+
+  function renderDocs(){
+    var cfg = PATHS[state.path], docs = cfg.docs(), key = state.path;
+    var done = store.get(key) || {};
+    var ul = $("docs");
+    ul.innerHTML = docs.map(function(d){
+      var id = "alt-"+key+"-"+d.id;
+      var links = (d.dl||[]).map(function(l){ return '<a class="dl" href="'+esc(l[1])+'" target="_blank" rel="noopener">'+esc(l[0])+'</a>'; }).join("");
+      return '<li><input type="checkbox" id="'+id+'" data-doc="'+d.id+'"'+(done[d.id]?" checked":"")+'>'+
+        '<label for="'+id+'"><span class="t">'+esc(d.t)+(d.opt?'<span class="opt">Om aktuellt</span>':'')+'</span>'+
+        (d.d?'<span class="d">'+esc(d.d)+'</span>':'')+'</label>'+(links?'<div class="dls">'+links+'</div>':'')+'</li>';
+    }).join("");
+    function update(){
+      var req=0, ok=0;
+      [].forEach.call(ul.querySelectorAll("input"),function(b){
+        var d = docs.filter(function(x){return x.id===b.dataset.doc;})[0];
+        if(!d.opt){ req++; if(b.checked) ok++; }
+        b.closest("li").classList.toggle("is-done", b.checked);
+      });
+      $("ring").querySelector(".fg").style.strokeDashoffset = C*(1-(req?ok/req:0));
+      $("ring").classList.toggle("is-full", ok===req);
+      $("ring-txt").textContent = ok+"/"+req;
+      $("done").classList.toggle("is-visible", req>0 && ok===req);
+    }
+    ul.onchange = function(e){
+      if(!e.target.dataset.doc) return;
+      done[e.target.dataset.doc] = e.target.checked; store.set(key,done); update();
+    };
+    update();
+  }
+
+  function renderSteps(){
+    var cfg = PATHS[state.path];
+    var upload = cfg.upload || "Ladda upp dina <strong>gymnasiebetyg</strong>. Övriga dokument laddar du upp på <strong>Min sida</strong> efter att ansökan skickats.";
+    var what = cfg.pick==="Kurser" ? "den eller de kurser" : "programmet";
+    var steps = [
+      'Gå till <a href="'+CONFIG.applyUrl+'" target="_blank" rel="noopener">ansökningssidan</a>. Klicka på <span class="ui">Logga in</span> uppe till höger och skapa ett konto.',
+      'Klicka på <span class="ui">Ny ansökan</span> och välj <span class="ui">'+cfg.pick+'</span>. Sök fram '+what+' du vill söka och klicka på <strong>kundvagnen</strong>.',
+      'Gå upp till rutan <em>Mitt kursval</em> och klicka <span class="ui">Fortsätt</span>.',
+      'Fyll i alla personuppgifter. Ange adressen där du är folkbokförd och dubbelkolla e-postadressen. Klicka <span class="ui">Spara &amp; fortsätt</span>.',
+      'Frågorna om Komvux och språkutbildning gäller inte dig – men svara ändå för att komma vidare.',
+      upload
+    ];
+    if(cfg.rek) steps.push('Be din referent mejla rekommendationen direkt till <a href="mailto:antagning@altutbildning.se">antagning@altutbildning.se</a>.');
+    steps.push('Svara på de sista frågorna och klicka på <span class="ui">Skicka ansökan</span>. Klart!');
+    var ol = $("steps");
+    ol.innerHTML = steps.map(function(s,i){ return '<li'+(i===steps.length-1?' class="last"':'')+'><div>'+s+'</div></li>'; }).join("");
+    ol.scrollLeft = 0;
+    $("dots").innerHTML = steps.map(function(){ return "<i></i>"; }).join("");
+    syncSteps();
+  }
+  function syncSteps(){
+    var ol = $("steps"), items = ol.children; if(!items.length) return;
+    var w = items[0].getBoundingClientRect().width + 16;
+    var idx = Math.round(ol.scrollLeft / w);
+    var max = ol.scrollWidth - ol.clientWidth;
+    if(ol.scrollLeft >= max - 4) idx = items.length-1;
+    [].forEach.call($("dots").children,function(d,i){ d.classList.toggle("on", i===idx); });
+    $("prev").disabled = ol.scrollLeft <= 4;
+    $("next").disabled = ol.scrollLeft >= max - 4;
+  }
+  function stepBy(dir){
+    var ol = $("steps"), first = ol.children[0]; if(!first) return;
+    ol.scrollBy({ left: dir*(first.getBoundingClientRect().width+16), behavior:"smooth" });
+  }
+
+  function renderFees(){
+    var cfg = PATHS[state.path];
+    $("fees").innerHTML = cfg.fees.map(function(f){
+      return '<div class="fee'+(f.hl?' fee--hl':'')+'"><span class="fee__l">'+esc(f.l)+'</span><span class="fee__v">'+esc(f.v)+'<small>kr</small></span>'+(f.s?'<span class="fee__s">'+esc(f.s)+'</span>':'')+'</div>';
+    }).join("");
+    $("fee-notes").textContent = cfg.feeNotes || ("För programstudenter ingår mat och logi vid gemensamma utbildningsdagar samt samordnade resor en gång per termin. Vid studiecentren i Göteborg, Stockholm och Malmö ingår även fika i terminsavgiften. Eventuella resor vid utbildningsdagar tillkommer.");
+  }
+
+  /* Ansökningsperiod för valt program */
+  function renderPeriod(cfg){
+    var now = new Date(), list = periodList(cfg.terms);
+    var cur = list.filter(function(p){ return now>=p.open && now<=p.close; })[0];
+    var chip;
+    if(cur){
+      var d = daysTo(cur.close);
+      chip = '<span class="period__chip is-open"><i></i>Öppen nu · '+(d===0?"sista dagen idag":d===1?"1 dag kvar":d+" dagar kvar")+'</span>'+
+             '<span class="period__now">Start '+cur.term+' '+cur.startYear+' – ansök senast '+fmt(cur.close)+'</span>';
+    } else {
+      var next = list.filter(function(p){ return p.open>now; })[0];
+      chip = '<span class="period__chip is-closed"><i></i>Stängd just nu</span>'+
+             '<span class="period__now">Nästa ansökan öppnar '+fmt(next.open)+' '+next.open.getFullYear()+' (start '+next.term+' '+next.startYear+')</span>';
+    }
+    var rows = CONFIG.periods.filter(function(p){ return cfg.terms.indexOf(p.key)>=0; }).map(function(p){
+      return '<li><b>Start '+p.term+'</b> Ansökan '+p.open[1]+' '+MONTHS[p.open[0]-1]+' – '+p.close[1]+' '+MONTHS[p.close[0]-1]+'</li>';
+    }).join("");
+    $("period").innerHTML = '<div class="period__status">'+chip+'</div><ul class="period__list">'+rows+'</ul>';
+  }
+
+  function setCosts(open){
+    $("costs-btn").setAttribute("aria-expanded", open ? "true" : "false");
+    $("costs-body").hidden = !open;
+    $("costs-hint").textContent = open ? "Dölj avgifter" : "Visa avgifter";
+  }
+
+  function markTiles(){
+    [].forEach.call(root.querySelectorAll(".tile"),function(b){ b.setAttribute("aria-pressed", b.dataset.path===state.path ? "true":"false"); });
+    root.querySelector(".tiles").classList.toggle("has-choice", !!state.path);
+  }
+
+  function select(path, scroll){
+    if(!PATHS[path]) return;
+    state.path = path;
+    var t = THEME[path]; root.style.setProperty("--c", t[0]); root.style.setProperty("--fg", t[1]);
+    markTiles();
+    $("clear").hidden = false;
+    $("hero-title").textContent = PATHS[path].name;
+    $("hero-sub").textContent = PATHS[path].sub;
+    renderPeriod(PATHS[path]);
+    var r = $("result"); r.classList.remove("is-visible"); void r.offsetWidth; r.classList.add("is-visible");
+    setCosts(false);
+    renderDocs(); renderSteps(); renderFees();
+    store.set("path", path);
+    if(scroll) setTimeout(function(){ r.scrollIntoView({behavior:"smooth",block:"start"}); }, 60);
+  }
+
+  function clear(){
+    state.path = null;
+    markTiles();
+    $("result").classList.remove("is-visible");
+    $("clear").hidden = true;
+    store.set("path", null);
+    if(location.hash) try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){}
+  }
+
+  root.addEventListener("click",function(e){
+    var c = e.target.closest(".tile");
+    if(c){ if(c.dataset.path===state.path) clear(); else select(c.dataset.path, true); return; }
+    if(e.target.closest('[data-alt="clear"]')){ clear(); return; }
+    if(e.target.closest('[data-alt="costs-btn"]')){ setCosts($("costs-body").hidden); return; }
+    if(e.target.closest('[data-alt="prev"]')){ stepBy(-1); return; }
+    if(e.target.closest('[data-alt="next"]')){ stepBy(1); return; }
+  });
+  $("steps").addEventListener("scroll", function(){ window.requestAnimationFrame(syncSteps); }, {passive:true});
+  window.addEventListener("resize", syncSteps);
+
+  /* ================= Bilder från Utbildningssidan ================= */
+  function setTileImages(map){
+    Object.keys(map||{}).forEach(function(k){
+      var img = root.querySelector('.tile[data-path="'+k+'"] .tile__img');
+      if(!img || !map[k] || img.getAttribute("src")===map[k]) return;
+      var pre = new Image();
+      pre.onload = function(){ img.src = map[k]; };
+      pre.src = map[k];
+    });
+  }
+  function syncImages(){
+    setTileImages(store.get("img"));                       // senast kända bilder direkt
+    if(!window.fetch || !window.DOMParser) return;
+    fetch(CONFIG.imageSource, {credentials:"same-origin"})
+      .then(function(r){ if(!r.ok) throw 0; return r.text(); })
+      .then(function(html){
+        var doc = new DOMParser().parseFromString(html, "text/html"), map = {};
+        [].forEach.call(doc.querySelectorAll("section.page-section"), function(sec){
+          var h = sec.querySelector("h1,h2,h3,h4"); if(!h) return;
+          var title = h.textContent.trim().toLowerCase();
+          Object.keys(CONFIG.imageMatch).forEach(function(k){
+            if(map[k] || title.indexOf(CONFIG.imageMatch[k])!==0) return;
+            var im = [].filter.call(sec.querySelectorAll("img"), function(i){ return !i.closest(".section-background"); })[0];
+            var src = im && (im.getAttribute("data-src") || im.getAttribute("src"));
+            if(src && /^https?:/.test(src)) map[k] = src.split("?")[0] + "?format=750w";
+          });
+        });
+        if(Object.keys(map).length){ store.set("img", map); setTileImages(map); }
+      })
+      .catch(function(){ /* behåll bilderna som står i koden */ });
+  }
+  syncImages();
+
+  /* Start: direktlänk (#teologi, #pastor, #diakoni, #mission, #master, #fristaende) eller senaste valet */
+  renderStatus();
+  var h = (location.hash||"").replace("#","").toLowerCase();
+  var saved = store.get("path");
+  if(!PATHS[h] && typeof saved==="string" && PATHS[saved]) h = saved;
+  if(PATHS[h]) select(h, false);
+})();
+</script>
+</div>
