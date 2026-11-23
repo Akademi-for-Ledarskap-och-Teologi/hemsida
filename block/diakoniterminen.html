@@ -1,0 +1,389 @@
+<!--
+  ============================================================
+  ALT – DIAKONITERMINEN: KLICKBAR STUDIEGÅNG
+  ============================================================
+  Laddas via loader.js: <div data-alt-block="diakoniterminen"></div>
+  Design: samma som årsplanerna för Pastors- och Teologiprogrammet.
+
+  KURSPLANER
+  Länkarna "Kursplan ↓" hämtas live från Drive-mappen "KURSPLANER HEMSIDA"
+  (samma källa och cache som kurskatalogen).
+
+  KURSDATA
+  Enligt Studiehandbok 2026–2027 (s. 32–33, 40, 46). Ändra i TERM nedan.
+  ============================================================
+-->
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=EB+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<div id="altdt">
+  <header class="altdt-head">
+    <p class="altdt-eyebrow">Diakoniterminen</p>
+    <h2 class="altdt-title">Din termin</h2>
+    <p class="altdt-lead">Så är terminen upplagd. Klicka på en kurs i studiegången för att läsa mer om den – och öppna kursplanerna direkt.</p>
+  </header>
+
+    <div class="altdt-stage" aria-live="polite"></div>
+  <div class="altdt-toast" role="status"></div>
+</div>
+
+<style>
+#altdt{
+  --bg:#EDE5E0; --card:#FBF9F7; --ink:#1c1c1c; --muted:#5a5652; --accent:#c07a63; --teal:#2f575f; --line:rgba(28,28,28,.1);
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif; --text:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--text); font-size:19px; line-height:1.5;
+  width:100%; margin:0 auto; -webkit-font-smoothing:antialiased;
+}
+#altdt *{box-sizing:border-box}
+#altdt button{font:inherit;color:inherit}
+#altdt h2,#altdt h3,#altdt h4,#altdt p{margin:0;color:inherit}
+#altdt h2,#altdt h3,#altdt h4{font-family:var(--head);font-weight:400;line-height:1.08;letter-spacing:-.01em}
+#altdt a{color:inherit}
+#altdt :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@keyframes altdt-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ---------- Intro ---------- */
+#altdt .altdt-head{text-align:center;max-width:760px;margin:0 auto 48px}
+#altdt .altdt-eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#altdt .altdt-title{font-size:clamp(38px,6vw,64px);text-transform:uppercase;margin:12px 0 16px}
+#altdt .altdt-lead{font-size:22px;color:var(--muted)}
+
+/* ---------- Årsrutor ---------- */
+#altdt .altdt-years{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:none}
+#altdt .altdt-years li{display:flex;margin:0;padding:0}
+#altdt .altdt-years li::before{display:none}
+#altdt .altdt-yr{position:relative;width:100%;border:0;padding:26px 24px 24px;border-radius:var(--r);background:var(--card);color:var(--ink);box-shadow:var(--shadow);text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-height:200px;overflow:hidden;isolation:isolate;transition:transform .45s var(--ease),box-shadow .45s var(--ease),background .35s,color .35s,opacity .35s}
+#altdt .altdt-yr .n{font-family:var(--head);font-size:56px;line-height:.9;letter-spacing:-.04em;color:var(--tc);transition:color .35s}
+#altdt .altdt-yr .l{font-family:var(--head);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-top:auto}
+#altdt .altdt-yr .t{font-size:18px;line-height:1.3;color:var(--muted);transition:color .35s}
+#altdt .altdt-yr .f{position:absolute;top:18px;right:18px;font-family:var(--head);font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--bg);border-radius:6px;padding:4px 9px;transition:background .35s,color .35s}
+#altdt .altdt-yr:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+#altdt .altdt-yr[aria-selected="true"]{background:var(--tc);color:var(--tf);box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--tc),var(--shadow-lg);transform:translateY(-4px)}
+#altdt .altdt-yr[aria-selected="true"] .n{color:var(--tf);opacity:.9}
+#altdt .altdt-yr[aria-selected="true"] .t{color:var(--tf);opacity:.85}
+#altdt .altdt-yr[aria-selected="true"] .f{background:rgba(255,255,255,.88);color:#1c1c1c}
+#altdt .altdt-years.has-choice .altdt-yr[aria-selected="false"]{opacity:.62}
+#altdt .altdt-years.has-choice .altdt-yr[aria-selected="false"]:hover{opacity:1}
+
+/* ---------- Valt år (hero) ---------- */
+#altdt .altdt-stage{margin-top:28px}
+#altdt .altdt-hero{container-type:inline-size;position:relative;overflow:hidden;border-radius:var(--r);background:var(--tc);color:var(--tf);padding:48px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;animation:altdt-up .6s var(--ease) both}
+#altdt .altdt-arches{position:absolute;right:4%;top:28px;height:150%;width:auto;color:currentColor;opacity:.16;pointer-events:none;z-index:0}
+#altdt .altdt-arches path{fill:none;stroke:currentColor;stroke-width:55;stroke-linecap:butt}
+#altdt .altdt-hero > div{position:relative;z-index:1}
+#altdt .altdt-hero .altdt-eyebrow{color:inherit;opacity:.75}
+#altdt .altdt-hero h3{font-size:clamp(26px,4.4cqi,48px);text-transform:uppercase;margin:10px 0 14px}
+#altdt .altdt-hero .d{font-size:20px;line-height:1.5;max-width:58ch;opacity:.92}
+#altdt .altdt-hero .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+#altdt .altdt-hero .facts span{font-size:16px;line-height:1.3;border-radius:8px;padding:6px 12px;background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+#altdt .altdt-ms{position:relative;z-index:1;background:rgba(255,255,255,.9);color:#1c1c1c;border-radius:var(--r-sm);padding:20px 22px;max-width:300px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#altdt .altdt-ms .lbl{font-family:var(--head);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#altdt .altdt-ms b{display:block;font-family:var(--head);font-weight:400;font-size:34px;line-height:1;letter-spacing:-.03em;margin:10px 0 8px}
+#altdt .altdt-ms p{font-size:16px;line-height:1.35}
+
+/* Inriktningar år 3 */
+#altdt .altdt-tracks{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+#altdt .altdt-pill{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:12px;padding:14px 22px;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;text-decoration:none;white-space:nowrap;background:var(--ink);color:#fff;transition:transform .2s var(--ease),background .2s,color .2s,box-shadow .2s}
+#altdt .altdt-pill:hover{transform:scale(1.04)}
+#altdt .altdt-pill.line{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+#altdt .altdt-pill.inv{background:var(--tf);color:var(--tc)}
+#altdt .altdt-pill.accent{background:var(--accent);color:#fff}
+#altdt .altdt-pill .arr{transition:transform .2s var(--ease)}
+#altdt .altdt-pill:hover .arr{transform:translateX(3px)}
+
+/* ---------- Kurslista ---------- */
+#altdt .altdt-listhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:40px 4px 16px;flex-wrap:wrap}
+#altdt .altdt-count{font-family:var(--head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#altdt .altdt-chips{display:flex;flex-wrap:wrap;gap:8px}
+#altdt .altdt-chip{border:0;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:7px 14px;font-size:16px;font-weight:600;line-height:1.3;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .2s,color .2s,transform .2s var(--ease)}
+#altdt .altdt-chip:hover{transform:scale(1.03)}
+#altdt .altdt-chip[aria-pressed="true"]{background:var(--ink);color:#fff;box-shadow:none}
+#altdt .altdt-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+#altdt .altdt-card{background:var(--card);border-radius:20px;padding:22px 22px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;transition:transform .35s var(--ease),box-shadow .35s var(--ease),opacity .3s;animation:altdt-up .5s var(--ease) backwards}
+#altdt .altdt-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+#altdt .altdt-card.dim{opacity:.32}
+#altdt .altdt-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--head);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+#altdt .altdt-card-top .code{display:flex;align-items:center;gap:8px;min-width:0}
+#altdt .altdt-card-top .code i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c)}
+#altdt .altdt-card-top .hp{flex:none;background:var(--bg);color:var(--ink);border-radius:6px;padding:4px 10px;white-space:nowrap}
+#altdt .altdt-card h4{font-size:19px;line-height:1.15;text-transform:uppercase}
+#altdt .altdt-tags{display:flex;flex-wrap:wrap;gap:6px}
+#altdt .altdt-tag{font-size:14px;line-height:1.3;border-radius:6px;padding:4px 10px;background:var(--bg)}
+#altdt .altdt-tag.k{background:color-mix(in srgb,var(--accent) 22%,#fff)}
+#altdt .altdt-msg{position:relative;font-size:16px;line-height:1.35;border-radius:12px;padding:9px 12px 9px 30px;background:color-mix(in srgb,#a7b9c8 32%,#fff)}
+#altdt .altdt-msg::before{content:"";position:absolute;left:12px;top:16px;width:8px;height:8px;border-radius:50%;background:var(--teal)}
+#altdt .altdt-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+#altdt .altdt-pdf{font-family:var(--head);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);text-decoration:none}
+#altdt .altdt-pdf:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Navigering + CTA ---------- */
+#altdt .altdt-nav{display:flex;justify-content:space-between;gap:12px;margin-top:32px}
+#altdt .altdt-btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:10px;padding:12px 20px;font-family:var(--head);font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background:var(--ink);color:#fff;text-decoration:none;white-space:nowrap;transition:transform .2s var(--ease),opacity .2s}
+#altdt .altdt-btn:hover:not(:disabled){transform:scale(1.04)}
+#altdt .altdt-btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+#altdt .altdt-btn:disabled{opacity:0;pointer-events:none}
+#altdt .altdt-cta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px 32px;align-items:center;background:var(--ink);color:#fff;border-radius:var(--r);padding:32px 36px;margin-top:40px}
+#altdt .altdt-cta h4{font-size:22px;text-transform:uppercase;margin-bottom:6px}
+#altdt .altdt-cta p{font-size:17px;opacity:.78}
+#altdt .altdt-cta div.b{display:flex;gap:10px;flex-wrap:wrap}
+
+#altdt .altdt-toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,12px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:11px;font-size:16px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .25s,transform .35s var(--ease);z-index:10001}
+
+/* ---------- Mobil ---------- */
+@media(max-width:900px){
+  #altdt .altdt-years{grid-template-columns:repeat(2,1fr);gap:14px}
+  #altdt .altdt-yr{min-height:160px}
+}
+@media(max-width:640px){
+  #altdt{font-size:18px}
+  #altdt .altdt-head{margin-bottom:32px}
+  #altdt .altdt-lead{font-size:20px}
+  #altdt .altdt-years{gap:10px}
+  #altdt .altdt-yr{min-height:0;padding:18px 16px 16px;gap:4px}
+  #altdt .altdt-yr .n{font-size:40px}
+  #altdt .altdt-yr .t{font-size:15px}
+  #altdt .altdt-yr .f{top:12px;right:12px;font-size:10px}
+  #altdt .altdt-hero{grid-template-columns:1fr;padding:36px 26px 30px;gap:24px}
+  #altdt .altdt-arches{right:-18%;height:130%;opacity:.12}
+  #altdt .altdt-ms{max-width:none}
+  #altdt .altdt-tracks .altdt-pill{flex:1;justify-content:center;white-space:normal;text-align:center;padding:13px 14px}
+  #altdt .altdt-list{grid-template-columns:1fr}
+  #altdt .altdt-cta{grid-template-columns:1fr;padding:28px 24px}
+  #altdt .altdt-btn{padding:11px 16px}
+}
+
+/* ---------- Studiegång (en termin) ---------- */
+#altdt .altdt-plan{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:28px;margin-top:24px;animation:altdt-up .6s var(--ease) both}
+#altdt .altdt-plan-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+#altdt .altdt-plan-top h4{font-size:20px;text-transform:uppercase}
+#altdt .altdt-plan-top span{font-family:var(--head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#altdt .altdt-axis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;font-family:var(--head);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#altdt .altdt-axis span{background:var(--bg);border-radius:8px;padding:8px 12px;text-align:center}
+#altdt .altdt-lanes{display:flex;flex-direction:column;gap:10px}
+#altdt .altdt-lane{display:flex;flex-direction:column;gap:4px;width:100%;border:0;border-radius:var(--r-sm);padding:16px 20px;text-align:left;cursor:pointer;background:var(--c);color:var(--fc);font:inherit;transition:transform .3s var(--ease),box-shadow .3s var(--ease),opacity .3s}
+#altdt .altdt-lane:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+#altdt .altdt-lane .c{font-family:var(--head);font-size:12px;letter-spacing:.06em;opacity:.85}
+#altdt .altdt-lane .n{font-family:var(--head);font-size:clamp(15px,1.6vw,19px);line-height:1.15;text-transform:uppercase}
+#altdt .altdt-lane .m{font-size:16px;opacity:.85}
+#altdt .altdt-fl{background:#2f575f;color:#e5e3dc;border-radius:var(--r-sm);padding:10px;display:flex;flex-direction:column;gap:10px}
+#altdt .altdt-fl > .altdt-lane{background:transparent;padding:6px 10px 2px}
+#altdt .altdt-fl > .altdt-lane:hover{box-shadow:none;transform:none;text-decoration:underline;text-underline-offset:4px}
+#altdt .altdt-lanes.has-sel .altdt-lane[aria-pressed="false"]:not(.fl){opacity:.45}
+#altdt .altdt-lane[aria-pressed="true"]{box-shadow:0 0 0 3px var(--card),0 0 0 6px var(--c)}
+#altdt .altdt-fl > .altdt-lane[aria-pressed="true"]{box-shadow:none;text-decoration:underline;text-underline-offset:4px}
+#altdt .altdt-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:16px;color:var(--muted)}
+#altdt .altdt-legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:8px;vertical-align:-1px;background:var(--c)}
+#altdt .altdt-card.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--accent),var(--shadow-lg)}
+@media(max-width:640px){
+  #altdt .altdt-plan{padding:20px 16px}
+  #altdt .altdt-lane{padding:14px 16px}
+}
+@media(prefers-reduced-motion:reduce){
+  #altdt *,#altdt *::before,#altdt *::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<script>
+(function(){
+'use strict';
+var root = document.getElementById('altdt');
+if (!root || root.dataset.ready) return;
+root.dataset.ready = '1';
+
+/* ---------- Länkar ---------- */
+var LINKS = {
+  ansokan: 'https://altutbildning.se/ansokan',
+  vagledning: 'https://altutbildning.se/studievagledning',
+  kursplaner: 'https://altutbildning.se/kursplaner'
+};
+/* Samma Drive-mapp och nyckel som kurskatalogen */
+var DRIVE_KEY = 'AIzaSyAEunCE3KQD22E1s5goQSIj6G29QB_-Npc';
+var DRIVE_FOLDER = '1-zFMbyd_e1Odf_ps7N1qdqigWWG2nH0Z';
+var KP_KEY = 'altk-kp';   // delar cache med kurskatalogen
+
+/* ---------- Ämnen och studieformer (samma som kurskatalogen) ---------- */
+var AMNEN = {
+  AA:['Allmänna ämnen','#303636'], BV:['Bibelvetenskap','#2f575f'], HS:['Historisk-systematisk teologi','#c07a63'],
+  KM:['Kyrko- och missionsstudier','#c8a24a'], PT:['Praktisk teologi','#d4967d'], RI:['Religion och interkulturell teologi','#a6b6a1'],
+  RR:['Religionshistoria','#a7b9c8'], ST:['Systematisk teologi','#1c1c1c'], FL:['Ledarkurs','#c5c2a0']
+};
+var FORMER = {
+  P:['På plats','Videokonferens med närvaro på din studieort'],
+  H:['Hybrid','Digitala moment + träffar på Campus Örebro'],
+  L:['Läskurs','Utan föreläsningar och närvarokrav'],
+  F:['Folkhögskola','Ledarkurs i samverkan med folkhögskola']
+};
+/* Visningsfilter */
+var KINDS = [['', 'Alla'], ['hs', 'Högskolekurser'], ['F', 'Folkhögskolekurs']];
+
+/* ---------- Kursdata (Studiehandbok 2026–2027, s. 32–33) ----------
+   [kod, namn, hp, {note, alt:kod på fördjupningsnivå}] */
+var TERM = {
+  title:'Diakoniterminen', c:'#2f575f', fg:'#e5e3dc',
+  eyebrow:'Hösttermin · Block 1–2 · v. 35–02',
+  lead:'Tre högskolekurser om 7,5 hp läses parallellt under hela hösten, samtidigt som du gör praktik i en social eller diakonal verksamhet genom folkhögskolekursen.',
+  facts:['Hybrid – digitalt + träffar på Campus Örebro','Heltid eller 25–75 %','Praktik ca 7 h/vecka'],
+  ms:{ lbl:'Efter terminen', big:'Diplom', text:'Diakoniterminen ger ett diplom – ensam eller tillsammans med Missionsterminen som ett helt år.' },
+  fl:['FL15','Social och diakonal tjänst',null,'Folkhögskolekurs på 50 %. Praktik med handledning i en församling med socialt arbete eller i en kristen hjälporganisation.'],
+  inFl:['KM152H','Diakonins teologi, ledarskap och uttryck',7.5,'',{alt:'KM252H'}],
+  courses:[
+    ['ST157H','Kyrkan i samhället',7.5,'',{alt:'ST257H'}],
+    ['RR147H','Idéburet ledarskap i diakoni',7.5,'',{alt:'RR247H'}]
+  ]
+};
+var ALL = [TERM.fl, TERM.inFl].concat(TERM.courses);
+
+/* ---------- Hjälpfunktioner ---------- */
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function sv(n){ return String(n).replace('.', ','); }
+function norm(s){ return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+function course(r){
+  var code = r[0], fhs = /^F?L\d/.test(code), valbar = !code, x = r[4] || {};
+  var a = valbar ? 'AA' : fhs ? 'FL' : code.slice(0,2); if (a === 'BI') a = 'BV'; if (!AMNEN[a]) a = 'AA';
+  var t = fhs ? 'F' : valbar ? null : code.slice(-1); if (t && !FORMER[t]) t = 'P';
+  return { code:code, name:r[1], hp:r[2] || null, note:r[3] || '', fhs:fhs, valbar:valbar, amne:a, t:t,
+           display: x.alt ? code + ' · ' + x.alt : code,
+           altNote: x.alt ? 'Kan även läsas på fördjupningsnivå (' + x.alt + ').' : '' };
+}
+var $ = function(s){ return root.querySelector(s); };
+var ARCHES = '<svg class="altdt-arches" viewBox="325 29 1282 1871" preserveAspectRatio="xMaxYMin meet" aria-hidden="true"><path d="M351 1900V670A614 614 0 0 1 1579 670V1900"/><path d="M442 1900V670A523 523 0 0 1 1488 670V1900"/><path d="M533 1900V670A432 432 0 0 1 1397 670V1900"/><path d="M624 1900V670A341 341 0 0 1 1306 670V1900"/><path d="M715 1900V670A250 250 0 0 1 1215 670V1900"/><path d="M806 1900V670A159 159 0 0 1 1124 670V1900"/><path d="M897 1900V670A68 68 0 0 1 1033 670V1900"/></svg>';
+
+/* ---------- Kursplaner från Drive ---------- */
+var KP = { ids:{}, names:{} }, KP_BYNAME = {};
+function kpLink(c){
+  if (c.valbar) return { href:LINKS.kursplaner, label:'Se kursutbudet →', ext:false };
+  var id = KP.ids[c.code] || KP.ids[c.code + 'S'] || KP_BYNAME[norm(c.name)];
+  if (!id && c.code === 'BI250H') id = KP.ids.HS250H || KP.ids.PT250H || KP.ids.RI250H;
+  return id ? { href:'https://drive.google.com/file/d/' + id + '/view', label:'Kursplan ↓', ext:true }
+            : { href:LINKS.kursplaner, label:'Kursplaner →', ext:false };
+}
+function applyKp(data){
+  if (!data || !data.ids) return;
+  KP = { ids:data.ids, names:data.names || {} }; KP_BYNAME = {};
+  Object.keys(KP.names).forEach(function(k){ var n = norm(KP.names[k]); if (n && !KP_BYNAME[n]) KP_BYNAME[n] = KP.ids[k]; });
+  renderList();
+}
+function driveList(folderId, pageToken){
+  var q = encodeURIComponent("'" + folderId + "' in parents and trashed=false");
+  return fetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&key=' + DRIVE_KEY + '&pageSize=1000&orderBy=name&fields=nextPageToken,files(id,name,mimeType)' + (pageToken ? '&pageToken=' + pageToken : ''))
+    .then(function(r){ if (!r.ok) throw new Error('Drive ' + r.status); return r.json(); })
+    .then(function(d){ if (!d.nextPageToken) return d.files || []; return driveList(folderId, d.nextPageToken).then(function(m){ return (d.files || []).concat(m); }); });
+}
+function kpTitle(fileName){
+  var base = (fileName.normalize ? fileName.normalize('NFC') : fileName).replace(/\.pdf$/i, '').replace(/_+/g, ' ').trim();
+  base = base.replace(/\s+\d{2}\s*[–-]?\s*\d{2}\s*$/, '').trim();
+  return base.replace(/^[A-Z]{2}\d{2,3}[A-Z]?\s*[-–:]?\s*/, '');
+}
+function syncKursplaner(){
+  try { applyKp(JSON.parse(localStorage.getItem(KP_KEY) || 'null')); } catch (e) {}
+  if (!window.fetch) return;
+  var map = {}, names = {}, year = {};
+  function take(f){
+    if (!/\.pdf$/i.test(f.name)) return;
+    var name = f.name.normalize ? f.name.normalize('NFC') : f.name;
+    var m = name.match(/^([A-Z]{1,2}\d{2,3}[A-Z]?)/); if (!m) return;
+    var y = (name.replace(/\.pdf$/i, '').match(/(\d{2})\s*[–-]?\s*(\d{2})\s*$/) || [])[1] || '00';
+    if (!map[m[1]] || y > year[m[1]]) { map[m[1]] = f.id; names[m[1]] = kpTitle(name); year[m[1]] = y; }
+  }
+  driveList(DRIVE_FOLDER).then(function(items){
+    items.forEach(take);
+    var folders = items.filter(function(f){ return f.mimeType === 'application/vnd.google-apps.folder'; });
+    return Promise.all(folders.map(function(fo){ return driveList(fo.id).then(function(fs){ fs.forEach(take); }); }));
+  }).then(function(){
+    if (!Object.keys(map).length) return;
+    var data = { ids:map, names:names };
+    try { localStorage.setItem(KP_KEY, JSON.stringify(data)); } catch (e) {}
+    applyKp(data);
+  }).catch(function(){ /* Drive svarar inte: länka till /kursplaner */ });
+}
+
+/* ---------- Tillstånd ---------- */
+var state = { kind:'', sel:'' };
+function currentCourses(){ return ALL.map(course); }
+
+/* ---------- Rendering ---------- */
+function lane(r, cls){
+  var c = course(r), a = AMNEN[c.amne];
+  var meta = c.fhs ? 'Folkhögskolekurs · 50 %' : sv(c.hp) + ' hp · Hybrid';
+  return '<button type="button" class="altdt-lane' + (cls ? ' ' + cls : '') + '" data-act="sel" data-code="' + esc(c.code) + '" aria-pressed="' + (state.sel === c.code) + '" style="--c:' + (c.fhs ? '#2f575f' : '#c07a63') + ';--fc:#fff">' +
+    '<span class="c">' + esc(c.display) + '</span><span class="n">' + esc(c.name) + '</span><span class="m">' + meta + '</span></button>';
+}
+function renderPlan(){
+  var el = $('.altdt-lanes'); if (!el) return;
+  el.classList.toggle('has-sel', !!state.sel);
+  el.innerHTML =
+    '<div class="altdt-fl">' + lane(TERM.fl, 'fl') + lane(TERM.inFl) + '</div>' +
+    TERM.courses.map(function(r){ return lane(r); }).join('');
+}
+function card(c){
+  var a = AMNEN[c.amne], f = c.t ? FORMER[c.t] : null, link = kpLink(c);
+  var dim = state.kind && ((state.kind === 'hs' && c.fhs) || (state.kind === 'F' && !c.fhs)) ? ' dim' : '';
+  if (state.sel) dim = c.code === state.sel ? ' sel' : ' dim';
+  var tags = (f ? '<span class="altdt-tag' + (c.fhs ? ' k' : '') + '" title="' + esc(f[1]) + '">' + f[0] + '</span>' : '') +
+             (!c.valbar && !c.fhs ? '<span class="altdt-tag">' + a[0] + '</span>' : '');
+  return '<article class="altdt-card' + dim + '" data-code="' + esc(c.code) + '" style="--c:' + (c.valbar ? 'var(--accent)' : a[1]) + '">' +
+    '<div class="altdt-card-top"><span class="code"><i></i>' + esc(c.display) + '</span><span class="hp">' +
+      (c.hp ? sv(c.hp) + ' hp' : c.fhs ? 'Folkhögskolekurs' : c.valbar ? 'Valfri' : 'Se kursplan') + '</span></div>' +
+    '<h4>' + esc(c.name) + '</h4>' +
+    (tags ? '<div class="altdt-tags">' + tags + '</div>' : '') +
+    (c.note || c.altNote ? '<p class="altdt-msg">' + esc([c.note, c.altNote].filter(Boolean).join(' ')) + '</p>' : '') +
+    '<div class="altdt-actions"><a class="altdt-pdf" href="' + link.href + '"' + (link.ext ? ' target="_blank" rel="noopener"' : '') + '>' + link.label + '</a></div>' +
+  '</article>';
+}
+function renderList(){
+  var el = $('.altdt-list'); if (!el) return;
+  var list = currentCourses();
+  el.innerHTML = list.map(card).join('');
+  var hp = list.reduce(function(s, c){ return s + (c.hp || 0); }, 0);
+  $('.altdt-count').textContent = list.length + ' kurser · ' + sv(hp) + ' hp + folkhögskolekurs';
+}
+function renderStage(){
+  var y = TERM;
+  $('.altdt-stage').innerHTML =
+    '<div class="altdt-hero" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + ARCHES +
+      '<div><p class="altdt-eyebrow">' + esc(y.eyebrow) + '</p><h3>' + esc(y.title) + '</h3>' +
+        '<p class="d">' + esc(y.lead) + '</p>' +
+        '<div class="facts">' + y.facts.map(function(f){ return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' +
+      '</div>' +
+      '<div class="altdt-ms"><p class="lbl">' + y.ms.lbl + '</p><b>' + y.ms.big + '</b><p>' + esc(y.ms.text) + '</p></div>' +
+    '</div>' +
+    '<div class="altdt-plan"><div class="altdt-plan-top"><h4>Studiegång</h4><span>Klicka på en kurs</span></div>' +
+      '<div class="altdt-axis"><span>HT1 · v. 35–44</span><span>HT2 · v. 45–02</span></div>' +
+      '<div class="altdt-lanes"></div>' +
+      '<div class="altdt-legend"><span style="--c:#2f575f"><i></i>Folkhögskolekurs med praktik</span><span style="--c:#c07a63"><i></i>Högskolekurs, löper hela terminen</span></div>' +
+    '</div>' +
+    '<div class="altdt-listhead"><p class="altdt-count"></p><div class="altdt-chips" role="group" aria-label="Markera kurstyp">' +
+      KINDS.map(function(k){ return '<button type="button" class="altdt-chip" data-act="kind" data-k="' + k[0] + '" aria-pressed="' + (state.kind === k[0]) + '">' + k[1] + '</button>'; }).join('') +
+    '</div></div>' +
+    '<div class="altdt-list"></div>' +
+    '<div class="altdt-cta"><div><h4>Redo att söka?</h4><p>Ansökan till hösten är öppen 15 mars–15 april. Osäker på om terminen passar dig? Prata med studievägledningen.</p></div>' +
+      '<div class="b"><a class="altdt-pill accent" href="' + LINKS.ansokan + '">Till ansökan <span class="arr">→</span></a><a class="altdt-pill line" href="' + LINKS.vagledning + '">Studievägledning</a></div></div>';
+  renderPlan(); renderList();
+}
+function render(){ renderStage(); }
+
+/* ---------- Händelser ---------- */
+root.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]'); if (!b || !root.contains(b)) return;
+  var act = b.dataset.act;
+  if (act === 'sel') {
+    state.sel = state.sel === b.dataset.code ? '' : b.dataset.code; state.kind = '';
+    root.querySelectorAll('.altdt-chip').forEach(function(x){ x.setAttribute('aria-pressed', x.dataset.k === ''); });
+    renderPlan(); renderList();
+    var card = state.sel && root.querySelector('.altdt-card[data-code="' + state.sel + '"]');
+    if (card) { try { card.scrollIntoView({ behavior:'smooth', block:'nearest' }); } catch (err) {} }
+  }
+  else if (act === 'kind') {
+    state.kind = state.kind === b.dataset.k ? '' : b.dataset.k; state.sel = '';
+    root.querySelectorAll('.altdt-chip').forEach(function(x){ x.setAttribute('aria-pressed', x.dataset.k === state.kind); });
+    renderPlan(); renderList();
+  }
+});
+
+/* ---------- Start ---------- */
+render(); syncKursplaner();
+})();
+</script>
