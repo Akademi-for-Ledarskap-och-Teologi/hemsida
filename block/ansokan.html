@@ -16,7 +16,8 @@
   --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
   --ease:cubic-bezier(.2,.8,.2,1);
   color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
-  max-width:1040px; margin:0 auto; -webkit-font-smoothing:antialiased;hyphens:none;-webkit-hyphens:none;word-break:normal;overflow-wrap:normal;
+  width:100%; max-width:none; margin:0 auto; -webkit-font-smoothing:antialiased;
+  container:altans / inline-size; /* samma bredd som kurskatalogen */hyphens:none;-webkit-hyphens:none;word-break:normal;overflow-wrap:normal;
 }
 #alt-ansokan *{box-sizing:border-box}
 #alt-ansokan h2,#alt-ansokan h3,#alt-ansokan h4{font-family:var(--head);font-weight:400;line-height:1.08;margin:0;color:inherit;letter-spacing:-.01em}
@@ -56,6 +57,14 @@
 
 /* ---------- Programrutor ---------- */
 #alt-ansokan .tiles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+/* Programrutor på breda sidor – som i kurskatalogen */
+@container altans (min-width:1250px){
+  #alt-ansokan .tile{aspect-ratio:5/4}
+}
+@container altans (min-width:1900px){
+  #alt-ansokan .tiles{grid-template-columns:repeat(6,1fr)}
+  #alt-ansokan .tile{aspect-ratio:4/5}
+}
 #alt-ansokan .tiles li{display:flex}
 #alt-ansokan .tile[data-path="teologi"]   {--tc:#2f575f;--tf:#e5e3dc}
 #alt-ansokan .tile[data-path="pastor"]    {--tc:#c07a63;--tf:#fff}
