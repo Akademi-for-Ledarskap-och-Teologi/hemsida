@@ -169,11 +169,11 @@
 #altdt .altdt-lane .n{font-family:var(--head);font-size:clamp(15px,1.6vw,19px);line-height:1.15;text-transform:uppercase}
 #altdt .altdt-lane .m{font-size:16px;opacity:.85}
 #altdt .altdt-fl{background:#2f575f;color:#e5e3dc;border-radius:var(--r-sm);padding:10px;display:flex;flex-direction:column;gap:10px}
-#altdt .altdt-fl > .altdt-lane{background:transparent;padding:6px 10px 2px}
-#altdt .altdt-fl > .altdt-lane:hover{box-shadow:none;transform:none;text-decoration:underline;text-underline-offset:4px}
+#altdt .altdt-fl > .altdt-lane.fl{background:transparent;padding:6px 10px 2px}
+#altdt .altdt-fl > .altdt-lane.fl:hover{box-shadow:none;transform:none;text-decoration:underline;text-underline-offset:4px}
 #altdt .altdt-lanes.has-sel .altdt-lane[aria-pressed="false"]:not(.fl){opacity:.45}
 #altdt .altdt-lane[aria-pressed="true"]{box-shadow:0 0 0 3px var(--card),0 0 0 6px var(--c)}
-#altdt .altdt-fl > .altdt-lane[aria-pressed="true"]{box-shadow:none;text-decoration:underline;text-underline-offset:4px}
+#altdt .altdt-fl > .altdt-lane.fl[aria-pressed="true"]{box-shadow:none;text-decoration:underline;text-underline-offset:4px}
 #altdt .altdt-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font-size:16px;color:var(--muted)}
 #altdt .altdt-legend i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:8px;vertical-align:-1px;background:var(--c)}
 #altdt .altdt-card.sel{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--accent),var(--shadow-lg)}
