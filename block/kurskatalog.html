@@ -1,0 +1,1207 @@
+<!--
+  ============================================================
+  ALT KURSKATALOG 2026/2027 – för altutbildning.se (Squarespace)
+  ============================================================
+  INSTALLATION
+  1. Skapa en ny sida (t.ex. /kurskatalog) i Squarespace.
+  2. Lägg till ett "Code"-block (Kod) och klistra in HELA denna fil.
+  3. Stäng av "Display source" om det är påslaget. Spara.
+  (Kodblock med JavaScript kräver Squarespace Business-plan eller högre.)
+  Design: samma formspråk som ansökningsguiden (/ansokan).
+
+  UPPDATERA KURSER
+  Block, veckor, veckodag och hp hämtas vid varje sidladdning från arket
+  "Kurskatalog – kursdata från kursöversikten" (Drive, mappen ALT), som fylls
+  från PDF:en i mappen KURSÖVERSIKT HEMSIDA. Det som står där går före listan
+  COURSES nedan, som bara används som reserv och för extra uppgifter
+  (grupper, förkunskaper, programtillhörighet).
+  Varje rad: [kurskod(er), namn, hp, period, veckodag, {extra}]
+    period : HT1 | HT2 | VT1 | VT2 | HT | VT | HT2-VT1 | A1 | A2 | A3 | AR | null
+             (A1–A3 = blocken för avancerad nivå, AR = hela läsåret)
+    veckodag: O = onsdag, T = torsdag, F = fredag, L = ons em + fre fm (språk),
+              Ou/Oj = ons em ojämna/jämna veckor, Ofm = ons fm, null = ingen fast dag
+    extra  : g   = grupp (kurser i samma grupp är alternativ, välj en)
+             req = kurs som normalt krävs före
+             fa  = få schemalagda kursdagar (räknas inte som veckokrock)
+             os  = preliminär placering (visas med en notis)
+             prog= ['TA'] Teologiåret, ['DT'] Diakoniterminen, ['MT'] Missionsterminen
+  Källa: "Högskolekurser läsåret 2026/2027" (ALT, senast uppd. 2026-03-05).
+  Rader markerade os:1 är tolkade ur PDF-layouten – kontrollera blocken.
+  ============================================================
+-->
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=EB+Garamond:ital,wght@0,400;0,600;1,400&amp;display=swap">
+<div id="altk">
+  <header class="altk-head">
+    <p class="altk-eyebrow">Läsåret 2026/2027</p>
+    <h2 class="altk-title">Kurskatalog</h2>
+    <p class="altk-lead">Välj ett program eller sök bland alla kurser. Lägg till det du vill läsa i din studieplan – så ser du direkt om något krockar, vilken studietakt det blir och om du är behörig.</p>
+  </header>
+
+  <div class="altk-pcont"><ul class="altk-programs" role="list" aria-label="Program och terminer"></ul></div>
+  <div class="altk-pdetail" aria-live="polite"></div>
+
+  <div class="altk-wrap">
+    <main class="altk-main">
+      <div class="altk-toolbar">
+        <label class="altk-search">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M13 13l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+          <input type="search" class="altk-q" placeholder="Sök kurs eller kurskod" aria-label="Sök kurs eller kurskod">
+        </label>
+        <button type="button" class="altk-ftoggle" data-act="filters" aria-expanded="false" aria-controls="altk-fpanel">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M6 10h8M9 15h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+          <span>Filter</span><span class="altk-fcount"></span>
+        </button>
+      </div>
+
+      <div class="altk-fpanel" id="altk-fpanel" hidden="">
+        <div class="altk-row">
+          <label class="altk-field">
+            <span>Mina tidigare studier</span>
+            <select class="altk-prior">
+              <option value="0">Inga högskolepoäng i teologi</option>
+              <option value="60">Minst 60 hp teologi (grundnivå)</option>
+              <option value="180">Kandidatexamen i teologi</option>
+            </select>
+          </label>
+          <label class="altk-field">
+            <span>Studieort</span>
+            <select class="altk-ort">
+              <option value="">Alla orter</option>
+              <option>Örebro</option><option>Stockholm</option><option>Göteborg</option>
+              <option>Jönköping</option><option>Malmö</option>
+              <option value="Hybrid">Hemifrån (hybrid/distans)</option>
+            </select>
+          </label>
+        </div>
+        <div class="altk-fgroups"></div>
+        <div class="altk-row altk-row-end">
+          <label class="altk-check"><input type="checkbox" class="altk-fits" role="switch"> Visa bara kurser som passar i min plan</label>
+          <button type="button" class="altk-link" data-act="reset">Rensa filter</button>
+        </div>
+      </div>
+
+      <div class="altk-listhead">
+        <p class="altk-count" aria-live="polite"></p>
+        <label class="altk-sort"><span>Sortera</span>
+          <select class="altk-sortsel">
+            <option value="period">Termin</option>
+            <option value="code">Kurskod</option>
+            <option value="name">Namn</option>
+          </select>
+        </label>
+      </div>
+      <div class="altk-list"></div>
+    </main>
+
+    <aside class="altk-plan" aria-label="Min studieplan">
+      <div class="altk-planhead">
+        <h3>Min studieplan</h3>
+        <button type="button" class="altk-close" data-act="sheet" aria-label="Stäng">×</button>
+      </div>
+      <div class="altk-planbody"></div>
+    </aside>
+  </div>
+
+  <button type="button" class="altk-bar" data-act="sheet"></button>
+  <div class="altk-toast" role="status"></div>
+</div>
+
+<style>
+#altk{
+  --bg:#EDE5E0; --card:#FBF9F7; --ink:#1c1c1c; --muted:#5a5652; --accent:#c07a63; --teal:#2f575f; --line:rgba(28,28,28,.1);
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif; --text:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--text); font-size:19px; line-height:1.5;
+  width:100%; max-width:none; margin:0 auto; -webkit-font-smoothing:antialiased;
+}
+#altk *{box-sizing:border-box}
+#altk button,#altk input,#altk select{font:inherit;color:inherit}
+#altk h2,#altk h3,#altk h4,#altk p{margin:0;color:inherit}
+#altk h2,#altk h3,#altk h4{font-family:var(--head);font-weight:400;line-height:1.08;letter-spacing:-.01em}
+#altk a{color:inherit}
+#altk :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@keyframes altk-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ---------- Intro ---------- */
+#altk .altk-head{text-align:center;max-width:760px;margin:0 auto 48px}
+#altk .altk-eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#altk .altk-title{font-size:clamp(38px,6vw,64px);text-transform:uppercase;margin:12px 0 16px}
+#altk .altk-lead{font-size:22px;color:var(--muted)}
+
+/* ---------- Programrutor ---------- */
+#altk .altk-programs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+#altk .altk-programs li{display:flex;margin:0;padding:0}
+#altk .altk-programs li::before{display:none}
+#altk .altk-tile{container-type:inline-size;position:relative;width:100%;aspect-ratio:4/5;border:0;padding:0;border-radius:var(--r);overflow:hidden;cursor:pointer;text-align:left;background:var(--tc);color:var(--tf);box-shadow:var(--shadow);isolation:isolate;transition:transform .45s var(--ease),box-shadow .45s var(--ease),opacity .35s,filter .35s}
+#altk .altk-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .8s var(--ease)}
+#altk .altk-tile::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--tc) 0%,var(--tc) 34%,color-mix(in srgb,var(--tc) 55%,transparent) 58%,transparent 82%)}
+#altk .altk-tile .body{position:absolute;left:0;right:0;bottom:0;padding:24px 24px 26px;display:flex;flex-direction:column;gap:8px}
+#altk .altk-tile .t{font-family:var(--head);font-size:clamp(15px,6.4cqi,22px);line-height:1.1;text-transform:uppercase;letter-spacing:-.005em;hyphens:none;-webkit-hyphens:none;overflow-wrap:normal;word-break:normal}
+#altk .altk-tile .m{font-size:17px;line-height:1.35;opacity:.92}
+#altk .altk-tile .go{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:25%;background:rgba(255,255,255,.88);color:#1c1c1c;display:grid;place-content:center;font-size:18px;line-height:1;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .35s var(--ease),background .35s}
+#altk .altk-tile .go::before{content:"+"}
+#altk .altk-tile:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+#altk .altk-tile:hover img{transform:scale(1.06)}
+#altk .altk-tile:hover .go{transform:rotate(90deg)}
+#altk .altk-tile:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+#altk .has-choice .altk-tile[aria-pressed="false"]{opacity:.5;filter:saturate(.6)}
+#altk .has-choice .altk-tile[aria-pressed="false"]:hover{opacity:.9;filter:none}
+#altk .altk-tile[aria-pressed="true"]{box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--tc),var(--shadow-lg);transform:translateY(-4px)}
+#altk .altk-tile[aria-pressed="true"] .go{background:var(--tc);color:var(--tf);transform:none}
+#altk .altk-tile[aria-pressed="true"] .go::before{content:"✓";font-weight:700}
+
+/* ---------- Valt program ---------- */
+#altk .altk-pdetail{margin-top:28px}
+#altk .altk-pdetail:empty{display:none}
+#altk .altk-hero{container-type:inline-size;position:relative;overflow:hidden;border-radius:var(--r);background:var(--tc);color:var(--tf);padding:48px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;animation:altk-up .6s var(--ease) both}
+#altk .altk-arches{position:absolute;right:4%;top:28px;height:150%;width:auto;color:currentColor;opacity:.16;pointer-events:none;z-index:0}
+#altk .altk-arches path{fill:none;stroke:currentColor;stroke-width:55;stroke-linecap:butt}
+#altk .altk-hero > div{position:relative;z-index:1}
+#altk .altk-hero .altk-eyebrow{color:inherit;opacity:.75}
+#altk .altk-hero h3{font-size:clamp(22px,4cqi,46px);text-transform:uppercase;margin:10px 0 14px}
+#altk .altk-hero .d{font-size:20px;line-height:1.5;max-width:60ch;opacity:.92}
+#altk .altk-hero .d + .lbl{margin-top:22px}
+#altk .altk-hero h3 + .lbl{margin-top:22px}
+#altk .altk-hero .lbl{font-family:var(--head);font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+#altk .altk-hero .m{font-size:17px;opacity:.72;margin-top:16px}
+#altk .altk-hero .acts{display:flex;flex-direction:column;align-items:flex-end;gap:14px;position:relative;z-index:1}
+#altk .altk-hclose{position:absolute;top:18px;right:18px;z-index:2;width:40px;height:40px;border-radius:25%;border:0;background:rgba(255,255,255,.88);color:#1c1c1c;font-size:20px;line-height:1;cursor:pointer;transition:transform .3s var(--ease)}
+#altk .altk-hclose:hover{transform:rotate(90deg)}
+
+/* ---------- Knappar ---------- */
+#altk .altk-pill{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:12px;padding:15px 26px;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;text-decoration:none;white-space:nowrap;background:var(--ink);color:#fff;transition:transform .2s var(--ease),background .2s}
+#altk .altk-pill:hover{transform:scale(1.04)}
+#altk .altk-pill.inv{background:var(--tf);color:var(--tc)}
+#altk .altk-pill.accent{background:var(--accent);color:#fff}
+#altk .altk-pill.line{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+#altk .altk-pill .arr{transition:transform .2s var(--ease)}
+#altk .altk-pill:hover .arr{transform:translateX(3px)}
+#altk .altk-tlink{font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;color:inherit}
+#altk .altk-tlink:hover{text-decoration:underline;text-underline-offset:3px}
+#altk .altk-btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:10px;padding:11px 18px;font-family:var(--head);font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;background:var(--ink);color:#fff;text-decoration:none;white-space:nowrap;transition:transform .2s var(--ease),background .2s}
+#altk .altk-btn:hover{transform:scale(1.04)}
+#altk .altk-btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+#altk .altk-btn.dark{background:var(--accent)}
+#altk .altk-link{background:none;border:0;padding:0;cursor:pointer;font-family:var(--head);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+#altk .altk-link:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Layout ---------- */
+#altk .altk-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start;margin-top:72px}
+@media(min-width:1000px){#altk .altk-wrap{grid-template-columns:minmax(0,1fr) 340px}}
+
+/* ---------- Sök och filter ---------- */
+#altk .altk-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+#altk .altk-search{flex:1;position:relative;display:block;min-width:0}
+#altk .altk-search svg{position:absolute;left:20px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none}
+#altk .altk-search input{width:100%;border:0;border-radius:14px;background:var(--card);box-shadow:var(--shadow);padding:16px 22px 16px 50px;font-size:19px;outline:none;-webkit-appearance:none;appearance:none;transition:box-shadow .2s}
+#altk .altk-search input:focus{box-shadow:0 0 0 3px var(--accent),var(--shadow)}
+#altk .altk-ftoggle{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:14px;background:var(--card);box-shadow:var(--shadow);padding:16px 22px;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:transform .2s var(--ease),background .2s,color .2s}
+#altk .altk-ftoggle:hover{transform:scale(1.03)}
+#altk .altk-ftoggle svg{width:18px;height:18px}
+#altk .altk-ftoggle[aria-expanded="true"]{background:var(--ink);color:#fff}
+#altk .altk-fcount{background:var(--accent);color:#fff;border-radius:6px;font-size:11px;min-width:22px;height:22px;padding:0 6px;display:grid;place-content:center}
+#altk .altk-fcount:empty{display:none}
+#altk .altk-fpanel{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:30px 32px;margin-bottom:20px;display:grid;gap:28px;animation:altk-up .45s var(--ease) both}
+#altk .altk-fpanel[hidden]{display:none}
+#altk .altk-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end}
+#altk .altk-row-end{justify-content:space-between;align-items:center}
+#altk .altk-field{display:flex;flex-direction:column;gap:8px;flex:1 1 240px}
+#altk .altk-field > span,#altk .altk-fgroup h4{font-family:var(--head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);line-height:1.2}
+#altk select{appearance:none;-webkit-appearance:none;border:0;border-radius:11px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231c1c1c' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 18px center/12px 8px;box-shadow:inset 0 0 0 1px var(--line);padding:12px 44px 12px 20px;font-size:18px;cursor:pointer;width:100%}
+#altk .altk-fgroups{display:grid;gap:26px}
+#altk .altk-fpanel .altk-chip,#altk .altk-fpanel select,#altk .altk-fpanel option,#altk .altk-fpanel .altk-check{font-weight:600}
+#altk .altk-fgroup h4{margin:0 0 12px}
+#altk .altk-chips{display:flex;flex-wrap:wrap;gap:8px}
+#altk .altk-chip{border:0;background:#fff;box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:8px 16px;font-size:17px;line-height:1.3;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .2s,color .2s,transform .2s var(--ease)}
+#altk .altk-chip:hover{transform:scale(1.03)}
+#altk .altk-chip[aria-pressed="true"]{background:var(--ink);color:#fff;box-shadow:none}
+#altk .altk-chip .dot{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1.5px rgba(255,255,255,.7)}
+#altk .altk-check{display:flex;gap:12px;align-items:center;font-size:18px;cursor:pointer}
+#altk .altk-check input{appearance:none;-webkit-appearance:none;flex:none;width:46px;height:28px;margin:0;border-radius:8px;background:rgba(28,28,28,.16);position:relative;cursor:pointer;transition:background .25s}
+#altk .altk-check input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:6px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .25s var(--ease)}
+#altk .altk-check input:checked{background:var(--teal)}
+#altk .altk-check input:checked::after{transform:translateX(18px)}
+
+/* ---------- Kurslista ---------- */
+#altk .altk-listhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 4px 16px;flex-wrap:wrap}
+#altk .altk-count{font-family:var(--head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#altk .altk-sort{display:flex;align-items:center;gap:10px;font-size:16px;color:var(--muted)}
+#altk .altk-sort select{width:auto;font-size:16px;padding:8px 38px 8px 16px;background-color:var(--card);color:var(--ink)}
+#altk .altk-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+#altk .altk-card{background:var(--card);border-radius:20px;padding:22px 22px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+#altk .altk-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+#altk .altk-card.in{box-shadow:0 0 0 2px var(--teal),var(--shadow)}
+#altk .altk-card.in .altk-btn.ghost{color:var(--teal);box-shadow:inset 0 0 0 1.5px var(--teal)}
+#altk .altk-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--head);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+#altk .altk-card-top .code{display:flex;align-items:center;gap:8px;min-width:0}
+#altk .altk-card-top .code i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c)}
+#altk .altk-card-top .hp{flex:none;background:var(--bg);color:var(--ink);border-radius:6px;padding:4px 10px;white-space:nowrap}
+#altk .altk-card h3{font-size:19px;line-height:1.15;text-transform:uppercase}
+#altk .altk-meta{font-size:17px;line-height:1.4;color:var(--muted);display:grid}
+#altk .altk-tags{display:flex;flex-wrap:wrap;gap:6px}
+#altk .altk-tag{font-size:14px;line-height:1.3;border-radius:6px;padding:4px 10px;background:var(--bg)}
+#altk .altk-tag.p{background:color-mix(in srgb,var(--accent) 22%,#fff)}
+#altk .altk-msgs{display:grid;gap:6px}
+#altk .altk-msg{position:relative;font-size:16px;line-height:1.35;border-radius:12px;padding:9px 12px 9px 30px}
+#altk .altk-msg::before{content:"";position:absolute;left:12px;top:16px;width:8px;height:8px;border-radius:50%}
+#altk .altk-msg.w{background:color-mix(in srgb,var(--accent) 16%,#fff)}
+#altk .altk-msg.w::before{background:var(--accent)}
+#altk .altk-msg.i{background:color-mix(in srgb,#a7b9c8 32%,#fff)}
+#altk .altk-msg.i::before{background:var(--teal)}
+#altk .altk-msg.o{background:color-mix(in srgb,#a6b6a1 32%,#fff)}
+#altk .altk-msg.o::before{background:var(--teal)}
+#altk .altk-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+#altk .altk-actions a.pdf{font-family:var(--head);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);text-decoration:none}
+#altk .altk-actions a.pdf::after{content:" ↓"}
+#altk .altk-actions a.pdf:hover{text-decoration:underline;text-underline-offset:3px}
+#altk .altk-empty{grid-column:1/-1;padding:48px 24px;text-align:center;color:var(--muted);background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);display:grid;gap:12px;justify-items:center}
+
+/* ---------- Studieplan ---------- */
+#altk .altk-plan{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:auto;overscroll-behavior:contain}
+#altk .altk-planhead{display:flex;justify-content:space-between;align-items:center;padding:26px 26px 10px;position:sticky;top:0;background:var(--card);z-index:2}
+#altk .altk-planhead h3{font-size:24px;text-transform:uppercase}
+#altk .altk-close{display:none;width:38px;height:38px;border-radius:25%;border:0;background:var(--bg);font-size:20px;line-height:1;cursor:pointer}
+#altk .altk-planbody{padding:10px 26px 26px;display:grid;gap:24px}
+#altk .altk-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#altk .altk-sum div{background:#fff;border-radius:var(--r-sm);padding:16px 14px 14px}
+#altk .altk-sum div:first-child{background:var(--teal);color:#e5e3dc}
+#altk .altk-sum b{display:block;font-family:var(--head);font-weight:400;font-size:30px;line-height:1;letter-spacing:-.03em}
+#altk .altk-sum span{display:block;font-size:14px;line-height:1.2;opacity:.75;margin-top:8px}
+#altk .altk-ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;font-family:var(--head);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#altk .altk-ph span{font-family:var(--text);font-size:15px;letter-spacing:0;text-transform:none}
+#altk .altk-chart{display:grid;grid-template-columns:repeat(40,1fr);gap:2px;height:84px;align-items:end;padding:10px;border-radius:14px;background:linear-gradient(to top,transparent calc(66.6% - 1px),rgba(28,28,28,.16) calc(66.6% - 1px),rgba(28,28,28,.16) 66.6%,transparent 66.6%) content-box,#fff}
+#altk .altk-chart i{display:block;min-height:0;background:var(--teal);border-radius:3px 3px 1px 1px;transition:height .5s var(--ease)}
+#altk .altk-chart i.over{background:var(--accent)}
+#altk .altk-axis{display:grid;grid-template-columns:repeat(4,1fr);font-size:13px;color:var(--muted);margin-top:6px;text-align:center}
+#altk .altk-matrix{width:100%;border-collapse:separate;border-spacing:4px;margin:-4px;width:calc(100% + 8px);font-size:14px;table-layout:fixed}
+#altk .altk-matrix th{font-weight:400;color:var(--muted);padding:2px;text-align:left;font-size:14px}
+#altk .altk-matrix thead th{font-family:var(--head);font-size:11px;letter-spacing:.06em}
+#altk .altk-matrix td{background:#fff;border-radius:8px;padding:3px;vertical-align:top;height:34px}
+#altk .altk-matrix td.x{background:color-mix(in srgb,var(--accent) 18%,#fff);box-shadow:inset 0 0 0 2px var(--accent)}
+#altk .altk-matrix .c{display:block;border-radius:6px;padding:2px 5px;margin:1px 0;background:var(--c);color:var(--ct);font-family:var(--head);font-size:10px;letter-spacing:.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#altk .altk-plist{display:grid;gap:16px}
+#altk .altk-pterm h4{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+#altk .altk-pterm{display:grid;gap:6px}
+#altk .altk-pterm h4{margin-bottom:2px}
+#altk .altk-pitem{display:grid;grid-template-columns:10px 1fr auto;gap:12px;align-items:center;padding:12px 12px 12px 14px;background:#fff;border-radius:14px}
+#altk .altk-pitem .s{width:10px;height:10px;border-radius:50%;background:var(--c)}
+#altk .altk-pitem b{display:block;font-weight:600;font-size:16px;line-height:1.3}
+#altk .altk-pitem small{display:block;font-size:14px;color:var(--muted);line-height:1.3;margin-top:2px}
+#altk .altk-pitem button{width:30px;height:30px;border-radius:25%;border:0;background:var(--bg);cursor:pointer;font-size:16px;line-height:1;transition:background .2s,color .2s}
+#altk .altk-pitem button:hover{background:var(--accent);color:#fff}
+#altk .altk-pempty{color:var(--muted);font-size:17px;background:#fff;border-radius:var(--r-sm);padding:20px}
+#altk .altk-ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#altk .altk-ptools .altk-link{margin-left:6px}
+#altk .altk-cta{display:grid;gap:16px;background:var(--ink);color:#fff;border-radius:20px;padding:26px}
+#altk .altk-cta h4{font-size:18px;text-transform:uppercase}
+#altk .altk-cta p{font-size:16px;opacity:.78}
+#altk .altk-cta div{display:flex;gap:8px;flex-wrap:wrap}
+#altk .altk-cta .altk-pill{padding:13px 20px;font-size:12px}
+#altk .altk-cta .altk-tlink{font-size:12px;opacity:.85}
+
+/* ---------- Mobil ---------- */
+#altk .altk-bar{display:none}
+#altk .altk-toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,12px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:11px;font-size:16px;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .25s,transform .35s var(--ease);z-index:10001;white-space:nowrap}
+#altk .altk-toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(min-width:1000px){
+  #altk .altk-plan{position:sticky;top:24px;max-height:calc(100vh - 48px)}
+}
+@media(min-width:1400px){
+  #altk .altk-wrap{grid-template-columns:minmax(0,1fr) 380px}
+}
+/* Programrutor på breda sidor: anpassas efter rutornas faktiska bredd */
+#altk .altk-pcont{container-type:inline-size}
+@container (min-width:1250px){
+  #altk .altk-tile{aspect-ratio:5/4}
+}
+@container (min-width:1900px){
+  #altk .altk-programs{grid-template-columns:repeat(6,1fr)}
+  #altk .altk-tile{aspect-ratio:4/5}
+}
+@media(max-width:900px){
+  #altk .altk-programs{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:999px){
+  #altk .altk-plan{position:fixed;left:0;right:0;bottom:0;top:6vh;z-index:10000;border-radius:24px 24px 0 0;box-shadow:0 -10px 40px rgba(28,28,28,.25);transform:translateY(105%);transition:transform .45s var(--ease);visibility:hidden}
+  #altk.altk-open .altk-plan{transform:none;visibility:visible}
+  #altk .altk-close{display:block}
+  #altk .altk-bar{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:var(--ink);color:#fff;border:0;border-radius:13px;padding:15px 22px;font-family:var(--head);font-size:13px;letter-spacing:.03em;justify-content:space-between;align-items:center;gap:10px;box-shadow:var(--shadow-lg);cursor:pointer}
+  #altk .altk-bar span{white-space:nowrap}
+  #altk .altk-bar .wd{background:var(--accent);color:#fff;border-radius:5px;font-size:11px;padding:3px 9px;margin-left:8px}
+  #altk{padding-bottom:88px}
+}
+@media(max-width:640px){
+  #altk{font-size:18px}
+  #altk .altk-head{margin-bottom:36px}
+  #altk .altk-lead{font-size:20px}
+  #altk .altk-programs{grid-template-columns:1fr;gap:14px}
+  #altk .altk-tile{aspect-ratio:16/11}
+  #altk .altk-hero{grid-template-columns:1fr;padding:36px 26px 30px}
+  #altk .altk-arches{right:-18%;height:130%;opacity:.12}
+  #altk .altk-hero .acts{align-items:flex-start}
+  #altk .altk-hero .acts > *{max-width:100%}
+  #altk .altk-hero .altk-pill{white-space:normal;text-align:left;line-height:1.3}
+  #altk .altk-wrap{margin-top:48px}
+  #altk .altk-toolbar{gap:8px}
+  #altk .altk-search input{font-size:17px;padding:14px 16px 14px 44px}
+  #altk .altk-search svg{left:16px}
+  #altk .altk-ftoggle{padding:14px 16px}
+  #altk .altk-ftoggle > span:not(.altk-fcount){display:none}
+  #altk .altk-fpanel{padding:24px 20px}
+  #altk .altk-list{grid-template-columns:1fr}
+  #altk .altk-planhead{padding:22px 20px 8px}
+  #altk .altk-planbody{padding:8px 20px 28px}
+}
+@media(prefers-reduced-motion:reduce){
+  #altk *,#altk *::before,#altk *::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<script>
+(function(){
+'use strict';
+var root = document.getElementById('altk');
+if (!root || root.dataset.ready) return;
+root.dataset.ready = '1';
+
+/* ---------- Grunddata ---------- */
+var LINKS = {
+  ansokan: 'https://altutbildning.se/ansokan',
+  vagledning: 'https://altutbildning.se/studievagledning',
+  kursutbud: ''   // hämtas från sidan /kursplaner (länken "Kursöversikt")
+};
+/* Kursplaner: hämtas live från Drive-mappen "KURSPLANER HEMSIDA" – samma källa
+   som sidan /kursplaner. Inga PDF-länkar är inbyggda i koden. */
+var DRIVE_KEY = 'AIzaSyAEunCE3KQD22E1s5goQSIj6G29QB_-Npc'; // projekt alt-hemsida-kursplaner (begränsad till altutbildning.se)
+var DRIVE_FOLDER = '1-zFMbyd_e1Odf_ps7N1qdqigWWG2nH0Z';
+var KURSPLAN = {};
+
+var COURSES = [
+  // --- Teologiåret (år 1 i Pastors- och Teologiprogrammet) ---
+  ['AA101P','Teologin, livet och lärandet',7.5,'HT1','O',{prog:['TA']}],
+  ['BI101P','Bibel, tro och tolkning',7.5,'HT2','O',{prog:['TA']}],
+  ['RI101P','Den missionella kyrkan',7.5,'VT1','O',{prog:['TA']}],
+  ['HS102P','Att tolka samtiden teologiskt',7.5,'VT2','O',{prog:['TA']}],
+  ['PT101P','Kristen spiritualitet och kyrkans liv',7.5,'HT1','T',{prog:['TA']}],
+  ['HS101P','Trons historia och teologiska teman',7.5,'HT2','T',{prog:['TA']}],
+  ['BI102P','Jesus och de första kristna',7.5,'VT1','T',{prog:['TA']}],
+  ['BI103P','Guds folk och dess skrifter',7.5,'VT2','T',{prog:['TA']}],
+  // --- Onsdagar ---
+  ['BV246H','Jesaja, icke-språklig',7.5,'HT1','O',{g:'jes'}],
+  ['BV256H','Jesaja, språklig',7.5,'HT1','O',{g:'jes',req:'BV125H'}],
+  ['BV257H','Skapelse, miljö och frälsning (ekoteologi i GT och NT)',7.5,'HT2','O'],
+  ['BV250H','Uppenbarelseboken, icke-språklig',7.5,'VT1','O',{g:'upp'}],
+  ['BV260H','Uppenbarelseboken, språklig',7.5,'VT1','O',{g:'upp',req:'BV121H'}],
+  ['BV228H','Romarbrevet, icke-språklig',7.5,'VT2','O',{g:'rom'}],
+  ['BV218H','Romarbrevet, språklig',7.5,'VT2','O',{g:'rom',req:'BV121H'}],
+  ['RR280L','Kommunikation och konflikthantering',7.5,'HT',null,{os:1}],
+  ['ST251R','Etik',7.5,'VT2','O',{os:1}],
+  ['BV207R','Exegetisk fördjupning med introduktion till bibliska språk',15,'HT','O'],
+  ['ST208R','Systematisk teologi 2',7.5,'VT1','O',{req:'ST103R'}],
+  ['AA231R','Självständigt arbete 7,5 hp (regional)',7.5,'VT2','O',{g:'sa75'}],
+  ['KM251L','Teologi om kyrkliga handlingar',7.5,'HT',null,{os:1}],
+  [['RR147H','RR247H'],'Idéburet ledarskap i diakoni',7.5,'HT','O',{fa:1,prog:['DT']}],
+  [['ST157H','ST257H'],'Kyrkan i samhället',7.5,'HT','O',{fa:1,prog:['DT']}],
+  [['ST153H','ST253H'],'Migration, nation och globalisering',7.5,'VT','O',{prog:['MT']}],
+  ['ST252R','Teologisk integrering',7.5,'VT2','O',{os:1}],
+  // --- Bibliska språk (ons em + fre fm) ---
+  [['BV125H','BV205H'],'Gammaltestamentlig hebreiska 1',7.5,'HT1','L'],
+  [['BV128H','BV208H'],'Gammaltestamentlig hebreiska 2',7.5,'HT2','L',{req:'BV125H'}],
+  [['BV121H','BV201H'],'Nytestamentlig grekiska 1',7.5,'VT1','L'],
+  [['BV122H','BV202H'],'Nytestamentlig grekiska 2',7.5,'VT2','L',{req:'BV121H'}],
+  // --- Torsdagar ---
+  ['ST206R','Religionsfilosofi och idéhistoria',7.5,'HT1','T'],
+  [['BV232R','KM232R','ST232R'],'Självständigt arbete 15 hp (kandidatuppsats)',15,'HT2-VT1','T'],
+  ['BV243R','Bibelbruk och bibeltolkning',7.5,'VT2','T',{g:'bib'}],
+  ['BV253R','Bibelbruk och språklig bibeltolkning',7.5,'VT2','T',{g:'bib'}],
+  ['BV268C','Bibelteologi 2 (campus)',7.5,'HT1','T',{g:'bt2',req:'BV103R'}],
+  ['BV268R','Bibelteologi 2 (regional)',7.5,'HT1','T',{g:'bt2',req:'BV103R'}],
+  ['KM253H','Frikyrkans historia och teologi',7.5,'HT2','T'],
+  ['RR246R','Religionsbeteendevetenskap',7.5,'VT1','T'],
+  ['ST103R','Systematisk teologi 1',7.5,'HT1','T'],
+  ['RR106R','Världsreligionerna, baskurs',7.5,'HT2','T'],
+  ['KM101R','Missionsvetenskap, baskurs',7.5,'VT1','T'],
+  ['BV103R','Bibelteologi 1',7.5,'VT2','T'],
+  // --- Fredagar (få kursdagar) ---
+  [['KM152H','KM252H'],'Diakonins teologi, ledarskap och uttryck',7.5,'HT','F',{fa:1,prog:['DT']}],
+  [['KM145H','KM245H'],'Kulturförståelse',7.5,'VT','F',{fa:1,prog:['MT']}],
+  // --- Utan fast veckodag: läs- och distanskurser ---
+  ['ST256L','Modern svensk teologi',7.5,'HT1',null,{os:1}],
+  [['BV234L','KM234L','ST234L'],'Vetenskaplig teori och metod',7.5,'HT2',null,{os:1}],
+  ['AA231H','Självständigt arbete 7,5 hp (hybrid)',7.5,'VT1',null,{g:'sa75',os:1}],
+  ['KM246L','Skandinavisk pentekostalism',7.5,'VT2',null,{os:1}],
+  ['BV160D','Sjung till Herrens ära!',7.5,'HT',null],
+  ['KM160D','Hur leder man?',7.5,'HT',null],
+  ['ST160D','Tårar och triumf',7.5,'HT',null],
+  ['BV161D','Ordet och Anden',7.5,'VT',null],
+  ['KM161D','Så säger Herren!',7.5,'VT',null],
+  ['ST161D','Att växa vidare',7.5,'VT',null],
+  [['BV233D','KM233D','ST233D'],'Fältstudium 15 hp',15,null,null],
+  ['ST207L','Kontextuell teologi',7.5,null,null],
+  // --- Avancerad nivå (magister/master) ---
+  ['AA401H','Text och tolkning',10,'A1','Oj'],
+  ['ST401H','Teologins historia',10,'A1','Ou'],
+  ['BV406H','Jesaja, icke-språklig',10,'A1','Ofm',{g:'jes4'}],
+  ['BV416H','Jesaja, språklig',10,'A1','Ofm',{g:'jes4'}],
+  ['BV405H','Jesus i modern forskning, icke-språklig',10,'A2','Ou',{g:'jmf'}],
+  ['BV415H','Jesus i modern forskning, språklig',10,'A2','Ou',{g:'jmf'}],
+  [['BV408H','ST408H'],'Anden, frälsning och församling',10,'A2','Oj'],
+  ['ST406H','Nyare frikyrkohistoria och teologi',10,'A2','Ofm'],
+  ['BV412H','Tidiga kristna texter i Rom, icke-språklig',10,'A3','Ou',{g:'tkr'}],
+  ['BV411H','Tidiga kristna texter i Rom, språklig',10,'A3','Ou',{g:'tkr'}],
+  ['ST402H','Systematisk teologi i en global kristenhet',10,'A3','Oj',{os:1}],
+  ['ST405H','Människa och Gud genom västerlandets idéhistoria',10,'A3','Oj',{os:1}],
+  [['BV419L','ST419L'],'Teori och metod (magister), helfart',5,null,null],
+  [['BV420H','ST420H'],'Magisteruppsats',15,null,null],
+  [['BV519L','ST519L'],'Teori och metod (master)',null,null,null],
+  [['BV520H','ST520H'],'Masteruppsats',30,'AR',null],
+  ['BV410L','Bibelöversättning',5,null,null],
+  // --- Ledarkurser (folkhögskola, ges i samverkan) ---
+  ['FL03','Ledaren och kommunikationen',null,null,null,{prog:['PP'],ingar:'RR280',alt:1}],
+  ['FL04','Ledarskap och etik',null,null,null,{prog:['PP'],ingar:'ST251',alt:1}],
+  ['FL05','Bibeln i församlingslivet',null,null,null,{prog:['PP'],ingar:'BV268R',alt:1}],
+  ['FL06','Människor i möte',null,null,null,{prog:['PP'],ingar:'RR246',alt:1}],
+  ['FL07','Gudstjänst och kyrkliga handlingar',null,null,null,{prog:['PP'],ingar:'KM251',alt:1}],
+  ['FL08','Ledarskap och teologisk integrering',null,null,null,{prog:['PP'],ingar:'ST252',alt:1}],
+  ['FL15','Social och diakonal tjänst',null,'HT',null,{takt:25,prog:['DT'],ingar:'KM152'}],
+  ['FL16','Interkulturell tjänst',null,'VT',null,{takt:25,prog:['MT'],ingar:'KM145'}]
+];
+
+var IMG = 'https://images.squarespace-cdn.com/content/v1/66daca81e2a9864d9d033ae4/';
+var PROGRAMS = [
+  {id:'TA',spec:'AA101P, BI101P, RI101P, HS102P, PT101P, HS101P, BI102P, BI103P',name:'Teologiåret / Teologiprogrammet',q:"Är du nyfiken på att stanna upp och tänka djupare kring de stora frågorna i livet?",text:[["Teologiåret", "Är du nyfiken på att stanna upp och tänka djupare kring de stora frågorna i livet? Hur formas egentligen våra övertygelser, vår tro och vår förståelse av världen? Teologiåret ger dig möjlighet att prova på teologiska studier i en miljö som kombinerar akademisk reflektion med personlig fördjupning. Teologiåret kan läsas i Göteborg, Jönköping, Malmö, Stockholm och Örebro och omfattar 60 hp."], ["Teologiprogrammet", "Vad är det som formar våra djupaste övertygelser? Hur påverkar frågor om mening, sanning och hopp sättet vi lever våra liv, leder andra och engagerar oss i samhället? Teologi är ett reflekterande och kritiskt utforskande av sådana frågor, med särskilt fokus på den kristna traditionens texter, tankevärldar och praktiker – och deras fortsatta betydelse i vår tid. Teologiprogrammet kan läsas i Göteborg, Jönköping, Malmö, Stockholm och Örebro och ger dig en kandidatexamen i teologi."]],meta:'Grundår 60 hp · program 2–3 år till examen',desc:'Börja med ett grundår i teologi med kurser i alla fyra ämnesområden – och fortsätt mot en högskole- eller kandidatexamen om du vill. Kan också läsas på halvfart.',url:'https://altutbildning.se/teologiaret',urlLabel:'Läs om Teologiåret',url2:'https://altutbildning.se/teologiprogram',url2Label:'Läs om Teologiprogrammet',img:IMG+'acd91f40-fa2f-404e-8299-a738fe0c6950/DSC04094.jpg',c:'#2f575f',fg:'#e5e3dc',add:'Lägg till Teologiåret'},
+  {id:'PP',spec:'AA101P, BI101P, RI101P, HS102P, PT101P, HS101P, BI102P, BI103P, ledarkurser',name:'Pastorsprogrammet',q:"Är du redo att utforska din kallelse för tjänst i Guds rike?",text:[["", "Är du redo att utforska din kallelse för tjänst i Guds rike? Har du en längtan att utrustas för uppdrag i församling, mission eller samhälle? Pastorsprogrammet ger dig redskapen du behöver för att gå in i en församlingstjänst. Det ger dig möjlighet att studera teologi i kombination med ledarskap med siktet inställt på tjänst i Guds rike. Programmet kan läsas på våra fem olika orter, eller i hybridform, och ger dig en kandidatexamen i teologi. För dig som är mitt i livet och har en tidigare utbildning erbjuder vi ett skräddarsytt tvåårigt förlopp."]],meta:'2–4 år · upp till kandidatexamen · på plats eller hybrid',desc:'År 1 är Teologiåret. År 2–4 kombinerar ledarkurser på folkhögskola med teologiska fördjupningar.',url:'https://altutbildning.se/pastorsprogram',img:IMG+'bbc6e113-7616-424e-9019-886f24b6da2e/Arches+-+2.jpg',c:'#c07a63',fg:'#e5e3dc',add:'Lägg till år 1'},
+  {id:'DT',spec:'RR147H, ST157H, KM152H, FL15',name:'Diakoniterminen',q:"Längtar du efter att stödja människor i olika typer av utsatthet?",text:[["", "Längtar du efter att stödja människor i olika typer av utsatthet? Överallt möter vi sociala utmaningar och människor i utsatthet, människor som lämnat det bekanta för flykt till något okänt, människor med beroendeproblematik eller hemlöshet, människor i ensamhet, psykisk ohälsa eller kriminalitet. Diakoniterminen vänder sig till dig som vill ha en utbildning inom socialt arbete och diakoni med teologisk fördjupning och reflektion. Här tränas du att se de sociala uppgifterna och livet i samhället i ett kristet perspektiv."]],meta:'Hösttermin · hybrid · 25–100 %',desc:'Socialt arbete och diakoni med teologisk fördjupning. Tre högskolekurser plus folkhögskolekurs med praktik.',url:'https://altutbildning.se/diakoniterminen',img:IMG+'372f6162-4fea-4831-968b-76507330e295/unsplash-image-nF8xhLMmg0c.jpg',c:'#a6b6a1',fg:'#1c1c1c',add:'Lägg till terminen'},
+  {id:'MT',spec:'ST153H, KM145H, FL16',name:'Missionsterminen',q:"Vill du arbeta interkulturellt utomlands eller i Sverige?",text:[["", "Vill du arbeta interkulturellt utomlands eller i Sverige, till exempel med integration i församlingen, församlingsgrundande arbete i mångkulturella miljöer eller med internationell mission? Missionsterminen vill stärka den teoretiska kunskapen om kultur och omvärld samt fördjupa reflektionen kring din egen roll och tjänst i interkulturella sammanhang."]],meta:'Vårtermin · hybrid · 25–100 %',desc:'För interkulturell tjänst i Sverige eller utomlands. Kurser i kultur, mission och globalisering.',url:'https://altutbildning.se/missionsterminen',img:IMG+'3fdddcb2-83a7-42e9-beef-f61654c1ead0/DSC01665.jpg',c:'#c8a24a',fg:'#e5e3dc',add:'Lägg till terminen'},
+  {id:'MA',spec:'avancerad nivå',name:'Masterprogrammet',q:"Vad innebär det att tänka teologiskt på avancerad nivå?",text:[["", "Vad innebär det att tänka teologiskt på avancerad nivå? Hur kan fördjupad analys av texter, traditioner och praktiker bidra till större klarhet i frågor om tro, mening och ansvar i en komplex samtid? Masterprogrammet i teologi riktar sig till dig som vill fördjupa din teologiska kompetens och utveckla ett moget, analytiskt och reflekterat förhållningssätt till den kristna traditionen i dialog med samtida frågor."]],meta:'1–2 år · magister eller master · distans',desc:'Avancerad nivå med inriktning Bibelvetenskap eller Historisk-systematisk teologi.',url:'https://altutbildning.se/masterprogram',img:IMG+'1774513755858-KA5RKGEVLH5FSOJBDWL1/unsplash-image-hHL08lF7Ikc.jpg',c:'#303636',fg:'#e5e3dc'},
+  {id:'FK',spec:'alla högskolekurser',name:'Fristående kurser',q:"Vill du fördjupa dig i teologins värld?",text:[["", "Vill du fördjupa dig i teologins värld? Förutom de konkreta dörrar som öppnas in mot olika yrkesgrupper som pastor, lärare, bibelforskare, rådgivare, ledarutvecklare eller olika typer av socialt arbete ger teologiska studier dig möjlighet att utforska och på ett djupare plan reflektera över livets stora frågor, om Gud, människa och skapelse, och hur de kan höra samman. Därför erbjuder vi en rad fristående kurser som kan läsas på plats, i hybridform eller på distans."]],meta:'På plats, hybrid eller distans',desc:'De flesta högskolekurser kan läsas fristående. Ansök 15 okt–15 nov (vår) eller 15 mars–15 april (höst).',url:'https://altutbildning.se/fristende-kurser',img:IMG+'fd9cf3d1-1b1e-40f8-b341-d20f4d0dbf89/ALT+Dagarna+HT2639+-+stor.jpeg',c:'#c5c2a0',fg:'#1c1c1c'}
+];
+
+var AMNEN = {
+  AA:['Allmänna ämnen','#303636','#e5e3dc'], BV:['Bibelvetenskap','#2f575f','#e5e3dc'], HS:['Historisk-systematisk teologi','#c07a63','#1c1c1c'],
+  KM:['Kyrko- och missionsstudier','#c8a24a','#1c1c1c'], PT:['Praktisk teologi','#d4967d','#1c1c1c'], RI:['Religion och interkulturell teologi','#a6b6a1','#1c1c1c'],
+  RR:['Religionshistoria och religionsbeteendevetenskap','#a7b9c8','#1c1c1c'], ST:['Systematisk teologi','#1c1c1c','#e5e3dc'], FL:['Ledarkurser (folkhögskola)','#c5c2a0','#1c1c1c']
+};
+var FORMER = {
+  P:['På plats','Videokonferens med närvaro på din studieort'],
+  R:['Regional','Videokonferens med närvaro på din studieort'],
+  C:['Campus Örebro','Obligatorisk närvaro på Campus Örebro'],
+  H:['Hybrid','Digitala moment + träffar på Campus Örebro'],
+  D:['Distans','Inspelade föreläsningar, ingen närvaro'],
+  L:['Läskurs','Utan föreläsningar och närvarokrav'],
+  F:['Folkhögskola','Ledarkurs i samverkan med folkhögskola']
+};
+var PER = {
+  HT1:[35,44,'HT1 · v. 35–44'], HT2:[45,2,'HT2 · v. 45–02'], VT1:[3,12,'VT1 · v. 03–12'], VT2:[13,22,'VT2 · v. 13–22'],
+  HT:[35,2,'Hösttermin · v. 35–02'], VT:[3,22,'Vårtermin · v. 03–22'], 'HT2-VT1':[45,12,'HT2–VT1 · v. 45–12'],
+  A1:[35,47,'HT1 · v. 35–47'], A2:[48,9,'HT2/VT1 · v. 48–09'], A3:[10,22,'VT2 · v. 10–22'], AR:[35,22,'Hela läsåret · v. 35–22']
+};
+var SLOTS = {
+  O:[['ons-fm','ons-em'],'Onsdagar'], T:[['tor-fm','tor-em'],'Torsdagar'], L:[['ons-em','fre-fm'],'Onsdag em + fredag fm'],
+  F:[['fre-fm','fre-em'],'Fredagar'], Ou:[['ons-em-u'],'Onsdag em, ojämna veckor'], Oj:[['ons-em-j'],'Onsdag em, jämna veckor'], Ofm:[['ons-fm'],'Onsdag fm']
+};
+var BLOCKS = [['HT1',1,10],['HT2',11,20],['VT1',21,30],['VT2',31,40]];
+var DAYS = [['ons','Ons'],['tor','Tor'],['fre','Fre'],['flex','Flex']];
+
+/* ---------- Hjälpfunktioner ---------- */
+function W(n){ return n >= 35 ? n - 34 : n + 18; }          // läsårsvecka 1–40
+function WK(i){ var n = i <= 18 ? i + 34 : i - 18; return (n < 10 ? '0' : '') + n; }
+function lvl(k){ if (/^FL/.test(k)) return 0; return +k.match(/\d/)[0]; }
+function sv(n){ return String(n).replace('.', ','); }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function expand(s){ var o = []; s.forEach(function(x){ if (x === 'ons-em') o.push('ons-em-u','ons-em-j'); else o.push(x); }); return o; }
+
+function mkCourse(r){
+  var codes = Array.isArray(r[0]) ? r[0] : [r[0]], x = r[5] || {}, per = r[3], p = null;
+  if (per && typeof per === 'object') { p = [per.from, per.to, per.label + ' · v. ' + pad2(per.from) + '–' + pad2(per.to)]; per = per.label; }   // från kursöversikten
+  else if (per) p = PER[per];
+  var c = { id:codes[0], codes:codes, name:r[1], hp:r[2], per:per, slot:r[4], g:x.g, req:x.req, fa:!!x.fa, os:!!x.os, prog:x.prog || [], fromKp:!!x.fromKp, fromOv:!!x.fromOv, ingar:x.ingar, alt:!!x.alt, raw:r };
+  c.fhs = /^FL/.test(c.id);
+  c.t = c.fhs ? 'F' : c.id.slice(-1);
+  if (!FORMER[c.t]) c.t = 'R';
+  c.r = p ? [W(p[0]), W(p[1])] : null;
+  c.perLabel = p ? p[2] : (c.fromKp ? 'Termin enligt kursplanen' : 'Period enligt kursplan');
+  c.takt = x.takt != null ? x.takt : (c.hp && c.r ? Math.round(c.hp / ((c.r[1] - c.r[0] + 1) * 1.5) * 100) : null);
+  c.amnen = []; codes.forEach(function(k){ var a = k.slice(0,2); if (a === 'BI') a = 'BV'; if (!AMNEN[a]) a = 'AA'; if (c.amnen.indexOf(a) < 0) c.amnen.push(a); });
+  c.color = AMNEN[c.amnen[0]][1]; c.tc = AMNEN[c.amnen[0]][2];
+  var ls = codes.map(lvl); c.minL = Math.min.apply(null, ls); c.maxL = Math.max.apply(null, ls);
+  c.niva = c.fhs ? 'F' : (c.minL >= 4 ? 'A' : 'G');
+  c.s = c.slot ? SLOTS[c.slot][0] : null;
+  c.dayLabel = c.slot ? SLOTS[c.slot][1] + (c.fa ? ' (enstaka kursdagar)' : '') : c.fromKp ? 'Veckodag enligt kursöversikten' : (c.t === 'D' ? 'Ingen fast dag – titta när du vill' : 'Ingen fast veckodag');
+  c.days = c.s ? c.s.map(function(x){ return x.slice(0,3); }).filter(function(v,i,a){ return a.indexOf(v) === i; }) : ['flex'];
+  c.search = (codes.join(' ') + ' ' + c.name).toLowerCase();
+  return c;
+}
+function pad2(n){ n = +n; return (n < 10 ? '0' : '') + n; }
+var C = COURSES.map(mkCourse);
+var BYID = {}; C.forEach(function(c){ BYID[c.id] = c; });
+/* Ledarkurserna (folkhögskola) har ingen egen rad i kursöversikten. Varje kursplan anger
+   vilken högskolekurs den "rymmer" (ingar) – ledarkursen får samma block och veckodag.
+   alt = ledarkursen och högskolekursen är alternativ (man läser inte båda). */
+function linkFl(){
+  C.forEach(function(c){
+    if (!c.ingar) return;
+    var k = c.ingar, h = C.filter(function(x){ return !x.fhs && x.codes.indexOf(k) >= 0; })[0] ||
+                         C.filter(function(x){ return !x.fhs && x.codes.some(function(y){ return y.indexOf(k) === 0; }); })[0];
+    if (!h) return;
+    c.hs = h.id;
+    if (!c.r && h.r) { c.r = h.r; c.per = h.per; c.perLabel = h.perLabel; }
+    if (h.slot) { c.slot = h.slot; c.s = h.s; c.days = h.days; c.dayLabel = h.dayLabel; }
+    if (c.takt == null) c.takt = h.takt;
+    if (c.alt) { c.g = h.g || ('fl-' + h.id); h.g = c.g; }
+  });
+}
+linkFl();
+
+/* ---------- Kursöversikten (block, veckor, veckodag, hp) ----------
+   Arket "Kurskatalog – kursdata från kursöversikten" fylls automatiskt från den
+   senaste PDF:en i Drive-mappen KURSÖVERSIKT HEMSIDA. Det som står där går före
+   uppgifterna i COURSES ovan, som bara är reserv om arket inte går att nå. */
+var OV_SHEET = '1bwXx8vTtZfG_3_Q0JOiqFnMaanOICUZf8XubbAgE4iw', OV_KEY = 'altk-ov', OV_ROWS = null;
+var DAYTEXT = { 'onsdag':'O', 'torsdag':'T', 'fredag':'F', 'onsdag em + fredag fm':'L', 'onsdag em, ojämna veckor':'Ou',
+  'onsdag em, jämna veckor':'Oj', 'onsdag fm':'Ofm', 'ingen fast dag':'' };
+function rebuildCourses(){
+  var base = COURSES.map(function(r){ return r.slice(); }), extra = [];
+  (OV_ROWS || []).forEach(function(o){
+    var codes = String(o[0] || '').toUpperCase().split(/[\/,\s]+/).filter(function(k){ return /^[A-Z]{2}\d{2,3}[A-Z]?$/.test(k); });
+    if (!codes.length || /^nej/i.test((o[9] || '').trim())) return;
+    var r = base.filter(function(b){ var bc = Array.isArray(b[0]) ? b[0] : [b[0]]; return codes.some(function(k){ return bc.indexOf(k) >= 0; }); })[0];
+    if (!r) { r = [codes.length > 1 ? codes : codes[0], esc((o[1] || codes[0]).trim()), null, null, null, {}]; extra.push(r); }
+    var x = {}, ox = r[5] || {}; for (var k in ox) x[k] = ox[k];
+    var hp = parseFloat(String(o[7] || '').replace(',', '.')), f = parseInt(o[4], 10), t = parseInt(o[5], 10);
+    if (hp > 0) r[2] = hp;
+    if (f >= 1 && f <= 53 && t >= 1 && t <= 53) { r[3] = { label:esc((o[3] || '').trim() || 'Period'), from:f, to:t }; x.os = 0; }
+    var day = (o[6] || '').trim().toLowerCase();
+    if (day in DAYTEXT) r[4] = DAYTEXT[day] || null;
+    var tk = String(o[8] || '').match(/^\s*(\d+)\s*%/); if (tk) x.takt = +tk[1];
+    x.fromOv = 1; r[5] = x;
+  });
+  C = base.concat(extra).map(mkCourse);
+  BYID = {}; C.forEach(function(c){ BYID[c.id] = c; });
+  linkFl();
+  reconcileCourses();
+}
+function applyOverview(rows){
+  if (!rows || !rows.length || JSON.stringify(rows) === JSON.stringify(OV_ROWS)) return;
+  OV_ROWS = rows;
+  rebuildCourses();
+  renderList(); renderPlan();
+}
+function syncOverview(){
+  try { applyOverview(JSON.parse(localStorage.getItem(OV_KEY) || 'null')); } catch (e) {}
+  if (!window.fetch) return;
+  fetch('https://www.googleapis.com/drive/v3/files/' + OV_SHEET + '/export?mimeType=text/csv&key=' + DRIVE_KEY)
+    .then(function(r){ if (!r.ok) throw new Error('Drive ' + r.status); return r.text(); })
+    .then(function(csv){
+      var rows = parseCSV(csv).slice(1).filter(function(r){ return /[A-Z]{2}\d{3}/i.test(r[0] || ''); });
+      if (rows.length < 5) return;   // tomt eller trasigt ark: behåll det vi har
+      try { localStorage.setItem(OV_KEY, JSON.stringify(rows)); } catch (e) {}
+      applyOverview(rows);
+    })
+    .catch(function(){ /* behåll uppgifterna i koden */ });
+}
+/* Programmens kurser: "Kurskoder" är kurskoder och/eller samlingsorden
+   "ledarkurser", "avancerad nivå" och "alla högskolekurser". */
+function findCourse(code){
+  code = code.toUpperCase();
+  var hit = C.filter(function(c){ return c.codes.indexOf(code) >= 0; })[0];
+  if (!hit && /^FL\d+S$/.test(code)) hit = C.filter(function(c){ return c.codes.indexOf(code.slice(0, -1)) >= 0; })[0];
+  return hit;
+}
+function prepProgram(p){
+  var ids = [], kw = {};
+  String(p.spec || '').split(/[,;\n]+/).forEach(function(tok){
+    var t = tok.trim(), l = t.toLowerCase(); if (!t) return;
+    if (/^ledarkurs/.test(l)) kw.fl = 1;
+    else if (/^avancerad/.test(l)) kw.adv = 1;
+    else if (/högskolekurs/.test(l)) kw.hs = 1;
+    else { var c = findCourse(t); if (c && ids.indexOf(c.id) < 0) ids.push(c.id); }
+  });
+  p.addList = ids;
+  p.has = function(c){ return ids.indexOf(c.id) >= 0 || (kw.fl && c.fhs) || (kw.adv && c.niva === 'A') || (kw.hs && !c.fhs); };
+  return p;
+}
+PROGRAMS.forEach(prepProgram);
+
+function taktLabel(t){ if (t == null) return ''; if (t >= 95) return 'Helfart'; if (t >= 45 && t <= 55) return 'Halvfart'; if (t >= 22 && t <= 28) return 'Kvartsfart'; return t + ' %'; }
+function codeFor(c){
+  if (c.codes.length > 1 && c.minL === 1 && c.maxL === 2) {
+    var want = state.prior >= 60 ? 2 : 1;
+    return c.codes.filter(function(k){ return lvl(k) === want; })[0];
+  }
+  return c.codes[0];
+}
+function eligible(c){
+  if (c.fhs || c.maxL <= 1) return true;
+  if (c.minL === 1) return true;                 // kan läsas på G1-kod
+  if (c.minL === 2) return state.prior >= 60;
+  return state.prior >= 180;
+}
+function eligText(c){ return c.minL >= 4 ? 'Kräver kandidatexamen i teologi (180 hp)' : 'Kräver minst 60 hp teologi på grundnivå'; }
+function overlap(a,b){ return a.r && b.r && a.r[0] <= b.r[1] && b.r[0] <= a.r[1]; }
+function clash(a,b){
+  if (!a.s || !b.s || a.fa || b.fa || !overlap(a,b)) return false;
+  var A = expand(a.s), B = expand(b.s);
+  return A.some(function(x){ return B.indexOf(x) >= 0; });
+}
+function load(list){
+  var L = []; for (var i = 0; i <= 40; i++) L[i] = 0;
+  list.forEach(function(c){ if (c.r && c.takt) for (var i = c.r[0]; i <= c.r[1]; i++) L[i] += c.takt; });
+  return L;
+}
+function ranges(L, from, to){
+  var out = [], s = null, mx = 0;
+  for (var i = from; i <= to + 1; i++) {
+    var over = i <= to && L[i] > 100;
+    if (over) { if (s === null) { s = i; mx = 0; } mx = Math.max(mx, L[i]); }
+    else if (s !== null) { out.push([s, i - 1, mx]); s = null; }
+  }
+  return out;
+}
+function campusIssue(c){ return state.ort && state.ort !== 'Örebro' && c.t === 'C'; }
+function available(c){
+  if (!state.ort) return true;
+  if (state.ort === 'Hybrid') return ['H','D','L','F'].indexOf(c.t) >= 0;
+  if (c.t === 'C') return state.ort === 'Örebro';
+  return true;
+}
+
+/* ---------- Tillstånd ---------- */
+var KEY = 'altk-plan-2627';
+var state = { q:'', amne:[], niva:[], block:[], form:[], dag:[], ort:'', prior:0, prog:'', fits:false, sort:'period', plan:[] };
+(function restore(){
+  var h = location.hash.match(/plan=([^&]*)/), f = location.hash.match(/fk=(\d+)/);
+  try {
+    if (h) state.plan = decodeURIComponent(h[1]).split(',').filter(function(id){ return BYID[id]; });
+    else { var s = JSON.parse(localStorage.getItem(KEY) || '{}'); state.plan = (s.plan || []).filter(function(id){ return BYID[id]; }); state.prior = s.prior || 0; state.ort = s.ort || ''; }
+  } catch (e) {}
+  if (f) state.prior = +f[1];
+})();
+function save(){ try { localStorage.setItem(KEY, JSON.stringify({ plan:state.plan, prior:state.prior, ort:state.ort })); } catch (e) {} }
+function planCourses(){ return state.plan.map(function(id){ return BYID[id]; }).filter(Boolean); }
+
+/* ---------- Analys ---------- */
+function analyze(c, plan){
+  var others = plan.filter(function(p){ return p.id !== c.id; });
+  var res = { conflicts:[], alt:null, over:null, elig:eligible(c), campus:campusIssue(c), reqLate:null };
+  others.forEach(function(p){
+    if (c.g && p.g === c.g) res.alt = p;
+    else if (clash(c, p)) res.conflicts.push(p);
+  });
+  if (c.r && c.takt) {
+    var L = load(others.concat([c])), mx = 0;
+    for (var i = c.r[0]; i <= c.r[1]; i++) mx = Math.max(mx, L[i]);
+    if (mx > 100) res.over = mx;
+  }
+  if (c.req) {
+    var rq = others.filter(function(p){ return p.id === c.req; })[0];
+    if (rq && rq.r && c.r && rq.r[0] >= c.r[0]) res.reqLate = rq;
+  }
+  res.ok = !res.conflicts.length && !res.alt && !res.over && res.elig && !res.campus;
+  return res;
+}
+
+/* ---------- Rendering: program ---------- */
+var $ = function(s){ return root.querySelector(s); };
+function progById(id){ return PROGRAMS.filter(function(x){ return x.id === id; })[0]; }
+function imgUrl(u){ if (!u) return ''; return /squarespace-cdn\.com/.test(u) && u.indexOf('?') < 0 ? u + '?format=750w' : u; }
+function renderPrograms(){
+  $('.altk-programs').innerHTML = PROGRAMS.map(function(p){
+    return '<li><button type="button" class="altk-tile" data-act="prog" data-p="' + p.id + '" aria-pressed="false" style="--tc:' + p.c + ';--tf:' + p.fg + '">' +
+      '<img src="' + imgUrl(p.img) + '" alt="" loading="lazy"' + (p.img ? '' : ' hidden') + ' onerror="this.hidden=true">' +
+      '<span class="go" aria-hidden="true"></span><span class="body"><span class="t">' + p.name + '</span><span class="m">' + p.q + '</span></span></button></li>';
+  }).join('');
+}
+var ARCHES = '<svg class="altk-arches" viewBox="325 29 1282 1871" preserveAspectRatio="xMaxYMin meet" aria-hidden="true"><path d="M351 1900V670A614 614 0 0 1 1579 670V1900"/><path d="M442 1900V670A523 523 0 0 1 1488 670V1900"/><path d="M533 1900V670A432 432 0 0 1 1397 670V1900"/><path d="M624 1900V670A341 341 0 0 1 1306 670V1900"/><path d="M715 1900V670A250 250 0 0 1 1215 670V1900"/><path d="M806 1900V670A159 159 0 0 1 1124 670V1900"/><path d="M897 1900V670A68 68 0 0 1 1033 670V1900"/></svg>';
+var shownProg = null;
+function renderDetail(){
+  var el = $('.altk-pdetail');
+  if (state.prog === shownProg) return;
+  shownProg = state.prog;
+  if (!state.prog) { el.innerHTML = ''; return; }
+  var p = progById(state.prog);
+  el.innerHTML = '<div class="altk-hero" style="--tc:' + p.c + ';--tf:' + p.fg + '">' + ARCHES +
+    '<button type="button" class="altk-hclose" data-act="prog" data-p="' + p.id + '" aria-label="Visa alla kurser igen">×</button>' +
+    '<div><p class="altk-eyebrow">Valt program</p><h3>' + p.name + '</h3>' +
+      p.text.map(function(t){ return (t[0] && p.text.length > 1 ? '<p class="lbl">' + t[0] + '</p>' : '') + '<p class="d">' + t[1] + '</p>'; }).join('') +
+      (p.meta ? '<p class="m">' + p.meta + '</p>' : '') + '</div>' +
+    '<div class="acts">' +
+      (p.addList.length ? '<button type="button" class="altk-pill inv" data-act="progadd" data-p="' + p.id + '">' + (p.add || 'Lägg till programmet') + ' i planen <span class="arr">+</span></button>' : '') +
+      (p.url ? '<a class="altk-tlink" href="' + p.url + '">' + (p.urlLabel || 'Läs mer om programmet') + ' →</a>' : '') +
+      (p.url2 ? '<a class="altk-tlink" href="' + p.url2 + '">' + (p.url2Label || 'Läs mer') + ' →</a>' : '') +
+    '</div></div>';
+}
+
+/* ---------- Rendering: filter ---------- */
+var FGROUPS = [
+  ['amne','Ämnesområde', Object.keys(AMNEN).map(function(k){ return [k, AMNEN[k][0], AMNEN[k][1]]; })],
+  ['block','Termin och block', [['HT1','HT1 (v. 35–44)'],['HT2','HT2 (v. 45–02)'],['VT1','VT1 (v. 03–12)'],['VT2','VT2 (v. 13–22)']]],
+  ['niva','Nivå', [['G','Grundnivå'],['A','Avancerad nivå'],['F','Folkhögskola']]],
+  ['form','Studieform', Object.keys(FORMER).map(function(k){ return [k, FORMER[k][0]]; })],
+  ['dag','Veckodag', [['ons','Onsdag'],['tor','Torsdag'],['fre','Fredag'],['flex','Ingen fast dag']]]
+];
+function renderFilters(){
+  $('.altk-fgroups').innerHTML = FGROUPS.map(function(g){
+    return '<div class="altk-fgroup"><h4>' + g[1] + '</h4><div class="altk-chips">' + g[2].map(function(o){
+      return '<button type="button" class="altk-chip" data-act="chip" data-f="' + g[0] + '" data-v="' + o[0] + '" aria-pressed="false"' +
+        (g[0] === 'form' ? ' title="' + esc(FORMER[o[0]][1]) + '"' : '') + '>' + (o[2] ? '<span class="dot" style="--c:' + o[2] + '"></span>' : '') + o[1] + '</button>';
+    }).join('') + '</div></div>';
+  }).join('');
+}
+function syncFilters(){
+  root.querySelectorAll('.altk-chip').forEach(function(b){ b.setAttribute('aria-pressed', state[b.dataset.f].indexOf(b.dataset.v) >= 0); });
+  root.querySelectorAll('[data-act=prog]').forEach(function(b){ b.setAttribute('aria-pressed', state.prog === b.dataset.p); });
+  var n = state.amne.length + state.block.length + state.niva.length + state.form.length + state.dag.length + (state.q ? 1 : 0) + (state.prog ? 1 : 0) + (state.fits ? 1 : 0) + (state.ort ? 1 : 0);
+  $('.altk-fcount').textContent = n ? n : '';
+  $('.altk-programs').classList.toggle('has-choice', !!state.prog);
+  renderDetail();
+}
+
+/* ---------- Rendering: kurslista ---------- */
+function matches(c, plan){
+  if (c.hidden) return false;
+  if (state.q && c.search.indexOf(state.q) < 0) return false;
+  if (state.prog) {
+    var p = progById(state.prog);
+    if (p && !p.has(c)) return false;
+  }
+  if (state.amne.length && !c.amnen.some(function(a){ return state.amne.indexOf(a) >= 0; })) return false;
+  if (state.niva.length && state.niva.indexOf(c.niva) < 0) return false;
+  if (state.form.length && state.form.indexOf(c.t) < 0) return false;
+  if (state.dag.length && !c.days.some(function(d){ return state.dag.indexOf(d) >= 0; })) return false;
+  if (state.block.length) {
+    if (!c.r) return false;
+    var hit = BLOCKS.some(function(b){ return state.block.indexOf(b[0]) >= 0 && c.r[0] <= b[2] && b[1] <= c.r[1]; });
+    if (!hit) return false;
+  }
+  if (!available(c)) return false;
+  if (state.fits && state.plan.indexOf(c.id) < 0 && !analyze(c, plan).ok) return false;
+  return true;
+}
+function progTags(c){
+  var seen = [];
+  return PROGRAMS.filter(function(p){
+    if (p.addList.indexOf(c.id) < 0) return false;
+    var key = p.addList.join(','); if (seen.indexOf(key) >= 0) return false;   // samma kurspaket som ett tidigare program
+    seen.push(key); return true;
+  }).map(function(p){ return '<span class="altk-tag p">' + p.name + '</span>'; }).join('');
+}
+function card(c, plan){
+  var inPlan = state.plan.indexOf(c.id) >= 0, a = analyze(c, plan), msgs = [];
+  if (!inPlan) {
+    if (a.alt) msgs.push(['w', 'Alternativ till ' + a.alt.id + ' i din plan – du väljer en av dem.']);
+    a.conflicts.forEach(function(p){ msgs.push(['w', 'Krockar med ' + codeFor(p) + ' ' + p.name + ' (' + p.dayLabel.toLowerCase() + ').']); });
+    if (a.over) msgs.push(['w', 'Studietakten blir ' + a.over + ' % – mer än heltid.']);
+  }
+  if (!a.elig) msgs.push(['w', eligText(c) + '.']);
+  if (a.campus) msgs.push(['w', 'Kräver närvaro på Campus Örebro.']);
+  if (a.reqLate) msgs.push(['w', 'Bygger på ' + a.reqLate.name + ', som ligger senare i din plan.']);
+  if (c.req && !a.reqLate && BYID[c.req]) msgs.push(['i', 'Förkunskap: ' + BYID[c.req].name + ' eller motsvarande.']);
+  if (c.codes.length > 1 && c.minL === 1 && c.maxL === 2) msgs.push(['i', 'Du läser kursen som ' + codeFor(c) + ' utifrån dina tidigare studier.']);
+  if (c.fa) msgs.push(['i', 'Få schemalagda kursdagar – går att kombinera med det mesta.']);
+  if (c.os) msgs.push(['i', 'Preliminär placering – se kursutbudet.']);
+  if (c.hs) msgs.push(['i', 'Rymmer högskolekursen ' + c.hs + ' och följer dess block och veckodag' + (c.alt ? ' – läs antingen den här eller ' + c.hs + '.' : '.')]);
+  if (c.fromKp) msgs.push(['i', 'Ny kurs – block och veckodag finns inte i katalogen än, så krockar och studietakt kan inte kontrolleras.']);
+  if (!inPlan && !msgs.some(function(m){ return m[0] === 'w'; }) && state.plan.length) msgs.push(['o', 'Passar i din plan.']);
+
+  var btn;
+  if (inPlan) btn = '<button type="button" class="altk-btn ghost" data-act="rm" data-id="' + c.id + '" title="Ta bort ur planen">✓ I din plan</button>';
+  else if (a.alt) btn = '<button type="button" class="altk-btn dark" data-act="swap" data-id="' + c.id + '">Byt till denna</button>';
+  else btn = '<button type="button" class="altk-btn" data-act="add" data-id="' + c.id + '">+ Lägg till</button>';
+
+  var tags = '<span class="altk-tag" title="' + esc(FORMER[c.t][1]) + '">' + FORMER[c.t][0] + '</span>' +
+    '<span class="altk-tag">' + (c.niva === 'A' ? 'Avancerad nivå' : c.niva === 'F' ? 'Folkhögskola' : 'Grundnivå') + '</span>' +
+    c.amnen.map(function(k){ return '<span class="altk-tag">' + AMNEN[k][0] + '</span>'; }).join('') +
+    progTags(c);
+
+  var pdfs = c.codes.filter(function(k){ return kpId(k); }).map(function(k, i, arr){
+    return '<a class="pdf" href="https://drive.google.com/file/d/' + kpId(k) + '/view" target="_blank" rel="noopener">Kursplan' + (arr.length > 1 ? ' ' + k : '') + '</a>';
+  }).join('');
+
+  return '<article class="altk-card' + (inPlan ? ' in' : '') + '" style="--c:' + c.color + '">' +
+    '<div class="altk-card-top"><span class="code"><i></i>' + c.codes.join(' / ') + '</span><span class="hp">' + (c.hp ? sv(c.hp) + ' hp' : (c.fhs ? 'Folkhögskolekurs' : 'Se kursplan')) + '</span></div>' +
+    '<h3>' + esc(c.name) + '</h3>' +
+    '<div class="altk-meta"><span>' + c.perLabel + (c.takt ? ' · ' + taktLabel(c.takt) : '') + '</span><span>' + c.dayLabel + '</span></div>' +
+    '<div class="altk-tags">' + tags + '</div>' +
+    (msgs.length ? '<div class="altk-msgs">' + msgs.map(function(m){ return '<p class="altk-msg ' + m[0] + '">' + esc(m[1]) + '</p>'; }).join('') + '</div>' : '') +
+    '<div class="altk-actions">' + btn + pdfs + '</div></article>';
+}
+function sortKey(c){
+  if (state.sort === 'code') return c.id;
+  if (state.sort === 'name') return c.name.toLowerCase();
+  return (c.r ? String(c.r[0]).padStart(2,'0') + String(c.r[1]).padStart(2,'0') : '99') + (c.niva === 'A' ? '1' : c.fhs ? '2' : '0') + c.id;
+}
+function renderList(){
+  var plan = planCourses();
+  var list = C.filter(function(c){ return matches(c, plan); }).sort(function(a,b){ var x = sortKey(a), y = sortKey(b); return x < y ? -1 : x > y ? 1 : 0; });
+  $('.altk-count').textContent = list.length + ' av ' + C.filter(function(c){ return !c.hidden; }).length + ' kurser';
+  $('.altk-list').innerHTML = list.length ? list.map(function(c){ return card(c, plan); }).join('') :
+    '<div class="altk-empty"><p>Inga kurser matchar det du valt.</p><button type="button" class="altk-link" data-act="reset">Rensa filter</button></div>';
+}
+
+/* ---------- Rendering: studieplan ---------- */
+function planWarnings(plan){
+  var w = [], seen = {};
+  plan.forEach(function(a, i){
+    plan.slice(i + 1).forEach(function(b){
+      if (a.g && a.g === b.g) w.push(['w', codeFor(a) + ' och ' + codeFor(b) + ' är alternativ – välj en av dem.']);
+      else if (clash(a, b)) w.push(['w', codeFor(a) + ' och ' + codeFor(b) + ' krockar (' + a.dayLabel.toLowerCase() + ').']);
+    });
+    if (!eligible(a)) w.push(['w', codeFor(a) + ': ' + eligText(a).toLowerCase() + '.']);
+    if (campusIssue(a)) w.push(['w', codeFor(a) + ' kräver närvaro på Campus Örebro.']);
+    if (a.req && BYID[a.req] && state.plan.indexOf(a.req) >= 0) {
+      var rq = BYID[a.req]; if (rq.r && a.r && rq.r[0] >= a.r[0]) w.push(['w', codeFor(a) + ' bygger på ' + codeFor(rq) + ', som ligger senare.']);
+    }
+    if (a.os) seen.os = 1;
+  });
+  ranges(load(plan), 1, 40).forEach(function(r){
+    w.push(['w', 'v. ' + WK(r[0]) + '–' + WK(r[1]) + ': ' + r[2] + ' % studietakt, mer än heltid.']);
+  });
+  if (seen.os) w.push(['i', 'Vissa kurser har preliminär placering. Stäm av med studievägledningen.']);
+  return w;
+}
+function renderPlan(){
+  var plan = planCourses(), L = load(plan), body = $('.altk-planbody');
+  var hp = plan.reduce(function(s,c){ return s + (c.hp || 0); }, 0);
+  var ht = plan.filter(function(c){ return c.r && c.r[0] <= 20; }).reduce(function(s,c){ return s + (c.hp ? c.hp * (Math.min(c.r[1],20) - c.r[0] + 1) / (c.r[1] - c.r[0] + 1) : 0); }, 0);
+  var vt = hp - ht - plan.filter(function(c){ return !c.r; }).reduce(function(s,c){ return s + (c.hp || 0); }, 0);
+  var warns = planWarnings(plan), wn = warns.filter(function(x){ return x[0] === 'w'; }).length;
+
+  // mobilknapp
+  $('.altk-bar').innerHTML = '<span>Min plan · ' + plan.length + ' kurser · ' + sv(hp) + ' hp' + (wn ? '<span class="wd" title="' + wn + ' saker att se över">⚠ ' + wn + '</span>' : '') + '</span><span>Visa ↑</span>';
+
+  if (!plan.length) {
+    body.innerHTML = '<p class="altk-pempty">Din plan är tom. Lägg till kurser från katalogen eller välj ett program ovan, så ser du schema, studietakt och eventuella krockar här.</p>' + cta();
+    return;
+  }
+  var bars = '';
+  for (var i = 1; i <= 40; i++) {
+    var v = L[i], h = Math.min(v, 150) / 150 * 100;
+    bars += '<i class="' + (v > 100 ? 'over' : '') + (i === 11 || i === 21 || i === 31 ? ' sep' : '') + '" style="height:' + h + '%" title="v. ' + WK(i) + ': ' + v + ' %"></i>';
+  }
+  var mx = Math.max.apply(null, L);
+
+  var rows = DAYS.map(function(d){
+    return '<tr><th>' + d[1] + '</th>' + BLOCKS.map(function(b){
+      var cell = plan.filter(function(c){ return c.days.indexOf(d[0]) >= 0 && c.r && c.r[0] <= b[2] && b[1] <= c.r[1]; });
+      var x = cell.some(function(a, i){ return cell.slice(i + 1).some(function(z){ return clash(a, z) || (a.g && a.g === z.g); }); });
+      return '<td class="' + (x ? 'x' : '') + '">' + cell.map(function(c){ return '<span class="c" style="--c:' + c.color + ';--ct:' + c.tc + '" title="' + esc(c.name) + '">' + codeFor(c) + '</span>'; }).join('') + '</td>';
+    }).join('') + '</tr>';
+  }).join('');
+
+  var groups = [['Hösttermin', function(c){ return c.r && c.r[1] <= 20; }], ['Vårtermin', function(c){ return c.r && c.r[0] >= 21; }],
+    ['Över båda terminerna', function(c){ return c.r && c.r[0] <= 20 && c.r[1] >= 21; }], ['Period enligt kursplan', function(c){ return !c.r; }]];
+  var plist = groups.map(function(g){
+    var items = plan.filter(g[1]).sort(function(a,b){ return a.r && b.r ? a.r[0] - b.r[0] : 0; });
+    if (!items.length) return '';
+    return '<div class="altk-pterm"><h4>' + g[0] + '</h4>' + items.map(function(c){
+      return '<div class="altk-pitem" style="--c:' + c.color + '"><span class="s"></span><div><b>' + codeFor(c) + ' ' + esc(c.name) + '</b><small>' +
+        [c.hp ? sv(c.hp) + ' hp' : null, c.per ? c.perLabel.split(' · ')[0] : null, c.slot ? SLOTS[c.slot][1] : (c.t === 'D' ? 'Distans' : null), FORMER[c.t][0]].filter(Boolean).join(' · ') +
+        '</small></div><button type="button" data-act="rm" data-id="' + c.id + '" aria-label="Ta bort ' + esc(c.name) + '">×</button></div>';
+    }).join('') + '</div>';
+  }).join('');
+
+  body.innerHTML =
+    '<div class="altk-sum"><div><b>' + sv(hp) + '</b><span>högskolepoäng</span></div><div><b>' + sv(Math.round(ht * 10) / 10) + '</b><span>hp hösttermin</span></div><div><b>' + sv(Math.round(vt * 10) / 10) + '</b><span>hp vårtermin</span></div></div>' +
+    '<div><p class="altk-ph">Studietakt per vecka <span>högst ' + mx + ' %</span></p><div class="altk-chart" aria-label="Studietakt per vecka">' + bars + '</div>' +
+    '<div class="altk-axis"><span>HT1</span><span>HT2</span><span>VT1</span><span>VT2</span></div></div>' +
+    '<div><p class="altk-ph">Veckoschema <span>röd ruta = krock</span></p><table class="altk-matrix"><thead><tr><th></th>' + BLOCKS.map(function(b){ return '<th>' + b[0] + '</th>'; }).join('') + '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    (warns.length ? '<div class="altk-msgs">' + warns.map(function(m){ return '<p class="altk-msg ' + m[0] + '">' + esc(m[1]) + '</p>'; }).join('') + '</div>' : '<p class="altk-msg o">Inga krockar och studietakten ryms inom heltid.</p>') +
+    '<div class="altk-plist">' + plist + '</div>' +
+    '<div class="altk-ptools"><button type="button" class="altk-btn ghost" data-act="link">Dela länk</button><button type="button" class="altk-btn ghost" data-act="text">Kopiera text</button><button type="button" class="altk-link" data-act="clear">Töm planen</button></div>' +
+    cta();
+}
+function cta(){
+  return '<div class="altk-cta"><h4>Redo att söka?</h4><p>Planen är ett stöd, inte en ansökan. Kontrollera alltid kursplaner, behörighet och vilka kurser som är sökbara.</p>' +
+    '<div><a class="altk-pill accent" href="' + LINKS.ansokan + '">Till ansökan <span class="arr">→</span></a><a class="altk-pill line" href="' + LINKS.vagledning + '">Studievägledning</a></div>' +
+    (LINKS.kursutbud ? '<a class="altk-tlink" href="' + LINKS.kursutbud + '" target="_blank" rel="noopener">' + (LINKS.kursutbudText || 'Kursöversikt (PDF)') + ' ↓</a>' : '') + '</div>';
+}
+
+function render(){ syncFilters(); renderList(); renderPlan(); save(); }
+
+/* ---------- Händelser ---------- */
+function toast(t){ var el = $('.altk-toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function(){ el.classList.remove('show'); }, 2200); }
+function copy(txt, msg){
+  function fb(){ var ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); toast(msg); } catch (e) { prompt('Kopiera:', txt); } ta.remove(); }
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(function(){ toast(msg); }, fb); else fb();
+}
+function add(id){
+  var c = BYID[id]; if (!c || state.plan.indexOf(id) >= 0) return;
+  if (c.g) state.plan = state.plan.filter(function(p){ return BYID[p].g !== c.g; });
+  state.plan.push(id);
+}
+
+root.addEventListener('click', function(e){
+  var b = e.target.closest('[data-act]'); if (!b || !root.contains(b)) return;
+  var act = b.dataset.act, id = b.dataset.id;
+  if (act === 'chip') {
+    var arr = state[b.dataset.f], i = arr.indexOf(b.dataset.v);
+    if (i >= 0) arr.splice(i, 1); else arr.push(b.dataset.v);
+  } else if (act === 'add' || act === 'swap') { add(id); toast(codeFor(BYID[id]) + ' tillagd i planen'); }
+  else if (act === 'rm') { state.plan = state.plan.filter(function(p){ return p !== id; }); }
+  else if (act === 'prog') {
+    state.prog = state.prog === b.dataset.p ? '' : b.dataset.p;
+    if (state.prog) setTimeout(function(){ try { $('.altk-pdetail').scrollIntoView({ behavior:'smooth', block:'start' }); } catch (err) {} }, 60);
+  } else if (act === 'progadd') {
+    var p = PROGRAMS.filter(function(x){ return x.id === b.dataset.p; })[0];
+    p.addList.filter(function(id){ return !BYID[id].hidden; }).forEach(add); toast(p.name.replace(/&[a-z]+;/g, '') + ' tillagd i planen');
+  } else if (act === 'reset') {
+    state.q = ''; state.amne = []; state.niva = []; state.block = []; state.form = []; state.dag = []; state.prog = ''; state.fits = false; state.ort = '';
+    $('.altk-q').value = ''; $('.altk-fits').checked = false; $('.altk-ort').value = '';
+  } else if (act === 'clear') { if (confirm('Töm hela studieplanen?')) state.plan = []; }
+  else if (act === 'sheet') { root.classList.toggle('altk-open'); return; }
+  else if (act === 'filters') {
+    var fp = $('.altk-fpanel'), open = fp.hidden;
+    fp.hidden = !open; b.setAttribute('aria-expanded', open); return;
+  }
+  else if (act === 'link') {
+    copy(location.href.split('#')[0] + '#plan=' + state.plan.join(',') + '&fk=' + state.prior, 'Länk kopierad'); return;
+  } else if (act === 'text') {
+    var plan = planCourses(), lines = ['Min studieplan ALT 2026/2027', ''];
+    plan.slice().sort(function(a,b){ return (a.r ? a.r[0] : 99) - (b.r ? b.r[0] : 99); }).forEach(function(c){
+      lines.push(codeFor(c) + ' ' + c.name + ' – ' + (c.hp ? sv(c.hp) + ' hp, ' : '') + c.perLabel + ', ' + c.dayLabel + ', ' + FORMER[c.t][0]);
+    });
+    lines.push('', 'Totalt: ' + sv(plan.reduce(function(s,c){ return s + (c.hp || 0); }, 0)) + ' hp');
+    copy(lines.join('\n'), 'Planen kopierad'); return;
+  }
+  render();
+});
+var qt;
+$('.altk-q').addEventListener('input', function(e){ clearTimeout(qt); qt = setTimeout(function(){ state.q = e.target.value.trim().toLowerCase(); render(); }, 150); });
+$('.altk-prior').addEventListener('change', function(e){ state.prior = +e.target.value; render(); });
+$('.altk-ort').addEventListener('change', function(e){ state.ort = e.target.value; render(); });
+$('.altk-fits').addEventListener('change', function(e){ state.fits = e.target.checked; render(); });
+$('.altk-sortsel').addEventListener('change', function(e){ state.sort = e.target.value; render(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') root.classList.remove('altk-open'); });
+
+/* ---------- Texter från Google-arket "Kurskatalog – texter (hemsidan)" ----------
+   Arket ligger i mappen ALT på Drive. Fliken "Texter" läses som CSV via Drive-API:t.
+   Tomma celler betyder att texten i koden nedan används. */
+var TEXT_SHEET = '1N7jM6AT1bLa8KSSSG-qwQTUOKHOvQ9RBadcT49aGxkU';
+var TX_KEY = 'altk-texter';
+function parseCSV(str){
+  var rows = [], row = [], cell = '', q = false;
+  for (var i = 0; i < str.length; i++) {
+    var ch = str[i];
+    if (q) {
+      if (ch === '"') { if (str[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+      else cell += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ',') { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && str[i + 1] === '\n') i++;
+      row.push(cell); rows.push(row); row = []; cell = '';
+    } else cell += ch;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+function paras(t){ return esc(t).replace(/\n\s*\n+/g, '</p><p class="d">').replace(/\n/g, '<br>'); }
+/* Kolumner i fliken Texter (A–Q):
+   ID, Programnamn, Inledningsfråga, Rubrik text 1, Text 1, Rubrik text 2, Text 2, Faktarad,
+   Färg, Textfärg, Bild, Länk 1, Länktext 1, Länk 2, Länktext 2, Knapptext, Kurskoder */
+var DEFAULT_PROGRAMS = PROGRAMS.slice();
+var PALETTE = ['#e5e3dc','#c5c2a0','#a6b6a1','#a7b9c8','#d4967d','#c07a63','#2f575f','#c8a24a','#303636','#1c1c1c'];
+function hexOf(v){ var m = String(v || '').match(/#[0-9a-f]{6}/i); return m ? m[0].toLowerCase() : ''; }
+function isLight(hex){ var n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) > 150; }
+function slugId(s){ return 'X-' + s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function safeUrl(u){ u = String(u || '').trim(); return /^(https?:\/\/|\/)/i.test(u) ? esc(u) : ''; }
+function applyTexts(rows){
+  if (!rows || !rows.length) return;
+  var list = [], used = {};
+  rows.forEach(function(r){
+    var v = function(i){ return String(r[i] || '').trim(); };
+    var id = v(0).toUpperCase();
+    if (id === 'INTRO') {
+      if (v(2)) $('.altk-head .altk-eyebrow').textContent = v(2);
+      if (v(1)) $('.altk-title').textContent = v(1);
+      if (v(4)) $('.altk-lead').innerHTML = esc(v(4)).replace(/\n/g, '<br>');
+      return;
+    }
+    if (!id && v(1)) id = slugId(v(1));                    // ny rad utan ID får ett automatiskt
+    if (!id || used[id]) return;
+    var base = DEFAULT_PROGRAMS.filter(function(x){ return x.id === id; })[0] || {};
+    var name = v(1) ? esc(v(1)) : base.name; if (!name) return;
+    var p = {}; for (var k in base) if (k !== 'has' && k !== 'addList') p[k] = base[k];
+    p.id = id; p.name = name;
+    p.q = v(2) ? esc(v(2)) : (base.q || '');
+    var t1 = v(4) ? [esc(v(3)), paras(v(4))] : (base.text || [])[0];
+    var t2 = v(6) ? [esc(v(5)), paras(v(6))] : (base.text || [])[1];
+    p.text = [t1, t2].filter(Boolean);
+    p.meta = v(7) ? esc(v(7)) : (base.meta || '');
+    var bg = hexOf(v(8)) || base.c || '#303636';
+    p.c = bg;
+    p.fg = /^ljus/i.test(v(9)) ? '#e5e3dc' : /^m[öo]rk/i.test(v(9)) ? '#1c1c1c' : (v(8) || !base.fg ? (isLight(bg) ? '#1c1c1c' : '#e5e3dc') : base.fg);
+    if (v(10)) { p.img = safeUrl(v(10)); p.imgFromSheet = true; }
+    if (v(11)) { p.url = safeUrl(v(11)); p.urlLabel = v(12) ? esc(v(12)) : ''; }
+    else if (v(12)) p.urlLabel = esc(v(12));
+    if (v(13)) { p.url2 = safeUrl(v(13)); p.url2Label = v(14) ? esc(v(14)) : ''; }
+    if (v(15)) p.add = esc(v(15));
+    if (v(16)) p.spec = v(16);
+    used[id] = 1; list.push(prepProgram(p));
+  });
+  if (!list.length) return;
+  PROGRAMS = list;
+  if (state.prog && !progById(state.prog)) state.prog = '';
+  renderPrograms();
+  try { setTileImages(JSON.parse(localStorage.getItem(IMG_KEY) || 'null')); } catch (e) {}
+  shownProg = null;
+  render();
+}
+function syncTexts(){
+  try { applyTexts(JSON.parse(localStorage.getItem(TX_KEY) || 'null')); } catch (e) {}
+  if (!window.fetch) return;
+  fetch('https://www.googleapis.com/drive/v3/files/' + TEXT_SHEET + '/export?mimeType=text/csv&key=' + DRIVE_KEY)
+    .then(function(r){ if (!r.ok) throw new Error('Drive ' + r.status); return r.text(); })
+    .then(function(csv){
+      var rows = parseCSV(csv).slice(1).filter(function(r){ return (r[0] || '').trim() || (r[1] || '').trim(); });
+      if (!rows.length) return;
+      try { localStorage.setItem(TX_KEY, JSON.stringify(rows)); } catch (e) {}
+      applyTexts(rows);
+    })
+    .catch(function(){ /* behåll texterna i koden */ });
+}
+
+/* ---------- Kursplaner från Google Drive ---------- */
+function kpId(k){ return KURSPLAN[k] || KURSPLAN[k + 'S'] || ''; }   // ledarkurserna heter t.ex. FL03S i Drive
+var KP_KEY = 'altk-kp';
+function driveList(folderId, pageToken){
+  var q = encodeURIComponent("'" + folderId + "' in parents and trashed=false");
+  var url = 'https://www.googleapis.com/drive/v3/files?q=' + q + '&key=' + DRIVE_KEY +
+    '&pageSize=1000&orderBy=name&fields=nextPageToken,files(id,name,mimeType)' + (pageToken ? '&pageToken=' + pageToken : '');
+  return fetch(url).then(function(r){ if (!r.ok) throw new Error('Drive ' + r.status); return r.json(); })
+    .then(function(d){
+      if (!d.nextPageToken) return d.files || [];
+      return driveList(folderId, d.nextPageToken).then(function(m){ return (d.files || []).concat(m); });
+    });
+}
+/* Mappen avgör vilka kurser som finns:
+   - kurs med kursplan i mappen  -> visas (block, veckodag m.m. från kursdatan i koden)
+   - kurs utan kursplan i mappen -> döljs
+   - kursplan utan kurs i koden  -> ny kurs med namn, ämne, nivå och studieform ur filnamn/kurskod */
+var KP_NAMES = {};
+function kpTitle(fileName){
+  var base = (fileName.normalize ? fileName.normalize('NFC') : fileName).replace(/\.pdf$/i, '').replace(/_+/g, ' ').trim();
+  base = base.replace(/\s+\d{2}\s*[–-]?\s*\d{2}\s*$/, '').trim();
+  var title = base.replace(/^[A-Z]{2}\d{2,3}[A-Z]?\s*[-–:]?\s*/, '');
+  return title.replace(/\s*[-–]?\s*\(?\s*(icke[\s-]?)?(språklig)\s*\)?\s*$/i, function(_, icke){ return ', ' + (icke ? 'icke-språklig' : 'språklig'); });
+}
+function reconcileCourses(){
+  var codes = Object.keys(KURSPLAN);
+  if (!codes.length) { C.forEach(function(c){ c.hidden = false; }); return; }
+  var covered = {};
+  C.forEach(function(c){
+    if (c.fromKp) { c.hidden = !KURSPLAN[c.id]; covered[c.id] = 1; return; }
+    c.hidden = !c.codes.some(function(k){ return kpId(k); });
+    c.codes.forEach(function(k){ covered[k] = 1; covered[k + 'S'] = 1; });
+  });
+  codes.forEach(function(k){
+    if (covered[k]) return;
+    var c = mkCourse([k, esc(KP_NAMES[k] || k), null, null, null, { fromKp:true }]);
+    C.push(c); BYID[c.id] = c;
+  });
+  PROGRAMS.forEach(prepProgram);
+}
+function applyKp(data){
+  if (!data) return;
+  var ids = data.ids || data, names = data.names || {};   // äldre sparat format: bara id:n
+  if (JSON.stringify(ids) === JSON.stringify(KURSPLAN) && JSON.stringify(names) === JSON.stringify(KP_NAMES)) return;
+  KURSPLAN = ids; KP_NAMES = names;
+  reconcileCourses();
+  renderList(); renderPlan();
+}
+function syncKursplaner(){
+  try { applyKp(JSON.parse(localStorage.getItem(KP_KEY) || 'null')); } catch (e) {}
+  if (!window.fetch) return;
+  var map = {}, names = {}, year = {};
+  function take(f){
+    if (!/\.pdf$/i.test(f.name)) return;
+    var name = f.name.normalize ? f.name.normalize('NFC') : f.name;
+    var m = name.match(/^([A-Z]{2}\d{2,3}[A-Z]?)/); if (!m) return;
+    var y = (name.replace(/\.pdf$/i, '').match(/(\d{2})\s*[–-]?\s*(\d{2})\s*$/) || [])[1] || '00';
+    if (!map[m[1]] || y > year[m[1]]) { map[m[1]] = f.id; names[m[1]] = kpTitle(name); year[m[1]] = y; }   // senaste läsåret vinner
+  }
+  driveList(DRIVE_FOLDER).then(function(items){
+    items.forEach(take);
+    var folders = items.filter(function(f){ return f.mimeType === 'application/vnd.google-apps.folder'; });
+    return Promise.all(folders.map(function(fo){ return driveList(fo.id).then(function(fs){ fs.forEach(take); }); }));
+  }).then(function(){
+    if (!Object.keys(map).length) return;   // tom mapp eller fel: dölj aldrig hela katalogen
+    var data = { ids:map, names:names };
+    try { localStorage.setItem(KP_KEY, JSON.stringify(data)); } catch (e) {}
+    applyKp(data);
+  }).catch(function(){ /* Drive svarar inte: senast hämtade lista (om någon) används */ });
+}
+
+/* ---------- Kursöversikten (PDF) från sidan /kursplaner ---------- */
+function syncKursutbud(){
+  try { var c = JSON.parse(localStorage.getItem('altk-ku') || 'null'); if (c && c.url) { LINKS.kursutbud = c.url; LINKS.kursutbudText = c.text; renderPlan(); } } catch (e) {}
+  if (!window.fetch || !window.DOMParser) return;
+  fetch('/kursplaner', { credentials:'same-origin' })
+    .then(function(r){ if (!r.ok) throw 0; return r.text(); })
+    .then(function(html){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var a = [].filter.call(doc.querySelectorAll('a[href]'), function(x){
+        return /\.pdf(\?|$)/i.test(x.getAttribute('href')) && /kursöversikt|högskolekurser/i.test(x.textContent);
+      })[0];
+      if (!a) return;
+      var href = a.getAttribute('href'); if (!/^https?:/.test(href)) href = location.origin + (href.charAt(0) === '/' ? '' : '/') + href;
+      var yr = (href + ' ' + a.textContent).match(/(20\d\d)\s*[-–\/]\s*(20)?(\d\d)/);
+      var text = 'Kursöversikt ' + (yr ? yr[1] + '/' + yr[3] + ' ' : '') + '(PDF)';
+      if (href === LINKS.kursutbud && text === LINKS.kursutbudText) return;
+      LINKS.kursutbud = href; LINKS.kursutbudText = text;
+      try { localStorage.setItem('altk-ku', JSON.stringify({ url:href, text:text })); } catch (e) {}
+      renderPlan();
+    })
+    .catch(function(){});
+}
+
+/* ---------- Bilder från Utbildningssidan ----------
+   Programrutornas bilder hämtas automatiskt från /utbildning, så att de alltid
+   matchar den sidan. Varje ruta matchas mot rubriken i sektionen. */
+var IMAGE_SOURCE = '/utbildning';
+var IMAGE_MATCH = { TA:'teologiåret', PP:'pastorsprogram', DT:'diakonitermin', MT:'missionstermin', MA:'masterprogram', FK:'fristående' };
+var IMG_KEY = 'altk-img';
+function setTileImages(map){
+  Object.keys(map || {}).forEach(function(k){
+    var img = root.querySelector('.altk-tile[data-p="' + k + '"] img'), pr = progById(k);
+    if (!img || !map[k] || !pr || pr.imgFromSheet || img.getAttribute('src') === map[k]) return;
+    var pre = new Image();
+    pre.onload = function(){ img.src = map[k]; img.hidden = false; };
+    pre.src = map[k];
+  });
+}
+function syncImages(){
+  try { setTileImages(JSON.parse(localStorage.getItem(IMG_KEY) || 'null')); } catch (e) {}
+  if (!window.fetch || !window.DOMParser) return;
+  fetch(IMAGE_SOURCE, { credentials:'same-origin' })
+    .then(function(r){ if (!r.ok) throw 0; return r.text(); })
+    .then(function(html){
+      var doc = new DOMParser().parseFromString(html, 'text/html'), map = {};
+      [].forEach.call(doc.querySelectorAll('section.page-section'), function(sec){
+        var h = sec.querySelector('h1,h2,h3,h4'); if (!h) return;
+        var title = h.textContent.trim().toLowerCase();
+        Object.keys(IMAGE_MATCH).forEach(function(k){
+          if (map[k] || title.indexOf(IMAGE_MATCH[k]) !== 0) return;
+          var im = [].filter.call(sec.querySelectorAll('img'), function(i){ return !i.closest('.section-background'); })[0];
+          var src = im && (im.getAttribute('data-src') || im.getAttribute('src'));
+          if (src && /^https?:/.test(src)) map[k] = src.split('?')[0] + '?format=750w';
+        });
+      });
+      if (Object.keys(map).length) { try { localStorage.setItem(IMG_KEY, JSON.stringify(map)); } catch (e) {} setTileImages(map); }
+    })
+    .catch(function(){ /* behåll bilderna som står i koden */ });
+}
+
+/* ---------- Start ---------- */
+renderPrograms(); renderFilters(); syncImages();
+$('.altk-prior').value = String(state.prior); $('.altk-ort').value = state.ort;
+render();
+syncTexts(); syncOverview(); syncKursplaner(); syncKursutbud();
+})();
+</script>
