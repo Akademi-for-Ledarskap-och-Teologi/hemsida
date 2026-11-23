@@ -27,6 +27,7 @@ En ändring som sparas (committas) här syns på hemsidan efter 1–2 minuter.
 | `pastorsprogram` | /pastorsprogram | Klickbar årsplan på /pastorsprogram |
 | `kursplaner` | /kursplaner | Kursplaner på /kursplaner |
 | `teologiaret` | /teologiaret | Klickbar studieplan på /teologiaret |
+| `teologiprogram` | /teologiprogram | Klickbar årsplan på Teologiprogrammets sida |
 | `bibellasningskalkylator` | /vanliga-fragor | Bibelläsningskalkylatorn på /vanliga-fragor |
 | `ips-publikationer` | /ips-publikationer | Publikationslistan på /ips-publikationer |
 | `uppsatser` | /uppsatser | Uppsatsarkivet på /uppsatser |
