@@ -36,12 +36,12 @@
   scan();
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan);
 
-  /* ---------- Sökträff: #hitta=text rullar fram till texten och markerar den ----------
+  /* ---------- Sökträff: #hitta=text (eller #ar=3&hitta=text) rullar fram till texten och markerar den ----------
      Sökblocket (block/sok.html) länkar till sidan#hitta=rubrik. Kodblocken laddas
      efter sidan, så vi försöker några gånger innan vi ger upp. */
   if(!window.__altHitta){
     window.__altHitta = 1;
-    var m = location.hash.match(/^#hitta=(.+)$/);
+    var m = location.hash.match(/(?:^#|&)hitta=(.+)$/);   /* t.ex. #hitta=… eller #ar=3&hitta=… */
     if(m){
       var want; try { want = decodeURIComponent(m[1]); } catch(e){ want = ''; }
       var fold = function(s){ var o=''; for(var i=0;i<s.length;i++){ var c=s[i].toLowerCase()[0], d=c.normalize?c.normalize('NFD')[0]:c; o+=/[a-z0-9]/.test(d)?d:' '; } return o.replace(/\s+/g,' ').trim(); };

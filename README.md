@@ -67,7 +67,9 @@ Sökblocket (`block/sok.html`) söker i `sokindex.json`. Indexet byggs av `verkt
 varje sida i `altutbildning.se/sitemap.xml` i en riktig webbläsare, väntar in kodblocken och sparar texten per rubrik.
 Det körs automatiskt (GitHub Actions → *Bygg sökindex*) varje natt och när ett kodblock ändras.
 Vill du uppdatera direkt: *Actions → Bygg sökindex → Run workflow*.
-En sökträff öppnar sidan med `#hitta=…`, och `loader.js` rullar fram till rätt rubrik.
+Kodblock med flikar (år 1, år 2 … och inriktningar) klickas igenom, så att även det som bara syns i en annan flik
+kommer med. En sökträff öppnar sidan med `#hitta=…` (och fliken först, t.ex. `#ar=3&inr=past&hitta=…`), och `loader.js`
+rullar fram till rätt rubrik. Nya flikbaserade block hittas automatiskt om flikarna har `role="tab"`.
 
 ## Gradientbilder (bilder i rutorna)
 
