@@ -17,6 +17,13 @@
   Enligt Studiehandbok 2026–2027 (utbildningsplan 2026). Ändra i COURSES och
   PATHS nedan. De två rutorna är studiegångar (heltid, nästa steg)
   i stället för år. Direktlänk: #val=1–2.
+
+  GRADIENTBILDER
+  Lägg en bild i Drive-mappen "Gradientbilder" (i ALT-mappen) och skriv
+  filnamnet i kalkylarket "Gradientbilder – koppling till block", flik
+  "Koppling": Block = teologiaret, Ruta = Teologiåret / Nästa steg.
+  Bilden används både på rutan och i den stora rutan under. Gradientfärg
+  är valfri (annars rutans egen färg). Tom bildcell = vanlig färgruta.
   ============================================================
 -->
 <meta charset="utf-8">
@@ -82,6 +89,10 @@
 #altty .altty-arches{position:absolute;right:4%;top:28px;height:150%;width:auto;color:currentColor;opacity:.16;pointer-events:none;z-index:0}
 #altty .altty-arches path{fill:none;stroke:currentColor;stroke-width:55;stroke-linecap:butt}
 #altty .altty-hero > div{position:relative;z-index:1}
+/* Gradientbilder (bild + färgtoning, styrs från Drive) */
+#altty .altty-yr.has-img,#altty .altty-hero.has-img{background-color:var(--tc);background-image:var(--gimg);background-size:cover;background-position:center;color:var(--tf)}
+#altty .altty-yr.has-img .n,#altty .altty-yr.has-img .t{color:var(--tf)}
+#altty .altty-yr.has-img .f{background:rgba(255,255,255,.88);color:#1c1c1c}
 #altty .altty-hero .altty-eyebrow{color:inherit;opacity:.75}
 #altty .altty-hero h3{font-size:clamp(26px,4.4cqi,48px);text-transform:uppercase;margin:10px 0 14px}
 #altty .altty-hero .d{font-size:20px;line-height:1.5;max-width:58ch;opacity:.92}
@@ -201,6 +212,12 @@ var LINKS = {
 var DRIVE_KEY = 'AIzaSyAEunCE3KQD22E1s5goQSIj6G29QB_-Npc';
 var DRIVE_FOLDER = '1-zFMbyd_e1Odf_ps7N1qdqigWWG2nH0Z';
 var KP_KEY = 'altk-kp';   // delar cache med kurskatalogen
+/* Gradientbilder: mappen "Gradientbilder" i ALT-mappen + kalkylarket som kopplar bild till ruta */
+var GRAD_FOLDER = '1HSa_eDz1CJZTbTLAxUAIY2vPTndCvyB2';
+var GRAD_SHEET = '1NxxOzC46kYvwhVmjVyvE1ytPPdCqYrF83Cu2NbeqUQ8';
+var GRAD_TAB = 'Koppling';
+var GRAD_BLOCK = 'teologiaret';
+var GRAD_KEY = 'altty-grad';
 
 /* ---------- Ämnen och studieformer (samma som kurskatalogen) ---------- */
 var AMNEN = {
@@ -310,6 +327,64 @@ function syncKursplaner(){
   }).catch(function(){ /* Drive svarar inte: länka till /kursplaner */ });
 }
 
+/* ---------- Gradientbilder från Drive ---------- */
+function rgba(hex, a){
+  var m = String(hex || '').replace('#', '').match(/^([0-9a-f]{6})$/i); if (!m) return 'rgba(0,0,0,' + a + ')';
+  var n = parseInt(m[1], 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function gradStyle(y, where){
+  if (!y.gimg) return '';
+  var c = y.gc || y.c;
+  var g = where === 'hero'
+    ? 'linear-gradient(90deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .9) + ' 40%,' + rgba(c, .45) + ' 75%,' + rgba(c, .25) + ' 100%)'
+    : 'linear-gradient(20deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .82) + ' 40%,' + rgba(c, .3) + ' 100%)';
+  return ';--gimg:' + g + ',url(&quot;' + y.gimg + '&quot;)';
+}
+function parseCSV(t){
+  var rows = [], row = [], cur = '', q = false, i, c;
+  for (i = 0; i < t.length; i++){
+    c = t[i];
+    if (q){ if (c === '"'){ if (t[i+1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
+    else if (c === '"') q = true;
+    else if (c === ','){ row.push(cur); cur = ''; }
+    else if (c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
+    else if (c !== '\r') cur += c;
+  }
+  if (cur !== '' || row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+function applyGrad(map){
+  if (!map) return;
+  YEARS.forEach(function(y){
+    var g = map[norm(y.label || y.name)];
+    y.gimg = g ? g.img : null; y.gc = g ? g.c : null;
+  });
+  renderYears(); render();
+}
+function syncGrad(){
+  try { applyGrad(JSON.parse(localStorage.getItem(GRAD_KEY) || 'null')); } catch (e) {}
+  if (!window.fetch) return;
+  var sheet = fetch('https://docs.google.com/spreadsheets/d/' + GRAD_SHEET + '/gviz/tq?tqx=out:csv&headers=1&sheet=' + encodeURIComponent(GRAD_TAB))
+    .then(function(r){ if (!r.ok) throw new Error('sheet ' + r.status); return r.text(); }).then(parseCSV);
+  Promise.all([sheet, driveList(GRAD_FOLDER)]).then(function(res){
+    var files = {};
+    res[1].forEach(function(f){
+      if (!/^image\//.test(f.mimeType || '')) return;
+      var n = f.name.normalize ? f.name.normalize('NFC') : f.name;
+      files[norm(n)] = f.id; files[norm(n.replace(/\.[a-z0-9]+$/i, ''))] = f.id;
+    });
+    var map = {};
+    res[0].slice(1).forEach(function(r){
+      if (norm(r[0]) !== norm(GRAD_BLOCK)) return;
+      var id = files[norm(r[2])]; if (!id) return;
+      var c = String(r[3] || '').trim(); if (c && c[0] !== '#') c = '#' + c;
+      map[norm(r[1])] = { img:'https://lh3.googleusercontent.com/d/' + id + '=w1800', c:/^#[0-9a-f]{6}$/i.test(c) ? c : null };
+    });
+    try { localStorage.setItem(GRAD_KEY, JSON.stringify(map)); } catch (e) {}
+    applyGrad(map);
+  }).catch(function(){ /* Ingen bild: rutorna behåller sina vanliga färger */ });
+}
+
 /* ---------- Tillstånd ---------- */
 var state = { y:0, kind:'' };
 var h = location.hash.match(/val=(\d)/); if (h && +h[1] >= 1 && +h[1] <= YEARS.length) state.y = +h[1] - 1;
@@ -319,7 +394,7 @@ function currentCourses(){ return (YEARS[state.y].courses || []).map(course); }
 /* ---------- Rendering ---------- */
 function renderYears(){
   $('.altty-years').innerHTML = YEARS.map(function(y, i){
-    return '<li><button type="button" class="altty-yr" role="tab" data-act="year" data-i="' + i + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' +
+    return '<li><button type="button" class="altty-yr' + (y.gimg ? ' has-img' : '') + '" role="tab" data-act="year" data-i="' + i + '" style="--tc:' + y.c + ';--tf:' + y.fg + gradStyle(y, 'tab') + '">' +
       '<span class="f">' + y.flag + '</span><span class="n w">' + esc(y.label) + '</span>' + (y.hideName ? '' : '<span class="t">' + esc(y.name) + '</span>') + '</button></li>';
   }).join('');
 }
@@ -359,7 +434,7 @@ function renderNext(y){
 function renderStage(){
   var y = YEARS[state.y], prev = YEARS[state.y - 1], next = YEARS[state.y + 1];
   $('.altty-stage').innerHTML =
-    '<div class="altty-hero" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + ARCHES +
+    '<div class="altty-hero' + (y.gimg ? ' has-img' : '') + '" style="--tc:' + y.c + ';--tf:' + y.fg + gradStyle(y, 'hero') + '">' + ARCHES +
       '<div><h3>' + esc(y.title) + '</h3>' +
         '<p class="d">' + esc(y.lead) + '</p>' +
         (y.facts && y.facts.length ? '<div class="facts">' + y.facts.map(function(f){ return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' : '') +
@@ -405,6 +480,6 @@ $('.altty-years').addEventListener('keydown', function(e){
 });
 
 /* ---------- Start ---------- */
-renderYears(); render(); syncKursplaner();
+renderYears(); render(); syncKursplaner(); syncGrad();
 })();
 </script>
