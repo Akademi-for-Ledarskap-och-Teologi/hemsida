@@ -96,8 +96,9 @@ await browser.close();
 pages.sort((a, b) => a.url.localeCompare(b.url, 'sv'));
 const seen = new Set(), out = { built:new Date().toISOString(), p:[], c:[] };
 pages.forEach(p => {
-  if (seen.has(p.url)) return; seen.add(p.url);
-  const pi = out.p.push([p.url.replace(SITE, '') || '/', p.title, p.desc]) - 1;
+  const path = new URL(p.url).pathname.replace(/\/$/, '') || '/';
+  if (seen.has(path) || path === '/home') return; seen.add(path);
+  const pi = out.p.push([path, p.title, p.desc]) - 1;
   p.chunks.forEach(c => { if (c.h || c.x.length > 2) out.c.push([pi, c.h, c.id, c.x.slice(0, 8000)]); });
 });
 if (out.p.length < 5) { console.error('För få sidor (' + out.p.length + ') – sparar inte indexet.'); process.exit(1); }
