@@ -104,7 +104,7 @@ function load(){
   loading = fetch(INDEX_URL, { cache:'no-cache' }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(d){
     IDX = d.c.map(function(c){
       var p = d.p[c[0]];
-      return { url:p[0], page:p[1] || p[0], ptitle:' ' + fold(p[1] || ''), h:c[1], hf:' ' + fold(c[1]), x:c[3], xf:' ' + fold(c[3]) };
+      return { url:p[0], page:p[1] || p[0], ptitle:' ' + fold(p[1] || ''), h:c[1], hf:' ' + fold(c[1]), x:c[3], xf:' ' + fold(c[3]), st:c[4] || '' };
     });
     return IDX;
   });
@@ -145,7 +145,7 @@ function search(q){
   res.sort(function(a, b){ return b.score - a.score; });
   // Slå ihop dubbletter (samma sida + rubrik)
   var seen = {};
-  return res.filter(function(r){ var k = r.c.url + '|' + r.c.h; if (seen[k]) return false; seen[k] = 1; return true; });
+  return res.filter(function(r){ var k = r.c.url + '|' + r.c.h + '|' + r.c.st; if (seen[k]) return false; seen[k] = 1; return true; });
 }
 
 function highlight(text, fold_, terms){
@@ -164,14 +164,15 @@ function snippet(c, first, terms){
   var part = x.slice(start, end);
   return (start > 0 ? '… ' : '') + highlight(part, fold(part), terms) + (end < x.length ? ' …' : '');
 }
-/* Länken öppnar sidan och rullar fram till rubriken (eller texten) – se loader.js */
+/* Länken öppnar sidan (och rätt flik i kodblocket, t.ex. #ar=3&) och rullar fram till rubriken (eller texten) – se loader.js */
 function link(c, first){
   var target = c.h;
   if (!target && c.x){
     var at = Math.max(0, first), words = c.x.slice(at).split(/\s+/).slice(0, 6).join(' ');
     target = words;
   }
-  return c.url + (target ? '#hitta=' + encodeURIComponent(target.slice(0, 80)) : '');
+  var hash = [c.st, target ? 'hitta=' + encodeURIComponent(target.slice(0, 80)) : ''].filter(Boolean).join('&');
+  return c.url + (hash ? '#' + hash : '');
 }
 
 function render(){

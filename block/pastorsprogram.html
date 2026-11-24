@@ -325,6 +325,8 @@ function gLay(y, where){ return G() ? G().layers(GB, y.name, where, y.c) : ''; }
 /* ---------- Tillstånd ---------- */
 var state = { y:0, track:'fork', kind:'' };
 var h = location.hash.match(/ar=(\d)/); if (h && +h[1] >= 1 && +h[1] <= 4) state.y = +h[1] - 1;
+var hi = location.hash.match(/inr=(fork|past)/); if (hi) state.track = hi[1];
+function hashFor(){ return '#ar=' + (state.y + 1) + (YEARS[state.y].tracks ? '&inr=' + state.track : ''); }
 
 function currentCourses(){
   var y = YEARS[state.y];
@@ -397,7 +399,7 @@ function render(){ syncYears(); renderStage(); }
 /* ---------- Händelser ---------- */
 function go(i, focus){
   state.y = Math.max(0, Math.min(3, i)); state.kind = '';
-  try { history.replaceState(null, '', '#ar=' + (state.y + 1)); } catch (e) {}
+  try { history.replaceState(null, '', hashFor()); } catch (e) {}
   render();
   if (focus) root.querySelectorAll('.altap-yr')[state.y].focus();
 }
@@ -406,7 +408,7 @@ root.addEventListener('click', function(e){
   var act = b.dataset.act;
   if (act === 'year') go(+b.dataset.i);
   else if (act === 'go') { go(state.y + +b.dataset.d); try { $('.altap-years').scrollIntoView({ behavior:'smooth', block:'start' }); } catch (err) {} }
-  else if (act === 'track') { state.track = b.dataset.t; render(); }
+  else if (act === 'track') { state.track = b.dataset.t; try { history.replaceState(null, '', hashFor()); } catch (err) {} render(); }
   else if (act === 'kind') {
     state.kind = state.kind === b.dataset.k ? '' : b.dataset.k;
     root.querySelectorAll('.altap-chip').forEach(function(x){ x.setAttribute('aria-pressed', x.dataset.k === state.kind); });
