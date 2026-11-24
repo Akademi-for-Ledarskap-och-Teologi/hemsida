@@ -360,7 +360,7 @@ function renderStage(){
   var y = YEARS[state.y], prev = YEARS[state.y - 1], next = YEARS[state.y + 1];
   $('.altty-stage').innerHTML =
     '<div class="altty-hero" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + ARCHES +
-      '<div><p class="altty-eyebrow">Väg ' + y.n + ' av ' + YEARS.length + '</p><h3>' + esc(y.title) + '</h3>' +
+      '<div><h3>' + esc(y.title) + '</h3>' +
         '<p class="d">' + esc(y.lead) + '</p>' +
         (y.facts && y.facts.length ? '<div class="facts">' + y.facts.map(function(f){ return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' : '') +
       '</div>' +
