@@ -35,6 +35,7 @@ En ändring som sparas (committas) här syns på hemsidan efter 1–2 minuter.
 | `uppsatser` | /uppsatser | Uppsatsarkivet på /uppsatser |
 | `kurskatalog` | /kurskatalog (opublicerad) | Kurskatalogen med studieplan |
 | `ansokan` | /testansokan (opublicerad) | Ny ansökningsguide, ska ersätta /ansokan |
+| `sok` | / (startsidan) | Sök i hela altutbildning.se, även kodblockens innehåll |
 
 ## Ändra något
 
@@ -59,6 +60,14 @@ Flera block hämtar innehåll från Google Drive (t.ex. personalregistret från 
 och bilder från mappen *Personalbilder - Hemsida*). Innehållet ändras där – inte här.
 Google-API-nyckeln som används är bara för läsning av offentligt delade filer. Lås den till
 `altutbildning.se/*` under *API-nycklar → Begränsningar för webbplatser* i Google Cloud Console.
+
+## Sökningen
+
+Sökblocket (`block/sok.html`) söker i `sokindex.json`. Indexet byggs av `verktyg/bygg-sokindex.mjs`, som öppnar
+varje sida i `altutbildning.se/sitemap.xml` i en riktig webbläsare, väntar in kodblocken och sparar texten per rubrik.
+Det körs automatiskt (GitHub Actions → *Bygg sökindex*) varje natt och när ett kodblock ändras.
+Vill du uppdatera direkt: *Actions → Bygg sökindex → Run workflow*.
+En sökträff öppnar sidan med `#hitta=…`, och `loader.js` rullar fram till rätt rubrik.
 
 ## Gradientbilder (bilder i rutorna)
 

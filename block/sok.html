@@ -1,0 +1,230 @@
+<!-- ============================================================
+     ALT – Sök (kodblock för Squarespace)
+     Söker i hela altutbildning.se – både Squarespace-sidorna och allt
+     som kodblocken visar (kurser, kursplaner, personal, uppsatser ...).
+
+     Sökningen använder sokindex.json, som byggs automatiskt varje natt
+     och när ett kodblock ändras (GitHub Actions: "Bygg sökindex").
+     En träff öppnar sidan och rullar fram till stället (#hitta=..., se loader.js).
+
+     Direktlänk med sökord: altutbildning.se/?q=kursplan
+     Allt är avgränsat under #alt-sok och påverkar inte resten av sidan.
+     ============================================================ -->
+<div id="alt-sok">
+<style>
+#alt-sok{
+  --bg:#EDE5E0; --ink:#1C1C1C; --muted:#5a5652; --accent:#C07A63; --card:#FBF9F7; --line:rgba(28,28,28,.1);
+  --teal:#2f575f;
+  --head:"Archivo Black","Arial Black",Helvetica,sans-serif;
+  --body:"EB Garamond",Garamond,Georgia,serif;
+  --r:24px; --r-sm:16px;
+  --shadow:0 1px 2px rgba(28,28,28,.04),0 8px 24px rgba(28,28,28,.06);
+  --shadow-lg:0 2px 6px rgba(28,28,28,.06),0 24px 48px rgba(28,28,28,.14);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--ink); font-family:var(--body); font-size:19px; line-height:1.5;
+  -webkit-font-smoothing:antialiased; max-width:1040px; margin:0 auto;
+}
+#alt-sok *{box-sizing:border-box}
+#alt-sok p{margin:0}
+#alt-sok a{color:inherit;text-decoration:none}
+#alt-sok .box{background:var(--card);border-radius:var(--r);padding:28px 32px;box-shadow:var(--shadow)}
+#alt-sok .eyebrow{font-family:var(--head);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block}
+#alt-sok .search{display:flex;align-items:center;gap:10px;padding:0 10px 0 20px;border-radius:999px;background:#fff;border:1px solid var(--line);transition:border-color .2s,box-shadow .2s}
+#alt-sok .search:focus-within{border-color:var(--ink);box-shadow:0 0 0 4px rgba(192,122,99,.18)}
+#alt-sok .search svg{width:22px;height:22px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;flex:none}
+#alt-sok .search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:21px;color:var(--ink);padding:15px 0;-webkit-appearance:none;appearance:none}
+#alt-sok .search input::-webkit-search-cancel-button{display:none}
+#alt-sok .clear{border:0;background:transparent;color:var(--muted);font-size:24px;line-height:1;width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none}
+#alt-sok .clear:hover{background:var(--bg);color:var(--ink)}
+#alt-sok .clear[hidden]{display:none}
+#alt-sok .hint{font-size:16px;color:var(--muted);margin-top:12px}
+#alt-sok .hint button{font:inherit;font-size:15px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:9px;padding:3px 10px;margin:4px 4px 0 0;cursor:pointer}
+#alt-sok .hint button:hover{border-color:var(--ink)}
+#alt-sok .status{font-family:var(--head);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 4px 10px}
+#alt-sok .status:empty{display:none}
+#alt-sok .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+#alt-sok .list li{margin:0;padding:0}
+#alt-sok .list li::before{display:none}
+#alt-sok .hit{display:block;background:#fff;border-radius:var(--r-sm);padding:18px 22px;border:1px solid var(--line);transition:border-color .2s,transform .25s var(--ease),box-shadow .25s var(--ease)}
+#alt-sok .hit:hover,#alt-sok .hit.is-sel{border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow)}
+#alt-sok .hit:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#alt-sok .hit .pg{display:flex;gap:8px;align-items:center;font-family:var(--head);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+#alt-sok .hit .pg span{color:var(--muted);letter-spacing:.04em;text-transform:none;font-family:var(--body);font-size:14px}
+#alt-sok .hit h3{font-family:var(--head);font-weight:400;font-size:20px;line-height:1.15;margin:6px 0 6px;letter-spacing:-.005em;text-transform:uppercase}
+#alt-sok .hit p{font-size:17px;line-height:1.45;color:var(--muted)}
+#alt-sok mark{background:rgba(200,162,74,.35);color:inherit;border-radius:3px;padding:0 1px}
+#alt-sok .more{margin-top:14px;font-family:var(--head);font-size:13px;letter-spacing:.04em;text-transform:uppercase;background:var(--ink);color:#fff;border:0;border-radius:12px;padding:14px 22px;cursor:pointer}
+#alt-sok .more:hover{background:#000}
+#alt-sok .more[hidden]{display:none}
+@media(max-width:640px){
+  #alt-sok .box{padding:20px 18px}
+  #alt-sok .search input{font-size:19px;padding:13px 0}
+  #alt-sok .hit{padding:16px 16px}
+  #alt-sok .hit h3{font-size:17px}
+}
+</style>
+
+<div class="box" role="search">
+  <label class="eyebrow" for="alt-sok-q">Sök på altutbildning.se</label>
+  <div class="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="alt-sok-q" type="search" placeholder="Sök kurs, program, person, sida …" autocomplete="off" spellcheck="false" aria-controls="alt-sok-list">
+    <button type="button" class="clear" aria-label="Rensa sökningen" hidden>×</button>
+  </div>
+  <p class="hint">Till exempel: <button type="button">Teologiåret</button><button type="button">kursplan</button><button type="button">ansökan</button><button type="button">studievägledning</button></p>
+</div>
+<p class="status" aria-live="polite"></p>
+<ol class="list" id="alt-sok-list"></ol>
+<button type="button" class="more" hidden>Visa fler träffar</button>
+
+<script>
+(function(){
+'use strict';
+var root = document.getElementById('alt-sok');
+if (!root || root.dataset.ready) return;
+root.dataset.ready = '1';
+
+var INDEX_URL = 'https://akademi-for-ledarskap-och-teologi.github.io/hemsida/sokindex.json';
+var FALLBACK = '/search?q=';            // Squarespace egen sökning om indexet inte går att hämta
+var STEP = 8;
+
+var $ = function(s){ return root.querySelector(s); };
+var input = $('input'), list = $('.list'), status = $('.status'), more = $('.more'), clr = $('.clear');
+var IDX = null, loading = null, shown = STEP, hits = [], sel = -1, timer = 0;
+
+/* Normalisering som behåller längden: en tecken in -> ett tecken ut (så träffpositioner stämmer) */
+function fold(s){
+  var out = '';
+  for (var i = 0; i < s.length; i++){
+    var c = s[i].toLowerCase()[0], d = c.normalize ? c.normalize('NFD')[0] : c;
+    out += /[a-z0-9]/.test(d) ? d : ' ';
+  }
+  return out;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+function load(){
+  if (loading) return loading;
+  loading = fetch(INDEX_URL, { cache:'no-cache' }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }).then(function(d){
+    IDX = d.c.map(function(c){
+      var p = d.p[c[0]];
+      return { url:p[0], page:p[1] || p[0], ptitle:' ' + fold(p[1] || ''), h:c[1], hf:' ' + fold(c[1]), x:c[3], xf:' ' + fold(c[3]) };
+    });
+    return IDX;
+  });
+  loading.catch(function(){ loading = null; });
+  return loading;
+}
+
+/* Hittar ord som börjar med söktermen. Returnerar positioner i den vikta texten. */
+function finds(hay, t){
+  var r = [], i = hay.indexOf(' ' + t);
+  while (i >= 0 && r.length < 50){ r.push(i); i = hay.indexOf(' ' + t, i + 1); }
+  return r;
+}
+function search(q){
+  var terms = fold(q).split(' ').filter(Boolean);
+  if (!terms.length) return [];
+  var phrase = ' ' + terms.join(' '), res = [];
+  IDX.forEach(function(c){
+    var score = 0, first = -1;
+    for (var k = 0; k < terms.length; k++){
+      var t = terms[k], inT = c.ptitle.indexOf(' ' + t) >= 0, inH = c.hf.indexOf(' ' + t) >= 0, xs = finds(c.xf, t);
+      if (!inT && !inH && !xs.length) return;                     // alla ord måste finnas
+      score += (inT ? 6 : 0) + (inH ? 10 : 0) + Math.min(xs.length, 6);
+      if (xs.length && (first < 0 || xs[0] < first)) first = xs[0];
+    }
+    if (terms.length > 1){
+      if (c.hf.indexOf(phrase) >= 0) score += 12;
+      if (c.xf.indexOf(phrase) >= 0) score += 6;
+    }
+    if (c.hf.trim() === terms.join(' ')) score += 15;
+    if (c.ptitle.trim() === terms.join(' ') && !c.h) score += 8;
+    res.push({ c:c, score:score, first:first });
+  });
+  res.sort(function(a, b){ return b.score - a.score; });
+  // Ingen sida ska ta alla platser: dämpa fler stycken från samma sida
+  var per = {};
+  res.forEach(function(r){ var n = per[r.c.url] = (per[r.c.url] || 0) + 1; r.score = r.score * Math.pow(0.55, n - 1); });
+  res.sort(function(a, b){ return b.score - a.score; });
+  // Slå ihop dubbletter (samma sida + rubrik)
+  var seen = {};
+  return res.filter(function(r){ var k = r.c.url + '|' + r.c.h; if (seen[k]) return false; seen[k] = 1; return true; });
+}
+
+function highlight(text, fold_, terms){
+  var marks = [];
+  terms.forEach(function(t){ finds(' ' + fold_, t).forEach(function(i){ marks.push([i, i + t.length]); }); });
+  marks.sort(function(a, b){ return a[0] - b[0]; });
+  var out = '', pos = 0;
+  marks.forEach(function(m){ if (m[0] < pos) return; out += esc(text.slice(pos, m[0])) + '<mark>' + esc(text.slice(m[0], m[1])) + '</mark>'; pos = m[1]; });
+  return out + esc(text.slice(pos));
+}
+function snippet(c, first, terms){
+  var x = c.x; if (!x) return '';
+  var at = Math.max(0, first), start = Math.max(0, at - 70), end = Math.min(x.length, start + 230);
+  if (start > 0){ var sp = x.indexOf(' ', start); if (sp > 0 && sp < at) start = sp + 1; }
+  if (end < x.length){ var ep = x.lastIndexOf(' ', end); if (ep > at) end = ep; }
+  var part = x.slice(start, end);
+  return (start > 0 ? '… ' : '') + highlight(part, fold(part), terms) + (end < x.length ? ' …' : '');
+}
+/* Länken öppnar sidan och rullar fram till rubriken (eller texten) – se loader.js */
+function link(c, first){
+  var target = c.h;
+  if (!target && c.x){
+    var at = Math.max(0, first), words = c.x.slice(at).split(/\s+/).slice(0, 6).join(' ');
+    target = words;
+  }
+  return c.url + (target ? '#hitta=' + encodeURIComponent(target.slice(0, 80)) : '');
+}
+
+function render(){
+  var q = input.value.trim(), terms = fold(q).split(' ').filter(Boolean);
+  clr.hidden = !q;
+  if (!q){ list.innerHTML = ''; status.textContent = ''; more.hidden = true; return; }
+  if (!IDX){
+    status.textContent = 'Söker …';
+    load().then(render, function(){
+      status.innerHTML = 'Sökningen kunde inte laddas. <a href="' + FALLBACK + encodeURIComponent(q) + '" style="text-decoration:underline">Försök med den vanliga sökningen</a>';
+    });
+    return;
+  }
+  hits = search(q); sel = -1;
+  var pages = {}; hits.forEach(function(h){ pages[h.c.url] = 1; });
+  status.textContent = hits.length ? hits.length + (hits.length === 1 ? ' träff' : ' träffar') + ' på ' + Object.keys(pages).length + (Object.keys(pages).length === 1 ? ' sida' : ' sidor')
+                                   : 'Inga träffar på ”' + q + '”';
+  list.innerHTML = hits.slice(0, shown).map(function(h, i){
+    var c = h.c, title = c.h || c.page;
+    return '<li><a class="hit" href="' + esc(link(c, h.first)) + '" data-i="' + i + '">' +
+      '<span class="pg">' + esc(c.page) + (c.url !== '/' ? ' <span>' + esc(c.url) + '</span>' : '') + '</span>' +
+      '<h3>' + highlight(title, fold(title), terms) + '</h3>' +
+      (c.x ? '<p>' + snippet(c, h.first, terms) + '</p>' : '') + '</a></li>';
+  }).join('');
+  more.hidden = hits.length <= shown;
+}
+function go(){ shown = STEP; render(); }
+
+input.addEventListener('input', function(){ clearTimeout(timer); timer = setTimeout(go, 120); });
+input.addEventListener('focus', function(){ load(); });
+input.addEventListener('keydown', function(e){
+  var items = list.querySelectorAll('.hit');
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+    if (!items.length) return; e.preventDefault();
+    sel = (sel + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+    items.forEach(function(a, i){ a.classList.toggle('is-sel', i === sel); });
+    items[sel].scrollIntoView({ block:'nearest' });
+  } else if (e.key === 'Enter'){
+    e.preventDefault(); clearTimeout(timer); go();
+    var a = list.querySelectorAll('.hit')[sel >= 0 ? sel : 0]; if (a) location.href = a.href;
+  } else if (e.key === 'Escape'){ input.value = ''; go(); }
+});
+clr.addEventListener('click', function(){ input.value = ''; go(); input.focus(); });
+more.addEventListener('click', function(){ shown += STEP; render(); });
+$('.hint').addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; input.value = b.textContent; go(); input.focus(); });
+
+/* ?q=… i adressen fyller i sökningen */
+var m = location.search.match(/[?&]q=([^&]+)/);
+if (m){ try { input.value = decodeURIComponent(m[1].replace(/\+/g, ' ')); } catch (e) {} go(); }
+})();
+</script>
+</div>
