@@ -616,6 +616,7 @@
     $("clear").hidden = false;
     $("hero-title").textContent = PATHS[path].name;
     $("hero-sub").textContent = PATHS[path].sub;
+    if(window.ALTGrad) gradHero();
     renderPeriod(PATHS[path]);
     var r = $("result"); r.classList.remove("is-visible"); void r.offsetWidth; r.classList.add("is-visible");
     setCosts(false);
@@ -649,6 +650,7 @@
     Object.keys(map||{}).forEach(function(k){
       var img = root.querySelector('.tile[data-path="'+k+'"] .tile__img');
       if(!img || !map[k] || img.getAttribute("src")===map[k]) return;
+      if(window.ALTGrad && PATHS[k] && ALTGrad.entry(GB, PATHS[k].name)) return;   // bild från Drive-arket vinner
       var pre = new Image();
       pre.onload = function(){ img.src = map[k]; };
       pre.src = map[k];
@@ -676,6 +678,27 @@
       .catch(function(){ /* behåll bilderna som står i koden */ });
   }
   syncImages();
+
+  /* ================= Gradientbilder från Drive (gradientbilder.js) ================= */
+  var GB = "ansokan";
+  function withGrad(fn){
+    if(window.ALTGrad) return fn();
+    var s = document.querySelector("script[data-altg]");
+    if(!s){ s = document.createElement("script"); s.src = "https://akademi-for-ledarskap-och-teologi.github.io/hemsida/gradientbilder.js"; s.setAttribute("data-altg","1"); document.head.appendChild(s); }
+    s.addEventListener("load", fn);
+  }
+  function gradTiles(){
+    Object.keys(PATHS).forEach(function(k){ ALTGrad.img(root.querySelector('.tile[data-path="'+k+'"] .tile__img'), GB, PATHS[k].name, "tab"); });
+  }
+  function gradHero(){
+    var h = root.querySelector(".hero"); if(!h || !window.ALTGrad) return;
+    [].forEach.call(h.querySelectorAll(".altg-bg,.altg-ov"), function(x){ x.remove(); });
+    var p = state.path && PATHS[state.path], t = state.path && THEME[state.path];
+    var lay = p ? ALTGrad.layers(GB, p.name, "hero", t[0]) : "";
+    h.classList.toggle("altg-on", !!lay);
+    if(lay){ h.style.setProperty("--tc", t[0]); h.style.setProperty("--tf", t[1]); h.insertAdjacentHTML("afterbegin", lay); }
+  }
+  withGrad(function(){ ALTGrad.get(GB, function(){ gradTiles(); gradHero(); }); });
 
   /* Start: direktlänk (#teologi, #pastor, #diakoni, #mission, #master, #fristaende) eller senaste valet */
   renderStatus();

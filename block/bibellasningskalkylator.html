@@ -452,7 +452,7 @@ start.addEventListener('change', function(){ renderResult(false); });
    så att bilden följer med om den byts där. Bilden i koden används som reserv. */
 (function syncImage(){
   var img = $('.ab-bg'), KEY_IMG = 'altbib-img';
-  function use(src){ if (!src || !img || img.getAttribute('src') === src) return; var pre = new Image(); pre.onload = function(){ img.src = src; }; pre.src = src; }
+  function use(src){ if (!src || !img || img.getAttribute('src') === src || (window.ALTGrad && ALTGrad.entry('bibellasningskalkylator', 'Bibelläsningskalkylator'))) return; var pre = new Image(); pre.onload = function(){ img.src = src; }; pre.src = src; }
   try { use(localStorage.getItem(KEY_IMG)); } catch (e) {}
   if (!window.fetch || !window.DOMParser) return;
   fetch('/utbildning', { credentials:'same-origin' })
@@ -470,6 +470,14 @@ start.addEventListener('change', function(){ renderResult(false); });
       if (src) { try { localStorage.setItem(KEY_IMG, src); } catch (e) {} use(src); }
     })
     .catch(function(){ /* behåll bilden i koden */ });
+  /* Bild från Drive-arket "Gradientbilder" vinner (gradientbilder.js) */
+  function withGrad(fn){
+    if (window.ALTGrad) return fn();
+    var s = document.querySelector('script[data-altg]');
+    if (!s){ s = document.createElement('script'); s.src = 'https://akademi-for-ledarskap-och-teologi.github.io/hemsida/gradientbilder.js'; s.setAttribute('data-altg', '1'); document.head.appendChild(s); }
+    s.addEventListener('load', fn);
+  }
+  withGrad(function(){ ALTGrad.get('bibellasningskalkylator', function(){ ALTGrad.img(img, 'bibellasningskalkylator', 'Bibelläsningskalkylator', 'hero'); }); });
 })();
 
 renderControls(); renderResult(true);

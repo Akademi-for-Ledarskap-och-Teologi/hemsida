@@ -716,6 +716,20 @@ function renderPrograms(){
       '<img src="' + imgUrl(p.img) + '" alt="" loading="lazy"' + (p.img ? '' : ' hidden') + ' onerror="this.hidden=true">' +
       '<span class="go" aria-hidden="true"></span><span class="body"><span class="t">' + p.name + '</span><span class="m">' + p.q + '</span></span></button></li>';
   }).join('');
+  gradTiles();
+}
+/* ---------- Gradientbilder från Drive (gradientbilder.js) – vinner över övriga bildkällor ---------- */
+var GB = 'kurskatalog';
+function withGrad(fn){
+  if (window.ALTGrad) return fn();
+  var s = document.querySelector('script[data-altg]');
+  if (!s){ s = document.createElement('script'); s.src = 'https://akademi-for-ledarskap-och-teologi.github.io/hemsida/gradientbilder.js'; s.setAttribute('data-altg', '1'); document.head.appendChild(s); }
+  s.addEventListener('load', fn);
+}
+function gEntry(p){ return window.ALTGrad && p ? ALTGrad.entry(GB, p.name) : null; }
+function gradTiles(){
+  if (!window.ALTGrad) return;
+  PROGRAMS.forEach(function(p){ ALTGrad.img(root.querySelector('.altk-tile[data-p="' + p.id + '"] img'), GB, p.name, 'tab'); });
 }
 var ARCHES = '<svg class="altk-arches" viewBox="325 29 1282 1871" preserveAspectRatio="xMaxYMin meet" aria-hidden="true"><path d="M351 1900V670A614 614 0 0 1 1579 670V1900"/><path d="M442 1900V670A523 523 0 0 1 1488 670V1900"/><path d="M533 1900V670A432 432 0 0 1 1397 670V1900"/><path d="M624 1900V670A341 341 0 0 1 1306 670V1900"/><path d="M715 1900V670A250 250 0 0 1 1215 670V1900"/><path d="M806 1900V670A159 159 0 0 1 1124 670V1900"/><path d="M897 1900V670A68 68 0 0 1 1033 670V1900"/></svg>';
 var shownProg = null;
@@ -725,7 +739,7 @@ function renderDetail(){
   shownProg = state.prog;
   if (!state.prog) { el.innerHTML = ''; return; }
   var p = progById(state.prog);
-  el.innerHTML = '<div class="altk-hero" style="--tc:' + p.c + ';--tf:' + p.fg + '">' + ARCHES +
+  el.innerHTML = '<div class="altk-hero' + (gEntry(p) ? ' altg-on' : '') + '" style="--tc:' + p.c + ';--tf:' + p.fg + '">' + (gEntry(p) ? ALTGrad.layers(GB, p.name, 'hero', p.c) : '') + ARCHES +
     '<button type="button" class="altk-hclose" data-act="prog" data-p="' + p.id + '" aria-label="Visa alla kurser igen">×</button>' +
     '<div><p class="altk-eyebrow">Valt program</p><h3>' + p.name + '</h3>' +
       p.text.map(function(t){ return (t[0] && p.text.length > 1 ? '<p class="lbl">' + t[0] + '</p>' : '') + '<p class="d">' + t[1] + '</p>'; }).join('') +
@@ -1170,7 +1184,7 @@ var IMG_KEY = 'altk-img';
 function setTileImages(map){
   Object.keys(map || {}).forEach(function(k){
     var img = root.querySelector('.altk-tile[data-p="' + k + '"] img'), pr = progById(k);
-    if (!img || !map[k] || !pr || pr.imgFromSheet || img.getAttribute('src') === map[k]) return;
+    if (!img || !map[k] || !pr || pr.imgFromSheet || gEntry(pr) || img.getAttribute('src') === map[k]) return;
     var pre = new Image();
     pre.onload = function(){ img.src = map[k]; img.hidden = false; };
     pre.src = map[k];
@@ -1203,5 +1217,6 @@ renderPrograms(); renderFilters(); syncImages();
 $('.altk-prior').value = String(state.prior); $('.altk-ort').value = state.ort;
 render();
 syncTexts(); syncOverview(); syncKursplaner(); syncKursutbud();
+withGrad(function(){ ALTGrad.get(GB, function(){ gradTiles(); shownProg = null; renderDetail(); }); });
 })();
 </script>

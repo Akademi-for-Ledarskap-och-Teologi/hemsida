@@ -304,6 +304,18 @@ function syncKursplaner(){
   }).catch(function(){ /* Drive svarar inte: länka till /kursplaner */ });
 }
 
+/* ---------- Gradientbilder (styrs från Drive, se gradientbilder.js) ---------- */
+var GB = 'missionsterminen';
+function withGrad(fn){
+  if (window.ALTGrad) return fn();
+  var s = document.querySelector('script[data-altg]');
+  if (!s){ s = document.createElement('script'); s.src = 'https://akademi-for-ledarskap-och-teologi.github.io/hemsida/gradientbilder.js'; s.setAttribute('data-altg', '1'); document.head.appendChild(s); }
+  s.addEventListener('load', fn);
+}
+function G(){ return window.ALTGrad; }
+function gOn(y){ return G() && G().entry(GB, y.title) ? ' altg-on' : ''; }
+function gLay(y, where){ return G() ? G().layers(GB, y.title, where, y.c) : ''; }
+
 /* ---------- Tillstånd ---------- */
 var state = { kind:'', sel:'' };
 function currentCourses(){ return ALL.map(course); }
@@ -346,7 +358,7 @@ function renderList(){
 function renderStage(){
   var y = TERM;
   $('.altmt-stage').innerHTML =
-    '<div class="altmt-hero" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + ARCHES +
+    '<div class="altmt-hero' + gOn(y) + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + gLay(y, 'hero') + ARCHES +
       '<div><p class="altmt-eyebrow">' + esc(y.eyebrow) + '</p><h3>' + esc(y.title) + '</h3>' +
         '<p class="d">' + esc(y.lead) + '</p>' +
         '<div class="facts">' + y.facts.map(function(f){ return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' +
@@ -388,5 +400,6 @@ root.addEventListener('click', function(e){
 
 /* ---------- Start ---------- */
 render(); syncKursplaner();
+withGrad(function(){ G().get(GB, function(){ render(); }); });
 })();
 </script>

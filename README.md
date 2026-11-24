@@ -60,6 +60,21 @@ och bilder från mappen *Personalbilder - Hemsida*). Innehållet ändras där �
 Google-API-nyckeln som används är bara för läsning av offentligt delade filer. Lås den till
 `altutbildning.se/*` under *API-nycklar → Begränsningar för webbplatser* i Google Cloud Console.
 
+## Gradientbilder (bilder i rutorna)
+
+Bilderna i rutorna (med färgtoning) styrs från Google Drive – inte här i koden:
+
+- **Mapp:** ALT / *Gradientbilder* – ladda upp bilderna hit.
+- **Kalkylark:** *Gradientbilder – koppling till block* (i samma mapp), flik *Koppling*.
+  En rad per ruta: Block, Ruta, Bild (filnamn i mappen eller en bildlänk), Gradientfärg (valfri),
+  Sidled/Höjdled ruta (%) och Sidled/Höjdled stor ruta (%). Tom bildcell = vanlig färgruta.
+- **Finjustera** vilken del av bilden som syns: lägg till `#bildfokus` i adressen
+  (t.ex. `altutbildning.se/teologiaret#bildfokus`), ställ in och klicka *Kopiera till arket*,
+  klistra in i kolumn E på rätt rad.
+
+Koden ligger i `gradientbilder.js` och används av teologiaret, pastorsprogram, teologiprogram,
+diakoniterminen, missionsterminen, ansokan, kurskatalog och bibellasningskalkylator.
+
 ## Överlämning
 
 Repot ligger i organisationen **Akademi-for-Ledarskap-och-Teologi** på GitHub. Lägg till den som tar över som *Owner*

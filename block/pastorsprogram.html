@@ -310,6 +310,18 @@ function syncKursplaner(){
   }).catch(function(){ /* Drive svarar inte: länka till /kursplaner */ });
 }
 
+/* ---------- Gradientbilder (styrs från Drive, se gradientbilder.js) ---------- */
+var GB = 'pastorsprogram';
+function withGrad(fn){
+  if (window.ALTGrad) return fn();
+  var s = document.querySelector('script[data-altg]');
+  if (!s){ s = document.createElement('script'); s.src = 'https://akademi-for-ledarskap-och-teologi.github.io/hemsida/gradientbilder.js'; s.setAttribute('data-altg', '1'); document.head.appendChild(s); }
+  s.addEventListener('load', fn);
+}
+function G(){ return window.ALTGrad; }
+function gOn(y){ return G() && G().entry(GB, y.name) ? ' altg-on' : ''; }
+function gLay(y, where){ return G() ? G().layers(GB, y.name, where, y.c) : ''; }
+
 /* ---------- Tillstånd ---------- */
 var state = { y:0, track:'fork', kind:'' };
 var h = location.hash.match(/ar=(\d)/); if (h && +h[1] >= 1 && +h[1] <= 4) state.y = +h[1] - 1;
@@ -323,7 +335,7 @@ function currentCourses(){
 /* ---------- Rendering ---------- */
 function renderYears(){
   $('.altap-years').innerHTML = YEARS.map(function(y, i){
-    return '<li><button type="button" class="altap-yr" role="tab" data-act="year" data-i="' + i + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' +
+    return '<li><button type="button" class="altap-yr' + gOn(y) + '" role="tab" data-act="year" data-i="' + i + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + gLay(y, 'tab') +
       '<span class="f">' + y.flag + '</span><span class="n">0' + y.n + '</span><span class="l">År ' + y.n + '</span><span class="t">' + esc(y.name) + '</span></button></li>';
   }).join('');
 }
@@ -358,7 +370,7 @@ function renderStage(){
   var y = YEARS[state.y], tr = y.tracks ? y.tracks.filter(function(t){ return t.id === state.track; })[0] : null;
   var prev = YEARS[state.y - 1], next = YEARS[state.y + 1];
   $('.altap-stage').innerHTML =
-    '<div class="altap-hero" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + ARCHES +
+    '<div class="altap-hero' + gOn(y) + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + gLay(y, 'hero') + ARCHES +
       '<div><p class="altap-eyebrow">År ' + y.n + ' av 4</p><h3>' + esc(y.title) + '</h3>' +
         '<p class="d">' + esc(tr ? y.lead + ' ' + tr.lead : y.lead) + '</p>' +
         (y.tracks ? '<div class="altap-tracks" role="group" aria-label="Välj inriktning">' + y.tracks.map(function(t){
@@ -408,5 +420,6 @@ $('.altap-years').addEventListener('keydown', function(e){
 
 /* ---------- Start ---------- */
 renderYears(); render(); syncKursplaner();
+withGrad(function(){ G().get(GB, function(){ renderYears(); render(); }); });
 })();
 </script>

@@ -19,16 +19,9 @@
   i stället för år. Direktlänk: #val=1–2.
 
   GRADIENTBILDER
-  Lägg en bild i Drive-mappen "Gradientbilder" (i ALT-mappen) och skriv
-  filnamnet i kalkylarket "Gradientbilder – koppling till block", flik
-  "Koppling": Block = teologiaret, Ruta = Teologiåret / Nästa steg.
-  Bilden används både på rutan och i den stora rutan under. Gradientfärg
-  är valfri (annars rutans egen färg). Tom bildcell = vanlig färgruta.
-  "Sidled/Höjdled ruta (%)" styr vilken del av bilden som syns i lilla
-  rutan (0 = vänster/överkant, 50 = mitten, 100 = höger/nederkant).
-  "Sidled/Höjdled stor ruta (%)" gäller stora rutan (tomt = samma som lilla).
-  Finjustera med verktyget: öppna altutbildning.se/teologiaret#bildfokus,
-  dra i reglagen och klicka "Kopiera till arket", klistra in i kolumn E.
+  Bilderna i rutorna styrs från Drive (mappen Gradientbilder och kalkylarket
+  "Gradientbilder – koppling till block"), se gradientbilder.js. Block = teologiaret,
+  Ruta = Teologiåret / Nästa steg. Finjustera: altutbildning.se/teologiaret#bildfokus
   ============================================================
 -->
 <meta charset="utf-8">
@@ -94,28 +87,6 @@
 #altty .altty-arches{position:absolute;right:4%;top:28px;height:150%;width:auto;color:currentColor;opacity:.16;pointer-events:none;z-index:0}
 #altty .altty-arches path{fill:none;stroke:currentColor;stroke-width:55;stroke-linecap:butt}
 #altty .altty-hero > div{position:relative;z-index:1}
-/* Gradientbilder (bild + färgtoning, styrs från Drive) */
-#altty .altty-yr.has-img,#altty .altty-hero.has-img{background:var(--tc);color:var(--tf);isolation:isolate}
-#altty .altty-gbg,#altty .altty-gov{position:absolute;inset:0;z-index:-1;pointer-events:none}
-#altty .altty-gbg{background-size:cover;background-repeat:no-repeat}
-/* Bildfokus-verktyget (#bildfokus) */
-#altty .altty-ed{position:fixed;right:20px;bottom:20px;z-index:10002;width:300px;background:#fff;color:#1c1c1c;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.25);padding:16px 18px;font-size:15px;line-height:1.35}
-#altty .altty-ed .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-#altty .altty-ed .hd b{font-family:var(--head);font-weight:400;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
-#altty .altty-ed .none{display:none;margin:0;color:var(--muted)}
-#altty .altty-ed.off .none{display:block}#altty .altty-ed.off > :not(.hd):not(.none){display:none}
-#altty .altty-ed .seg{display:flex;gap:6px;margin-bottom:10px}
-#altty .altty-ed button{font:inherit;font-size:14px;border:0;border-radius:8px;padding:7px 10px;cursor:pointer;background:#1c1c1c;color:#fff}
-#altty .altty-ed .seg button{flex:1;background:#eee;color:#1c1c1c}#altty .altty-ed .seg button[aria-pressed="true"]{background:#1c1c1c;color:#fff}
-#altty .altty-ed button.ghost{background:#eee;color:#1c1c1c}
-#altty .altty-ed label{display:block;margin:6px 0}#altty .altty-ed label i{float:right;font-style:normal;color:var(--muted)}
-#altty .altty-ed input[type=range]{width:100%;margin:4px 0 0}
-#altty .altty-ed .tip{font-size:13px;color:var(--muted);margin:6px 0 10px}
-#altty .altty-ed .out{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px;background:#f5f2ef;border-radius:8px;padding:8px 10px;margin-bottom:10px}
-#altty .altty-ed .act{display:flex;gap:6px;flex-wrap:wrap}
-#altty .altty-hero.has-img{touch-action:pan-y}
-#altty .altty-yr.has-img .n,#altty .altty-yr.has-img .t{color:var(--tf)}
-#altty .altty-yr.has-img .f{background:rgba(255,255,255,.88);color:#1c1c1c}
 #altty .altty-hero .altty-eyebrow{color:inherit;opacity:.75}
 #altty .altty-hero h3{font-size:clamp(26px,4.4cqi,48px);text-transform:uppercase;margin:10px 0 14px}
 #altty .altty-hero .d{font-size:20px;line-height:1.5;max-width:58ch;opacity:.92}
@@ -235,12 +206,7 @@ var LINKS = {
 var DRIVE_KEY = 'AIzaSyAEunCE3KQD22E1s5goQSIj6G29QB_-Npc';
 var DRIVE_FOLDER = '1-zFMbyd_e1Odf_ps7N1qdqigWWG2nH0Z';
 var KP_KEY = 'altk-kp';   // delar cache med kurskatalogen
-/* Gradientbilder: mappen "Gradientbilder" i ALT-mappen + kalkylarket som kopplar bild till ruta */
-var GRAD_FOLDER = '1HSa_eDz1CJZTbTLAxUAIY2vPTndCvyB2';
-var GRAD_SHEET = '1NxxOzC46kYvwhVmjVyvE1ytPPdCqYrF83Cu2NbeqUQ8';
-var GRAD_TAB = 'Koppling';
-var GRAD_BLOCK = 'teologiaret';
-var GRAD_KEY = 'altty-grad';
+
 
 /* ---------- Ämnen och studieformer (samma som kurskatalogen) ---------- */
 var AMNEN = {
@@ -350,161 +316,17 @@ function syncKursplaner(){
   }).catch(function(){ /* Drive svarar inte: länka till /kursplaner */ });
 }
 
-/* ---------- Gradientbilder från Drive ---------- */
-function rgba(hex, a){
-  var m = String(hex || '').replace('#', '').match(/^([0-9a-f]{6})$/i); if (!m) return 'rgba(0,0,0,' + a + ')';
-  var n = parseInt(m[1], 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+/* ---------- Gradientbilder (styrs från Drive, se gradientbilder.js) ---------- */
+var GB = 'teologiaret';
+function withGrad(fn){
+  if (window.ALTGrad) return fn();
+  var s = document.querySelector('script[data-altg]');
+  if (!s){ s = document.createElement('script'); s.src = 'https://akademi-for-ledarskap-och-teologi.github.io/hemsida/gradientbilder.js'; s.setAttribute('data-altg', '1'); document.head.appendChild(s); }
+  s.addEventListener('load', fn);
 }
-/* Bildinställning för 'tab' (lilla rutan) eller 'hero' (stora rutan). Stora rutan ärver lilla om den saknas. */
-function gset(y, where){
-  var t = y.gf.tab, h = y.gf.hero || {};
-  return where === 'hero' ? { x:h.x != null ? h.x : t.x, y:h.y != null ? h.y : t.y } : t;
-}
-function bgCss(y, where){
-  var s = gset(y, where), p = s.x + '% ' + s.y + '%';
-  return 'background-image:url(&quot;' + y.gimg + '&quot;);background-position:' + p;
-}
-function gradLayers(y, where){
-  if (!y.gimg) return '';
-  var c = y.gc || y.c;
-  var g = where === 'hero'
-    ? 'linear-gradient(90deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .9) + ' 40%,' + rgba(c, .45) + ' 75%,' + rgba(c, .25) + ' 100%)'
-    : 'linear-gradient(20deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .82) + ' 40%,' + rgba(c, .3) + ' 100%)';
-  return '<span class="altty-gbg" aria-hidden="true" style="' + bgCss(y, where) + '"></span><span class="altty-gov" aria-hidden="true" style="background:' + g + '"></span>';
-}
-/* "30", "30%", "30,5" -> 30 (0–100), tomt -> null */
-function pct(v){
-  v = String(v == null ? '' : v).trim().replace('%', '').replace(',', '.'); if (!v || isNaN(+v)) return null;
-  return Math.max(0, Math.min(100, +v));
-}
-function parseCSV(t){
-  var rows = [], row = [], cur = '', q = false, i, c;
-  for (i = 0; i < t.length; i++){
-    c = t[i];
-    if (q){ if (c === '"'){ if (t[i+1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
-    else if (c === '"') q = true;
-    else if (c === ','){ row.push(cur); cur = ''; }
-    else if (c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
-    else if (c !== '\r') cur += c;
-  }
-  if (cur !== '' || row.length){ row.push(cur); rows.push(row); }
-  return rows;
-}
-function applyGrad(map){
-  if (!map) return;
-  YEARS.forEach(function(y){
-    var g = map[norm(y.label || y.name)];
-    y.gimg = g ? g.img : null; y.gc = g ? g.c : null;
-    var t = (g && g.tab) || {}, h = (g && g.hero) || {};
-    y.gf = { tab:{ x:t.x != null ? t.x : 50, y:t.y != null ? t.y : 50 }, hero:{ x:h.x, y:h.y } };
-  });
-  renderYears(); render();
-}
-function syncGrad(){
-  try { applyGrad(JSON.parse(localStorage.getItem(GRAD_KEY) || 'null')); } catch (e) {}
-  if (!window.fetch) return;
-  var sheet = fetch('https://docs.google.com/spreadsheets/d/' + GRAD_SHEET + '/gviz/tq?tqx=out:csv&headers=1&sheet=' + encodeURIComponent(GRAD_TAB))
-    .then(function(r){ if (!r.ok) throw new Error('sheet ' + r.status); return r.text(); }).then(parseCSV);
-  Promise.all([sheet, driveList(GRAD_FOLDER)]).then(function(res){
-    var files = {};
-    res[1].forEach(function(f){
-      if (!/^image\//.test(f.mimeType || '')) return;
-      var n = f.name.normalize ? f.name.normalize('NFC') : f.name;
-      files[norm(n)] = f.id; files[norm(n.replace(/\.[a-z0-9]+$/i, ''))] = f.id;
-    });
-    var map = {}, head = (res[0][0] || []).map(norm);
-    function col(word, fb){ for (var i = 0; i < head.length; i++) if (head[i].indexOf(word) === 0) return i; return fb; }
-    var cB = col('block', 0), cR = col('ruta', 1), cI = col('bild filnamn', 2), cC = col('gradientfarg', 3),
-        cX = col('sidled ruta', -1), cY = col('hojdled ruta', -1), cXH = col('sidled stor', -1), cYH = col('hojdled stor', -1);
-    res[0].slice(1).forEach(function(r){
-      if (norm(r[cB]) !== norm(GRAD_BLOCK)) return;
-      var id = files[norm(r[cI])]; if (!id) return;
-      var c = String(r[cC] || '').trim(); if (c && c[0] !== '#') c = '#' + c;
-      map[norm(r[cR])] = { img:'https://lh3.googleusercontent.com/d/' + id + '=w2000', c:/^#[0-9a-f]{6}$/i.test(c) ? c : null,
-        tab:{ x:pct(r[cX]), y:pct(r[cY]) }, hero:{ x:pct(r[cXH]), y:pct(r[cYH]) } };
-    });
-    try { localStorage.setItem(GRAD_KEY, JSON.stringify(map)); } catch (e) {}
-    applyGrad(map);
-  }).catch(function(){ /* Ingen bild: rutorna behåller sina vanliga färger */ });
-}
-
-/* ---------- Bildfokus-verktyg: öppna sidan med #bildfokus i adressen ---------- */
-var ED = /bildfokus/i.test(location.hash) ? { where:'tab' } : null;
-function edPct(n){ return (Math.round(n * 10) / 10 + '').replace('.', ',') + '%'; }
-function edPaint(){
-  var y = YEARS[state.y]; if (!y.gimg) return;
-  var t = root.querySelectorAll('.altty-yr')[state.y], h = $('.altty-hero');
-  var a = t && t.querySelector('.altty-gbg'), b = h && h.querySelector('.altty-gbg');
-  if (a) a.setAttribute('style', bgCss(y, 'tab').replace(/&quot;/g, '"'));
-  if (b) b.setAttribute('style', bgCss(y, 'hero').replace(/&quot;/g, '"'));
-}
-function edSync(){
-  if (!ED) return;
-  var p = $('.altty-ed'); if (!p) return;
-  var y = YEARS[state.y];
-  p.querySelector('[data-ed="name"]').textContent = y.label || y.name;
-  if (!y.gimg){ p.classList.add('off'); return; } p.classList.remove('off');
-  var s = gset(y, ED.where), t = gset(y, 'tab'), hh = gset(y, 'hero');
-  p.querySelectorAll('[data-w]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.w === ED.where); });
-  p.querySelector('[name="x"]').value = s.x; p.querySelector('[name="y"]').value = s.y;
-  p.querySelector('[data-ed="x"]').textContent = edPct(s.x); p.querySelector('[data-ed="y"]').textContent = edPct(s.y);
-  ED.row = [t.x, t.y, hh.x, hh.y].map(function(v){ return String(Math.round(v * 10) / 10).replace('.', ','); });
-  p.querySelector('[data-ed="out"]').innerHTML =
-    '<span>Sidled ruta</span><b>' + ED.row[0] + '</b><span>Höjdled ruta</span><b>' + ED.row[1] + '</b>' +
-    '<span>Sidled stor ruta</span><b>' + ED.row[2] + '</b><span>Höjdled stor ruta</span><b>' + ED.row[3] + '</b>';
-}
-function edSet(k, v){
-  var y = YEARS[state.y]; if (!y.gimg) return;
-  if (ED.where === 'hero' && !y.gf.hero) y.gf.hero = {};
-  var o = ED.where === 'hero' ? y.gf.hero : y.gf.tab;
-  if (ED.where === 'hero'){ var cur = gset(y, 'hero'); o.x = cur.x; o.y = cur.y; }
-  o[k] = v; edPaint(); edSync();
-}
-function edInit(){
-  if (!ED) return;
-  var p = document.createElement('div'); p.className = 'altty-ed';
-  p.innerHTML =
-    '<div class="hd"><b>Bildfokus</b><span data-ed="name"></span></div>' +
-    '<p class="none">Den här rutan har ingen bild i kalkylarket.</p>' +
-    '<div class="seg"><button type="button" data-w="tab">Liten ruta</button><button type="button" data-w="hero">Stor ruta</button></div>' +
-    '<label>Sidled <i data-ed="x"></i><input type="range" name="x" min="0" max="100" step="1"></label>' +
-    '<label>Höjdled <i data-ed="y"></i><input type="range" name="y" min="0" max="100" step="1"></label>' +
-    '<p class="tip">Dra i den stora rutan för att flytta bilden. Piltangenter på reglagen flyttar 1 % åt gången.</p>' +
-    '<div class="out" data-ed="out"></div>' +
-    '<div class="act"><button type="button" data-ed="copy">Kopiera till arket</button><button type="button" data-ed="reset" class="ghost">Återställ</button></div>';
-  root.appendChild(p);
-  p.addEventListener('click', function(e){
-    var b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.w){ ED.where = b.dataset.w; edSync(); }
-    else if (b.dataset.ed === 'reset'){ var y = YEARS[state.y]; if (ED.where === 'hero') y.gf.hero = {}; else y.gf.tab = { x:50, y:50 }; edPaint(); edSync(); }
-    else if (b.dataset.ed === 'copy'){
-      var txt = ED.row.join('\t');
-      var done = function(){ b.textContent = 'Kopierat! Klistra in i kolumn E på raden ' + (YEARS[state.y].label || '') ; setTimeout(function(){ b.textContent = 'Kopiera till arket'; }, 2600); };
-      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, function(){ window.prompt('Kopiera:', txt); });
-      else window.prompt('Kopiera:', txt);
-    }
-  });
-  p.addEventListener('input', function(e){
-    var n = e.target.name; if (!n) return;
-    edSet(n, +e.target.value);
-  });
-  /* Dra i stora rutan */
-  var drag = null;
-  root.addEventListener('pointerdown', function(e){
-    var h = e.target.closest('.altty-hero.has-img'); if (!h || e.target.closest('.altty-ms')) return;
-    var s = gset(YEARS[state.y], 'hero'); ED.where = 'hero';
-    drag = { x0:e.clientX, y0:e.clientY, x:s.x, y:s.y, w:h.offsetWidth, h:h.offsetHeight }; h.setPointerCapture(e.pointerId); e.preventDefault();
-  });
-  root.addEventListener('pointermove', function(e){
-    if (!drag) return;
-    var y = YEARS[state.y];
-    var nx = Math.max(0, Math.min(100, drag.x - (e.clientX - drag.x0) / drag.w * 100));
-    var ny = Math.max(0, Math.min(100, drag.y - (e.clientY - drag.y0) / drag.h * 100));
-    y.gf.hero = { x:Math.round(nx), y:Math.round(ny) }; edPaint(); edSync();
-  });
-  root.addEventListener('pointerup', function(){ drag = null; });
-  edSync();
-}
+function G(){ return window.ALTGrad; }
+function gOn(y){ return G() && G().entry(GB, y.label || y.name) ? ' altg-on' : ''; }
+function gLay(y, where){ return G() ? G().layers(GB, y.label || y.name, where, y.c) : ''; }
 
 /* ---------- Tillstånd ---------- */
 var state = { y:0, kind:'' };
@@ -515,7 +337,7 @@ function currentCourses(){ return (YEARS[state.y].courses || []).map(course); }
 /* ---------- Rendering ---------- */
 function renderYears(){
   $('.altty-years').innerHTML = YEARS.map(function(y, i){
-    return '<li><button type="button" class="altty-yr' + (y.gimg ? ' has-img' : '') + '" role="tab" data-act="year" data-i="' + i + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + gradLayers(y, 'tab') +
+    return '<li><button type="button" class="altty-yr' + gOn(y) + '" role="tab" data-act="year" data-i="' + i + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + gLay(y, 'tab') +
       '<span class="f">' + y.flag + '</span><span class="n w">' + esc(y.label) + '</span>' + (y.hideName ? '' : '<span class="t">' + esc(y.name) + '</span>') + '</button></li>';
   }).join('');
 }
@@ -555,7 +377,7 @@ function renderNext(y){
 function renderStage(){
   var y = YEARS[state.y], prev = YEARS[state.y - 1], next = YEARS[state.y + 1];
   $('.altty-stage').innerHTML =
-    '<div class="altty-hero' + (y.gimg ? ' has-img' : '') + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + gradLayers(y, 'hero') + ARCHES +
+    '<div class="altty-hero' + gOn(y) + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' + gLay(y, 'hero') + ARCHES +
       '<div><h3>' + esc(y.title) + '</h3>' +
         '<p class="d">' + esc(y.lead) + '</p>' +
         (y.facts && y.facts.length ? '<div class="facts">' + y.facts.map(function(f){ return '<span>' + esc(f) + '</span>'; }).join('') + '</div>' : '') +
@@ -575,7 +397,7 @@ function renderStage(){
       '<div class="b"><a class="altty-pill accent" href="' + LINKS.ansokan + '">Till ansökan <span class="arr">→</span></a><a class="altty-pill line" href="' + LINKS.vagledning + '">Studievägledning</a></div></div>';
   renderList();
 }
-function render(){ syncYears(); renderStage(); edSync(); }
+function render(){ syncYears(); renderStage(); }
 
 /* ---------- Händelser ---------- */
 function go(i, focus){
@@ -601,6 +423,7 @@ $('.altty-years').addEventListener('keydown', function(e){
 });
 
 /* ---------- Start ---------- */
-renderYears(); render(); edInit(); syncKursplaner(); syncGrad();
+renderYears(); render(); syncKursplaner();
+withGrad(function(){ G().get(GB, function(){ renderYears(); render(); }); });
 })();
 </script>
