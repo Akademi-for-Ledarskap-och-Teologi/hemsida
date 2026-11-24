@@ -24,6 +24,8 @@
   "Koppling": Block = teologiaret, Ruta = Teologiåret / Nästa steg.
   Bilden används både på rutan och i den stora rutan under. Gradientfärg
   är valfri (annars rutans egen färg). Tom bildcell = vanlig färgruta.
+  "Bildfokus ruta" / "Bildfokus stor ruta" styr vilken del av bilden som syns:
+  mitten, uppe, nere, vänster, höger, uppe höger ... eller "30% 70%".
   ============================================================
 -->
 <meta charset="utf-8">
@@ -90,7 +92,7 @@
 #altty .altty-arches path{fill:none;stroke:currentColor;stroke-width:55;stroke-linecap:butt}
 #altty .altty-hero > div{position:relative;z-index:1}
 /* Gradientbilder (bild + färgtoning, styrs från Drive) */
-#altty .altty-yr.has-img,#altty .altty-hero.has-img{background-color:var(--tc);background-image:var(--gimg);background-size:cover;background-position:center;color:var(--tf)}
+#altty .altty-yr.has-img,#altty .altty-hero.has-img{background-color:var(--tc);background-image:var(--gimg);background-size:cover;background-position:var(--gpos,center);color:var(--tf)}
 #altty .altty-yr.has-img .n,#altty .altty-yr.has-img .t{color:var(--tf)}
 #altty .altty-yr.has-img .f{background:rgba(255,255,255,.88);color:#1c1c1c}
 #altty .altty-hero .altty-eyebrow{color:inherit;opacity:.75}
@@ -246,7 +248,7 @@ var COURSES = [
 var ORTER = 'Göteborg · Jönköping · Malmö · Stockholm · Örebro';
 
 var YEARS = [
-  { n:1, name:'Heltid', label:'Teologiåret', title:'Ett år på heltid', c:'#2f575f', fg:'#e5e3dc', flag:'60 hp',
+  { n:1, name:'Heltid', label:'Teologiåret', hideName:true, title:'Ett år på heltid', c:'#2f575f', fg:'#e5e3dc', flag:'60 hp',
     lead:'Du läser alla åtta kurserna under ett läsår, tillsammans med studenter på Pastorsprogrammet och Teologiprogrammet. Du provar på alla fyra ämnesområden och får tid att läsa, samtala, fråga och pröva tankar.',
     facts:['Studietakt 100 %','1 läsår','Fem studieorter'],
     courses:COURSES,
@@ -338,7 +340,17 @@ function gradStyle(y, where){
   var g = where === 'hero'
     ? 'linear-gradient(90deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .9) + ' 40%,' + rgba(c, .45) + ' 75%,' + rgba(c, .25) + ' 100%)'
     : 'linear-gradient(20deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .82) + ' 40%,' + rgba(c, .3) + ' 100%)';
-  return ';--gimg:' + g + ',url(&quot;' + y.gimg + '&quot;)';
+  return ';--gimg:' + g + ',url(&quot;' + y.gimg + '&quot;);--gpos:' + (where === 'hero' ? (y.gposHero || y.gpos) : y.gpos);
+}
+/* "mitten", "uppe höger", "30% 70%" ... -> CSS background-position */
+function focus(v){
+  v = String(v || '').trim().toLowerCase(); if (!v) return null;
+  var p = v.match(/^(\d{1,3})\s*%?\s*[ ,;]\s*(\d{1,3})\s*%?$/);
+  if (p) return Math.min(100, +p[1]) + '% ' + Math.min(100, +p[2]) + '%';
+  var x = '50%', y = '50%', w = norm(v);
+  if (/vanster/.test(w)) x = '0%'; if (/hoger/.test(w)) x = '100%';
+  if (/uppe|upp|topp|ovan/.test(w)) y = '0%'; if (/nere|ner|botten|nedan/.test(w)) y = '100%';
+  return x + ' ' + y;
 }
 function parseCSV(t){
   var rows = [], row = [], cur = '', q = false, i, c;
@@ -358,6 +370,7 @@ function applyGrad(map){
   YEARS.forEach(function(y){
     var g = map[norm(y.label || y.name)];
     y.gimg = g ? g.img : null; y.gc = g ? g.c : null;
+    y.gpos = (g && g.pos) || 'center'; y.gposHero = g && g.posHero;
   });
   renderYears(); render();
 }
@@ -373,12 +386,16 @@ function syncGrad(){
       var n = f.name.normalize ? f.name.normalize('NFC') : f.name;
       files[norm(n)] = f.id; files[norm(n.replace(/\.[a-z0-9]+$/i, ''))] = f.id;
     });
-    var map = {};
+    var map = {}, head = (res[0][0] || []).map(norm);
+    function col(word, fb){ for (var i = 0; i < head.length; i++) if (head[i].indexOf(word) === 0) return i; return fb; }
+    var cB = col('block', 0), cR = col('ruta', 1), cI = col('bild filnamn', 2), cC = col('gradientfarg', 3),
+        cF = col('bildfokus ruta', -1), cH = col('bildfokus stor', -1);
     res[0].slice(1).forEach(function(r){
-      if (norm(r[0]) !== norm(GRAD_BLOCK)) return;
-      var id = files[norm(r[2])]; if (!id) return;
-      var c = String(r[3] || '').trim(); if (c && c[0] !== '#') c = '#' + c;
-      map[norm(r[1])] = { img:'https://lh3.googleusercontent.com/d/' + id + '=w1800', c:/^#[0-9a-f]{6}$/i.test(c) ? c : null };
+      if (norm(r[cB]) !== norm(GRAD_BLOCK)) return;
+      var id = files[norm(r[cI])]; if (!id) return;
+      var c = String(r[cC] || '').trim(); if (c && c[0] !== '#') c = '#' + c;
+      map[norm(r[cR])] = { img:'https://lh3.googleusercontent.com/d/' + id + '=w1800', c:/^#[0-9a-f]{6}$/i.test(c) ? c : null,
+        pos:focus(r[cF]), posHero:focus(r[cH]) };
     });
     try { localStorage.setItem(GRAD_KEY, JSON.stringify(map)); } catch (e) {}
     applyGrad(map);
