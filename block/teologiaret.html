@@ -227,13 +227,13 @@ var COURSES = [
 var ORTER = 'Göteborg · Jönköping · Malmö · Stockholm · Örebro';
 
 var YEARS = [
-  { n:1, name:'Heltid', title:'Ett år på heltid', c:'#2f575f', fg:'#e5e3dc', flag:'60 hp',
+  { n:1, name:'Heltid', label:'Teologiåret', title:'Ett år på heltid', c:'#2f575f', fg:'#e5e3dc', flag:'60 hp',
     lead:'Du läser alla åtta kurserna under ett läsår, tillsammans med studenter på Pastorsprogrammet och Teologiprogrammet. Du provar på alla fyra ämnesområden och får tid att läsa, samtala, fråga och pröva tankar.',
     facts:['Studietakt 100 %','1 läsår','Fem studieorter'],
     courses:COURSES,
     ms:{ lbl:'Efter ett år', big:'60 hp', text:'Ett helt år teologi – och en väg vidare om du vill.' }
   },
-  { n:2, name:'Nästa steg', title:'Efter Teologiåret', c:'#c8a24a', fg:'#1c1c1c', flag:'År 2',
+  { n:2, name:'Nästa steg', label:'Nästa steg', hideName:true, title:'Efter Teologiåret', c:'#c8a24a', fg:'#1c1c1c', flag:'År 2',
     lead:'Du behöver inte veta vart studierna leder. Men när året är slut kan du gå direkt vidare till år 2 på något av ALT:s program.',
     facts:['Direkt till år 2'],
     next:[
@@ -318,7 +318,7 @@ function currentCourses(){ return (YEARS[state.y].courses || []).map(course); }
 function renderYears(){
   $('.altty-years').innerHTML = YEARS.map(function(y, i){
     return '<li><button type="button" class="altty-yr" role="tab" data-act="year" data-i="' + i + '" style="--tc:' + y.c + ';--tf:' + y.fg + '">' +
-      '<span class="f">' + y.flag + '</span><span class="n">0' + y.n + '</span><span class="l">Väg ' + y.n + '</span><span class="t">' + esc(y.name) + '</span></button></li>';
+      '<span class="f">' + y.flag + '</span><span class="n">0' + y.n + '</span><span class="l">' + esc(y.label || ('Väg ' + y.n)) + '</span>' + (y.hideName ? '' : '<span class="t">' + esc(y.name) + '</span>') + '</button></li>';
   }).join('');
 }
 function syncYears(){
