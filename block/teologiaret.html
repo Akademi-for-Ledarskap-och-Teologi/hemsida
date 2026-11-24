@@ -24,9 +24,9 @@
   "Koppling": Block = teologiaret, Ruta = Teologiåret / Nästa steg.
   Bilden används både på rutan och i den stora rutan under. Gradientfärg
   är valfri (annars rutans egen färg). Tom bildcell = vanlig färgruta.
-  "Bildfokus ruta" / "Bildfokus stor ruta" styr vilken del av bilden som syns:
-  mitten, uppe, nere, vänster, höger, uppe höger ... eller "30% 70%".
-  "Zoom ruta" / "Zoom stor ruta": 100–300 %.
+  "Sidled/Höjdled ruta (%)" styr vilken del av bilden som syns i lilla
+  rutan (0 = vänster/överkant, 50 = mitten, 100 = höger/nederkant).
+  "Sidled/Höjdled stor ruta (%)" gäller stora rutan (tomt = samma som lilla).
   Finjustera med verktyget: öppna altutbildning.se/teologiaret#bildfokus,
   dra i reglagen och klicka "Kopiera till arket", klistra in i kolumn E.
   ============================================================
@@ -358,11 +358,11 @@ function rgba(hex, a){
 /* Bildinställning för 'tab' (lilla rutan) eller 'hero' (stora rutan). Stora rutan ärver lilla om den saknas. */
 function gset(y, where){
   var t = y.gf.tab, h = y.gf.hero || {};
-  return where === 'hero' ? { x:h.x != null ? h.x : t.x, y:h.y != null ? h.y : t.y, z:h.z != null ? h.z : t.z } : t;
+  return where === 'hero' ? { x:h.x != null ? h.x : t.x, y:h.y != null ? h.y : t.y } : t;
 }
 function bgCss(y, where){
   var s = gset(y, where), p = s.x + '% ' + s.y + '%';
-  return 'background-image:url(&quot;' + y.gimg + '&quot;);background-position:' + p + ';transform-origin:' + p + ';transform:scale(' + s.z + ')';
+  return 'background-image:url(&quot;' + y.gimg + '&quot;);background-position:' + p;
 }
 function gradLayers(y, where){
   if (!y.gimg) return '';
@@ -372,20 +372,10 @@ function gradLayers(y, where){
     : 'linear-gradient(20deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .82) + ' 40%,' + rgba(c, .3) + ' 100%)';
   return '<span class="altty-gbg" aria-hidden="true" style="' + bgCss(y, where) + '"></span><span class="altty-gov" aria-hidden="true" style="background:' + g + '"></span>';
 }
-/* "mitten", "uppe höger", "30% 70%" ... -> {x, y} i procent */
-function focus(v){
-  v = String(v || '').trim().toLowerCase(); if (!v) return null;
-  var p = v.match(/^(\d{1,3}(?:[.,]\d+)?)\s*%?\s*[ ,;]\s*(\d{1,3}(?:[.,]\d+)?)\s*%?$/);
-  if (p) return { x:Math.min(100, +p[1].replace(',', '.')), y:Math.min(100, +p[2].replace(',', '.')) };
-  var x = 50, y = 50, w = norm(v);
-  if (/vanster/.test(w)) x = 0; if (/hoger/.test(w)) x = 100;
-  if (/uppe|upp|topp|ovan/.test(w)) y = 0; if (/nere|ner|botten|nedan/.test(w)) y = 100;
-  return { x:x, y:y };
-}
-/* "140%", "140", "1,4" -> 1.4 (100–400 %) */
-function zoom(v){
-  v = String(v || '').trim().replace('%', '').replace(',', '.'); if (!v || isNaN(+v)) return null;
-  var z = +v; if (z > 10) z = z / 100; return Math.max(1, Math.min(4, z));
+/* "30", "30%", "30,5" -> 30 (0–100), tomt -> null */
+function pct(v){
+  v = String(v == null ? '' : v).trim().replace('%', '').replace(',', '.'); if (!v || isNaN(+v)) return null;
+  return Math.max(0, Math.min(100, +v));
 }
 function parseCSV(t){
   var rows = [], row = [], cur = '', q = false, i, c;
@@ -405,8 +395,8 @@ function applyGrad(map){
   YEARS.forEach(function(y){
     var g = map[norm(y.label || y.name)];
     y.gimg = g ? g.img : null; y.gc = g ? g.c : null;
-    var p = (g && g.pos && typeof g.pos === 'object') ? g.pos : { x:50, y:50 }, hp = g && g.posHero && typeof g.posHero === 'object' ? g.posHero : {};
-    y.gf = { tab:{ x:p.x, y:p.y, z:(g && g.z) || 1 }, hero:{ x:hp.x, y:hp.y, z:g && g.zHero } };
+    var t = (g && g.tab) || {}, h = (g && g.hero) || {};
+    y.gf = { tab:{ x:t.x != null ? t.x : 50, y:t.y != null ? t.y : 50 }, hero:{ x:h.x, y:h.y } };
   });
   renderYears(); render();
 }
@@ -425,13 +415,13 @@ function syncGrad(){
     var map = {}, head = (res[0][0] || []).map(norm);
     function col(word, fb){ for (var i = 0; i < head.length; i++) if (head[i].indexOf(word) === 0) return i; return fb; }
     var cB = col('block', 0), cR = col('ruta', 1), cI = col('bild filnamn', 2), cC = col('gradientfarg', 3),
-        cF = col('bildfokus ruta', -1), cH = col('bildfokus stor', -1), cZ = col('zoom ruta', -1), cZH = col('zoom stor', -1);
+        cX = col('sidled ruta', -1), cY = col('hojdled ruta', -1), cXH = col('sidled stor', -1), cYH = col('hojdled stor', -1);
     res[0].slice(1).forEach(function(r){
       if (norm(r[cB]) !== norm(GRAD_BLOCK)) return;
       var id = files[norm(r[cI])]; if (!id) return;
       var c = String(r[cC] || '').trim(); if (c && c[0] !== '#') c = '#' + c;
       map[norm(r[cR])] = { img:'https://lh3.googleusercontent.com/d/' + id + '=w2000', c:/^#[0-9a-f]{6}$/i.test(c) ? c : null,
-        pos:focus(r[cF]), posHero:focus(r[cH]), z:zoom(r[cZ]), zHero:zoom(r[cZH]) };
+        tab:{ x:pct(r[cX]), y:pct(r[cY]) }, hero:{ x:pct(r[cXH]), y:pct(r[cYH]) } };
     });
     try { localStorage.setItem(GRAD_KEY, JSON.stringify(map)); } catch (e) {}
     applyGrad(map);
@@ -456,18 +446,18 @@ function edSync(){
   if (!y.gimg){ p.classList.add('off'); return; } p.classList.remove('off');
   var s = gset(y, ED.where), t = gset(y, 'tab'), hh = gset(y, 'hero');
   p.querySelectorAll('[data-w]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.w === ED.where); });
-  p.querySelector('[name="x"]').value = s.x; p.querySelector('[name="y"]').value = s.y; p.querySelector('[name="z"]').value = Math.round(s.z * 100);
-  p.querySelector('[data-ed="x"]').textContent = edPct(s.x); p.querySelector('[data-ed="y"]').textContent = edPct(s.y); p.querySelector('[data-ed="z"]').textContent = Math.round(s.z * 100) + '%';
-  ED.row = [edPct(t.x) + ' ' + edPct(t.y), edPct(hh.x) + ' ' + edPct(hh.y), Math.round(t.z * 100) + '%', Math.round(hh.z * 100) + '%'].map(function(v){ return v.replace(/,/g, '.'); });
+  p.querySelector('[name="x"]').value = s.x; p.querySelector('[name="y"]').value = s.y;
+  p.querySelector('[data-ed="x"]').textContent = edPct(s.x); p.querySelector('[data-ed="y"]').textContent = edPct(s.y);
+  ED.row = [t.x, t.y, hh.x, hh.y].map(function(v){ return String(Math.round(v * 10) / 10).replace('.', ','); });
   p.querySelector('[data-ed="out"]').innerHTML =
-    '<span>Bildfokus ruta</span><b>' + ED.row[0] + '</b><span>Bildfokus stor ruta</span><b>' + ED.row[1] + '</b>' +
-    '<span>Zoom ruta</span><b>' + ED.row[2] + '</b><span>Zoom stor ruta</span><b>' + ED.row[3] + '</b>';
+    '<span>Sidled ruta</span><b>' + ED.row[0] + '</b><span>Höjdled ruta</span><b>' + ED.row[1] + '</b>' +
+    '<span>Sidled stor ruta</span><b>' + ED.row[2] + '</b><span>Höjdled stor ruta</span><b>' + ED.row[3] + '</b>';
 }
 function edSet(k, v){
   var y = YEARS[state.y]; if (!y.gimg) return;
   if (ED.where === 'hero' && !y.gf.hero) y.gf.hero = {};
   var o = ED.where === 'hero' ? y.gf.hero : y.gf.tab;
-  if (ED.where === 'hero'){ var cur = gset(y, 'hero'); o.x = cur.x; o.y = cur.y; o.z = cur.z; }
+  if (ED.where === 'hero'){ var cur = gset(y, 'hero'); o.x = cur.x; o.y = cur.y; }
   o[k] = v; edPaint(); edSync();
 }
 function edInit(){
@@ -477,17 +467,16 @@ function edInit(){
     '<div class="hd"><b>Bildfokus</b><span data-ed="name"></span></div>' +
     '<p class="none">Den här rutan har ingen bild i kalkylarket.</p>' +
     '<div class="seg"><button type="button" data-w="tab">Liten ruta</button><button type="button" data-w="hero">Stor ruta</button></div>' +
-    '<label>Sidled <i data-ed="x"></i><input type="range" name="x" min="0" max="100" step="0.5"></label>' +
-    '<label>Höjdled <i data-ed="y"></i><input type="range" name="y" min="0" max="100" step="0.5"></label>' +
-    '<label>Zoom <i data-ed="z"></i><input type="range" name="z" min="100" max="300" step="1"></label>' +
-    '<p class="tip">Dra i den stora rutan för att flytta bilden. Piltangenter på reglagen ger små steg.</p>' +
+    '<label>Sidled <i data-ed="x"></i><input type="range" name="x" min="0" max="100" step="1"></label>' +
+    '<label>Höjdled <i data-ed="y"></i><input type="range" name="y" min="0" max="100" step="1"></label>' +
+    '<p class="tip">Dra i den stora rutan för att flytta bilden. Piltangenter på reglagen flyttar 1 % åt gången.</p>' +
     '<div class="out" data-ed="out"></div>' +
     '<div class="act"><button type="button" data-ed="copy">Kopiera till arket</button><button type="button" data-ed="reset" class="ghost">Återställ</button></div>';
   root.appendChild(p);
   p.addEventListener('click', function(e){
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.w){ ED.where = b.dataset.w; edSync(); }
-    else if (b.dataset.ed === 'reset'){ var y = YEARS[state.y]; if (ED.where === 'hero') y.gf.hero = {}; else y.gf.tab = { x:50, y:50, z:1 }; edPaint(); edSync(); }
+    else if (b.dataset.ed === 'reset'){ var y = YEARS[state.y]; if (ED.where === 'hero') y.gf.hero = {}; else y.gf.tab = { x:50, y:50 }; edPaint(); edSync(); }
     else if (b.dataset.ed === 'copy'){
       var txt = ED.row.join('\t');
       var done = function(){ b.textContent = 'Kopierat! Klistra in i kolumn E på raden ' + (YEARS[state.y].label || '') ; setTimeout(function(){ b.textContent = 'Kopiera till arket'; }, 2600); };
@@ -497,7 +486,7 @@ function edInit(){
   });
   p.addEventListener('input', function(e){
     var n = e.target.name; if (!n) return;
-    edSet(n, n === 'z' ? +e.target.value / 100 : +e.target.value);
+    edSet(n, +e.target.value);
   });
   /* Dra i stora rutan */
   var drag = null;
@@ -508,10 +497,10 @@ function edInit(){
   });
   root.addEventListener('pointermove', function(e){
     if (!drag) return;
-    var y = YEARS[state.y], s = gset(y, 'hero');
-    var nx = Math.max(0, Math.min(100, drag.x - (e.clientX - drag.x0) / drag.w * 100 / s.z));
-    var ny = Math.max(0, Math.min(100, drag.y - (e.clientY - drag.y0) / drag.h * 100 / s.z));
-    y.gf.hero = { x:Math.round(nx * 2) / 2, y:Math.round(ny * 2) / 2, z:s.z }; edPaint(); edSync();
+    var y = YEARS[state.y];
+    var nx = Math.max(0, Math.min(100, drag.x - (e.clientX - drag.x0) / drag.w * 100));
+    var ny = Math.max(0, Math.min(100, drag.y - (e.clientY - drag.y0) / drag.h * 100));
+    y.gf.hero = { x:Math.round(nx), y:Math.round(ny) }; edPaint(); edSync();
   });
   root.addEventListener('pointerup', function(){ drag = null; });
   edSync();
