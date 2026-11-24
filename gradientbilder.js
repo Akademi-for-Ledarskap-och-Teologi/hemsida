@@ -5,11 +5,12 @@
      Mapp:      ALT / Gradientbilder
      Kalkylark: "Gradientbilder – koppling till block", flik "Koppling"
        Block | Ruta | Bild | Gradientfärg | Sidled ruta | Höjdled ruta |
-       Sidled stor ruta | Höjdled stor ruta | Kommentar
+       Sidled stor ruta | Höjdled stor ruta | Zoom ruta | Zoom stor ruta | Kommentar
 
    Bild = filnamn i mappen Gradientbilder (med eller utan filändelse)
           eller en fullständig bildlänk (https://...).
-   Sidled/Höjdled = 0–100 (%). Tomt = 50. "Stor ruta" tom = samma som rutan.
+   Sidled/Höjdled = 0–100 (%). Tomt = 50. Zoom = 100–300 (%). Tomt = 100.
+   "Stor ruta" tom = samma som rutan.
 
    Finjustera på sidan: lägg till #bildfokus i adressen, t.ex.
    altutbildning.se/teologiaret#bildfokus
@@ -37,6 +38,12 @@
     v = String(v == null ? '' : v).trim().replace('%', '').replace(',', '.');
     if (!v || isNaN(+v)) return null;
     return Math.max(0, Math.min(100, +v));
+  }
+  function zoom(v){
+    v = String(v == null ? '' : v).trim().replace('%', '').replace(',', '.');
+    if (!v || isNaN(+v)) return null;
+    var z = +v; if (z > 0 && z <= 4) z = z * 100;               // 1,5 tolkas som 150 %
+    return Math.max(100, Math.min(300, z));
   }
   function rgba(hex, a){
     var m = String(hex || '').replace('#', '').match(/^([0-9a-f]{6})$/i); if (!m) return 'rgba(0,0,0,' + a + ')';
@@ -68,7 +75,8 @@
     var head = (rows[0] || []).map(norm), data = {};
     function col(word, fb){ for (var i = 0; i < head.length; i++) if (head[i].indexOf(word) === 0) return i; return fb; }
     var cB = col('block', 0), cR = col('ruta', 1), cI = col('bild', 2), cC = col('gradientfarg', 3),
-        cX = col('sidled ruta', 4), cY = col('hojdled ruta', 5), cXH = col('sidled stor', 6), cYH = col('hojdled stor', 7);
+        cX = col('sidled ruta', 4), cY = col('hojdled ruta', 5), cXH = col('sidled stor', 6), cYH = col('hojdled stor', 7),
+        cZ = col('zoom ruta', -1), cZH = col('zoom stor', -1);
     rows.slice(1).forEach(function(r){
       var b = norm(r[cB]), k = norm(r[cR]), v = String(r[cI] || '').trim(); if (!b || !k || !v) return;
       var img = null;
@@ -78,7 +86,7 @@
       var c = String(r[cC] || '').trim(); if (c && c[0] !== '#') c = '#' + c;
       (data[b] = data[b] || {})[k] = {
         img:img, c:/^#[0-9a-f]{6}$/i.test(c) ? c : null, name:String(r[cR]).trim(), block:String(r[cB]).trim(),
-        tab:{ x:pct(r[cX]), y:pct(r[cY]) }, hero:{ x:pct(r[cXH]), y:pct(r[cYH]) }
+        tab:{ x:pct(r[cX]), y:pct(r[cY]), z:zoom(r[cZ]) }, hero:{ x:pct(r[cXH]), y:pct(r[cYH]), z:zoom(r[cZH]) }
       };
     });
     return data;
@@ -108,10 +116,17 @@
   function entry(block, ruta){ var b = DATA && DATA[norm(block)]; return (b && b[norm(ruta)]) || null; }
   function set(e, where){
     var t = e.tab || {}, h = e.hero || {};
-    var tx = t.x != null ? t.x : 50, ty = t.y != null ? t.y : 50;
-    return where === 'hero' ? { x:h.x != null ? h.x : tx, y:h.y != null ? h.y : ty } : { x:tx, y:ty };
+    var tx = t.x != null ? t.x : 50, ty = t.y != null ? t.y : 50, tz = t.z != null ? t.z : 100;
+    return where === 'hero' ? { x:h.x != null ? h.x : tx, y:h.y != null ? h.y : ty, z:h.z != null ? h.z : tz } : { x:tx, y:ty, z:tz };
   }
   function pos(block, ruta, where){ var e = entry(block, ruta); if (!e) return '50% 50%'; var s = set(e, where); return s.x + '% ' + s.y + '%'; }
+  /* Zoom med egenskapen "scale" – krockar inte med blockens egna hover-effekter (transform) */
+  function zcss(e, where){ var s = set(e, where), p = s.x + '% ' + s.y + '%'; return { pos:p, scale:String(s.z / 100), origin:p }; }
+  function style(el, e, where){
+    var z = zcss(e, where);
+    if (el.tagName === 'IMG') el.style.objectPosition = z.pos; else el.style.backgroundPosition = z.pos;
+    el.style.scale = z.scale; el.style.transformOrigin = z.origin;
+  }
   var DIRS = {
     tab:  function(c){ return 'linear-gradient(20deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .82) + ' 40%,' + rgba(c, .3) + ' 100%)'; },
     hero: function(c){ return 'linear-gradient(90deg,' + rgba(c, .97) + ' 0%,' + rgba(c, .9) + ' 40%,' + rgba(c, .45) + ' 75%,' + rgba(c, .25) + ' 100%)'; },
@@ -121,14 +136,15 @@
   function layers(block, ruta, where, color, dir){
     var e = entry(block, ruta); if (!e) return '';
     var g = (DIRS[dir] || DIRS[where] || DIRS.hero)(e.c || color);
-    return '<span class="altg-bg" aria-hidden="true"' + attrs(block, ruta, where) + ' style="background-image:url(&quot;' + e.img + '&quot;);background-position:' + pos(block, ruta, where) + '"></span>' +
+    var z = zcss(e, where);
+    return '<span class="altg-bg" aria-hidden="true"' + attrs(block, ruta, where) + ' style="background-image:url(&quot;' + e.img + '&quot;);background-position:' + z.pos + ';scale:' + z.scale + ';transform-origin:' + z.origin + '"></span>' +
            '<span class="altg-ov" aria-hidden="true" style="background:' + g + '"></span>';
   }
   /* För block som har en <img> i rutan: byt bild och läge, markera för verktyget */
   function img(el, block, ruta, where){
     var e = entry(block, ruta); if (!el || !e) return false;
     el.setAttribute('data-altg-block', norm(block)); el.setAttribute('data-altg-ruta', norm(ruta)); el.setAttribute('data-altg-where', where);
-    el.style.objectPosition = pos(block, ruta, where);
+    style(el, e, where);
     if (el.getAttribute('src') !== e.img){ var p = new Image(); p.onload = function(){ el.src = e.img; el.hidden = false; }; p.src = e.img; }
     return true;
   }
@@ -166,10 +182,7 @@
   }
   function paint(key){
     var p = key.split('|'), e = entry(p[0], p[1]); if (!e) return;
-    ['tab', 'hero'].forEach(function(w){
-      var v = pos(p[0], p[1], w);
-      targets(key, w).forEach(function(el){ if (el.tagName === 'IMG') el.style.objectPosition = v; else el.style.backgroundPosition = v; });
-    });
+    ['tab', 'hero'].forEach(function(w){ targets(key, w).forEach(function(el){ style(el, e, w); }); });
   }
   function keys(){
     var seen = {}, out = [];
@@ -191,6 +204,7 @@
         '<div class="ctl"><div class="seg"><button type="button" data-w="tab">Liten ruta</button><button type="button" data-w="hero">Stor ruta</button></div>' +
         '<label>Sidled <i data-e="xv"></i><input type="range" name="x" min="0" max="100" step="1"></label>' +
         '<label>Höjdled <i data-e="yv"></i><input type="range" name="y" min="0" max="100" step="1"></label>' +
+        '<label>Zoom <i data-e="zv"></i><input type="range" name="z" min="100" max="300" step="1"></label>' +
         '<p class="tip">Dra i den stora rutan för att flytta bilden. Piltangenter flyttar 1 % åt gången.</p>' +
         '<div class="out" data-e="out"></div>' +
         '<div class="act"><button type="button" data-e="copy">Kopiera till arket</button><button type="button" class="ghost" data-e="reset">Återställ</button></div></div>';
@@ -199,7 +213,7 @@
         var b = ev.target.closest('button'); if (!b) return;
         if (b.dataset.w){ ED.where = b.dataset.w; edSync(); }
         else if (b.dataset.e === 'min'){ panel.classList.toggle('min'); b.textContent = panel.classList.contains('min') ? '+' : '–'; }
-        else if (b.dataset.e === 'reset'){ var e = cur(); if (!e) return; if (ED.where === 'hero') e.hero = { x:null, y:null }; else e.tab = { x:null, y:null }; paint(ED.key); edSync(); }
+        else if (b.dataset.e === 'reset'){ var e = cur(); if (!e) return; if (ED.where === 'hero') e.hero = { x:null, y:null, z:null }; else e.tab = { x:null, y:null, z:null }; paint(ED.key); edSync(); }
         else if (b.dataset.e === 'copy'){
           var txt = ED.row.join('\t'), lbl = b.textContent;
           var done = function(){ b.textContent = 'Kopierat! Klistra in i kolumn E'; setTimeout(function(){ b.textContent = lbl; }, 2600); };
@@ -211,7 +225,7 @@
       panel.addEventListener('mousedown', function(ev){ if (ev.target.dataset && ev.target.dataset.e === 'key') edOptions(); });
       panel.addEventListener('input', function(ev){
         var n = ev.target.name; if (!n) return; var e = cur(); if (!e) return;
-        var s = set(e, ED.where), o = ED.where === 'hero' ? (e.hero = { x:s.x, y:s.y }) : (e.tab = e.tab || {});
+        var s = set(e, ED.where), o = ED.where === 'hero' ? (e.hero = { x:s.x, y:s.y, z:s.z }) : (e.tab = e.tab || {});
         o[n] = +ev.target.value; paint(ED.key); edSync();
       });
       var drag = null;
@@ -227,12 +241,12 @@
         var k = t.getAttribute('data-altg-block') + '|' + t.getAttribute('data-altg-ruta'), p = k.split('|'), e = entry(p[0], p[1]); if (!e) return;
         ED.key = k; ED.where = 'hero'; edOptions(); edSync();
         var s = set(e, 'hero');
-        drag = { e:e, x0:ev.clientX, y0:ev.clientY, x:s.x, y:s.y, w:r.width, h:r.height }; ev.preventDefault();
+        drag = { e:e, x0:ev.clientX, y0:ev.clientY, x:s.x, y:s.y, z:s.z, w:r.width, h:r.height }; ev.preventDefault();
       });
       document.addEventListener('pointermove', function(ev){
         if (!drag) return;
         drag.e.hero = { x:Math.round(Math.max(0, Math.min(100, drag.x - (ev.clientX - drag.x0) / drag.w * 100))),
-                        y:Math.round(Math.max(0, Math.min(100, drag.y - (ev.clientY - drag.y0) / drag.h * 100))) };
+                        y:Math.round(Math.max(0, Math.min(100, drag.y - (ev.clientY - drag.y0) / drag.h * 100))), z:drag.z };
         paint(ED.key); edSync();
       });
       document.addEventListener('pointerup', function(){ drag = null; });
@@ -266,10 +280,12 @@
     panel.querySelector('[name="x"]').value = s.x; panel.querySelector('[name="y"]').value = s.y;
     panel.querySelector('[data-e="xv"]').textContent = Math.round(s.x) + ' %';
     panel.querySelector('[data-e="yv"]').textContent = Math.round(s.y) + ' %';
-    ED.row = [t.x, t.y, h.x, h.y].map(function(v){ return String(Math.round(v)); });
+    panel.querySelector('[name="z"]').value = s.z; panel.querySelector('[data-e="zv"]').textContent = Math.round(s.z) + ' %';
+    ED.row = [t.x, t.y, h.x, h.y, t.z, h.z].map(function(v){ return String(Math.round(v)); });
     panel.querySelector('[data-e="out"]').innerHTML =
       '<span>Sidled ruta</span><b>' + ED.row[0] + '</b><span>Höjdled ruta</span><b>' + ED.row[1] + '</b>' +
-      '<span>Sidled stor ruta</span><b>' + ED.row[2] + '</b><span>Höjdled stor ruta</span><b>' + ED.row[3] + '</b>';
+      '<span>Sidled stor ruta</span><b>' + ED.row[2] + '</b><span>Höjdled stor ruta</span><b>' + ED.row[3] + '</b>' +
+      '<span>Zoom ruta</span><b>' + ED.row[4] + '</b><span>Zoom stor ruta</span><b>' + ED.row[5] + '</b>';
   }
 
   window.ALTGrad = {

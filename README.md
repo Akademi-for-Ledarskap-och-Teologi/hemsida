@@ -67,7 +67,8 @@ Bilderna i rutorna (med färgtoning) styrs från Google Drive – inte här i ko
 - **Mapp:** ALT / *Gradientbilder* – ladda upp bilderna hit.
 - **Kalkylark:** *Gradientbilder – koppling till block* (i samma mapp), flik *Koppling*.
   En rad per ruta: Block, Ruta, Bild (filnamn i mappen eller en bildlänk), Gradientfärg (valfri),
-  Sidled/Höjdled ruta (%) och Sidled/Höjdled stor ruta (%). Tom bildcell = vanlig färgruta.
+  Sidled/Höjdled ruta (%), Sidled/Höjdled stor ruta (%) och Zoom ruta/stor ruta (%, 100–300).
+  Tom bildcell = vanlig färgruta.
 - **Finjustera** vilken del av bilden som syns: lägg till `#bildfokus` i adressen
   (t.ex. `altutbildning.se/teologiaret#bildfokus`), ställ in och klicka *Kopiera till arket*,
   klistra in i kolumn E på rätt rad.
