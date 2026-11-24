@@ -368,7 +368,9 @@ function renderList(){
 }
 function renderNext(y){
   return '<div class="altty-next">' + y.next.map(function(n, i){
-    return '<a class="altty-nx" href="' + n.href + '" style="--c:' + n.c + ';--f:' + n.f + ';text-decoration:none;animation-delay:' + (i * 60) + 'ms">' +
+    var g = G() && G().entry(GB, n.h);
+    return '<a class="altty-nx' + (g ? ' altg-on' : '') + '" href="' + n.href + '" style="--c:' + n.c + ';--f:' + n.f + ';--tc:' + n.c + ';--tf:' + n.f + ';text-decoration:none;animation-delay:' + (i * 60) + 'ms">' +
+      (g ? G().layers(GB, n.h, 'tab', n.c, 'hero') : '') +
       '<span class="k">' + esc(n.k) + '</span><h4>' + esc(n.h) + '</h4><p>' + esc(n.p) + '</p>' +
       '<ul>' + n.tags.map(function(t){ return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' +
       '<span class="altty-pill inv" style="--tf:' + n.f + ';--tc:' + n.c + '">Läs mer <span class="arr">→</span></span></a>';
